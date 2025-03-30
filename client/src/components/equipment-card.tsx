@@ -7,7 +7,6 @@ import {
   Button,
   Chip,
   Box,
-  CardActionArea,
   styled
 } from "@mui/material";
 import { useLocation } from "wouter";
@@ -29,6 +28,13 @@ const StyledCard = styled(Card)(({ theme }) => ({
     transform: 'translateY(-8px)',
     boxShadow: theme.shadows[8]
   }
+}));
+
+// Стилизованная область контента с авто-растягиванием
+const ContentArea = styled(Box)(({ theme }) => ({
+  flex: '1 1 auto',
+  display: 'flex',
+  flexDirection: 'column'
 }));
 
 const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
@@ -91,55 +97,57 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
 
   return (
     <StyledCard>
-      <CardActionArea onClick={handleCardClick}>
-        <CardMedia
-          component="img"
-          height="180"
-          image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
-          alt={equipment.name}
-        />
-        {getStatusChip()}
-      
-        <CardContent>
-          <Typography variant="h6" component="h3" gutterBottom>
-            {equipment.name}
-          </Typography>
-          
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {equipment.description}
-          </Typography>
-          
-          <Box sx={{ mt: 'auto', mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-            <Box>
-              <Typography variant="body2" color="text.secondary" component="span">
-                Категория:
-              </Typography>
-              <Typography 
-                variant="body2" 
-                component="span" 
-                sx={{ ml: 0.5, fontWeight: 'medium', textTransform: 'capitalize' }}
-              >
-                {equipment.category}
-              </Typography>
-            </Box>
+      <ContentArea>
+        <Box onClick={handleCardClick} sx={{ cursor: 'pointer' }}>
+          <CardMedia
+            component="img"
+            height="180"
+            image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
+            alt={equipment.name}
+          />
+          {getStatusChip()}
+        
+          <CardContent>
+            <Typography variant="h6" component="h3" gutterBottom>
+              {equipment.name}
+            </Typography>
             
-            <Box>
-              <Typography variant="body2" color="text.secondary" component="span">
-                Локация:
-              </Typography>
-              <Typography 
-                variant="body2" 
-                component="span" 
-                sx={{ ml: 0.5, fontWeight: 'medium' }}
-              >
-                {equipment.location}
-              </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {equipment.description}
+            </Typography>
+            
+            <Box sx={{ mt: 'auto', mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+              <Box>
+                <Typography variant="body2" color="text.secondary" component="span">
+                  Категория:
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  component="span" 
+                  sx={{ ml: 0.5, fontWeight: 'medium', textTransform: 'capitalize' }}
+                >
+                  {equipment.category}
+                </Typography>
+              </Box>
+              
+              <Box>
+                <Typography variant="body2" color="text.secondary" component="span">
+                  Локация:
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  component="span" 
+                  sx={{ ml: 0.5, fontWeight: 'medium' }}
+                >
+                  {equipment.location}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        </CardContent>
-      </CardActionArea>
+          </CardContent>
+        </Box>
+      </ContentArea>
       
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, mt: 'auto' }}>
         {equipment.status === "available" ? (
           <Button 
             variant="contained" 
