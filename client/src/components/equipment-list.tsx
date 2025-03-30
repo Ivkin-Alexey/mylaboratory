@@ -88,12 +88,12 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     <Box mb={4}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h2" fontWeight="bold" color="text.primary">
-          Available Equipment
+          Доступное оборудование
         </Typography>
         
         <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
-            placeholder="Search equipment..."
+            placeholder="Поиск оборудования..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             size="small"
@@ -108,18 +108,18 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           />
           
           <FormControl sx={{ minWidth: 180 }} size="small">
-            <InputLabel id="category-select-label">Category</InputLabel>
+            <InputLabel id="category-select-label">Категория</InputLabel>
             <MuiSelect
               labelId="category-select-label"
               value={selectedCategory}
-              label="Category"
+              label="Категория"
               onChange={handleCategoryChange}
             >
-              <MenuItem value="all">All Categories</MenuItem>
-              <MenuItem value="microscopes">Microscopes</MenuItem>
-              <MenuItem value="analyzers">Analyzers</MenuItem>
-              <MenuItem value="spectrometers">Spectrometers</MenuItem>
-              <MenuItem value="centrifuges">Centrifuges</MenuItem>
+              <MenuItem value="all">Все категории</MenuItem>
+              <MenuItem value="microscopes">Микроскопы</MenuItem>
+              <MenuItem value="analyzers">Анализаторы</MenuItem>
+              <MenuItem value="spectrometers">Спектрометры</MenuItem>
+              <MenuItem value="centrifuges">Центрифуги</MenuItem>
             </MuiSelect>
           </FormControl>
         </Box>
@@ -134,10 +134,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         <Paper sx={{ py: 4, textAlign: 'center', mb: 4 }} elevation={1}>
           <SearchIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
           <Typography variant="h6" sx={{ mt: 1 }}>
-            No equipment found
+            Оборудование не найдено
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Try adjusting your search or filter to find what you're looking for.
+            Попробуйте изменить параметры поиска или фильтры, чтобы найти нужное оборудование.
           </Typography>
         </Paper>
       ) : (

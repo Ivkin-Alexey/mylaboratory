@@ -75,8 +75,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
     
     if (!equipment || !isFormValid) {
       toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields.",
+        title: "Ошибка валидации",
+        description: "Пожалуйста, заполните все обязательные поля.",
         variant: "destructive",
       });
       return;
@@ -111,7 +111,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       maxWidth="sm"
     >
       <DialogTitle>
-        Book Equipment
+        Бронирование оборудования
       </DialogTitle>
       
       <DialogContent>
@@ -139,7 +139,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               <TextField
                 fullWidth
                 id="booking-date" 
-                label="Booking Date"
+                label="Дата бронирования"
                 type="date" 
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
@@ -149,19 +149,19 @@ const BookingModal: React.FC<BookingModalProps> = ({
               />
               
               <FormControl fullWidth disabled={!date || isLoadingSlots}>
-                <InputLabel id="time-slot-label">Time Slot</InputLabel>
+                <InputLabel id="time-slot-label">Временной интервал</InputLabel>
                 <Select
                   labelId="time-slot-label"
                   id="time-slot"
                   value={timeSlot}
                   onChange={handleTimeSlotChange}
-                  label="Time Slot"
+                  label="Временной интервал"
                 >
                   {isLoadingSlots ? (
                     <MenuItem value="" disabled>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <CircularProgress size={20} sx={{ mr: 1 }} />
-                        Loading available slots...
+                        Загрузка доступных интервалов...
                       </Box>
                     </MenuItem>
                   ) : availableSlots && availableSlots.length > 0 ? (
@@ -172,18 +172,18 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     ))
                   ) : (
                     <MenuItem value="" disabled>
-                      No available slots for this date
+                      Нет доступных интервалов на эту дату
                     </MenuItem>
                   )}
                 </Select>
-                {!date && <FormHelperText>Please select a date first</FormHelperText>}
+                {!date && <FormHelperText>Сначала выберите дату</FormHelperText>}
               </FormControl>
               
               <TextField
                 fullWidth
                 id="purpose"
-                label="Purpose"
-                placeholder="Briefly describe your intended use"
+                label="Цель использования"
+                placeholder="Кратко опишите, для чего вам нужно это оборудование"
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
                 required
@@ -194,8 +194,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
               <TextField
                 fullWidth
                 id="additional-requirements"
-                label="Additional Requirements"
-                placeholder="Any special requirements or notes"
+                label="Дополнительные требования"
+                placeholder="Любые особые требования или примечания"
                 value={additionalRequirements}
                 onChange={(e) => setAdditionalRequirements(e.target.value)}
                 multiline
@@ -211,7 +211,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           variant="outlined" 
           onClick={onClose}
         >
-          Cancel
+          Отмена
         </Button>
         <Button 
           variant="contained" 
@@ -219,7 +219,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           disabled={!isFormValid || isPending}
           color="primary"
         >
-          {isPending ? "Processing..." : "Confirm Booking"}
+          {isPending ? "Обработка..." : "Подтвердить бронирование"}
         </Button>
       </DialogActions>
     </Dialog>

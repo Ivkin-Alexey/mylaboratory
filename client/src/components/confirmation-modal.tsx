@@ -40,7 +40,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   // Format time slot for display
   const formatTimeSlot = (timeSlot: string) => {
-    return timeSlot.replace('-', ' to ').replace(':', ':').replace(':', ':');
+    return timeSlot.replace('-', ' до ').replace(':', ':').replace(':', ':');
   };
 
   return (
@@ -51,7 +51,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       fullWidth
     >
       <DialogTitle align="center">
-        Booking Confirmed
+        Бронирование подтверждено
       </DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -70,7 +70,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </Box>
           
           <DialogContentText align="center" sx={{ mb: 3 }}>
-            Your booking for <b>{equipment.name}</b> has been confirmed for <b>{booking.date}</b> from <b>{formatTimeSlot(booking.timeSlot)}</b>.
+            Ваше бронирование <b>{equipment.name}</b> подтверждено на <b>{booking.date}</b> с <b>{formatTimeSlot(booking.timeSlot)}</b>.
           </DialogContentText>
           
           <Paper 
@@ -83,7 +83,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             }}
           >
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Booking Details:
+              Детали бронирования:
             </Typography>
             
             <List dense disablePadding>
@@ -94,7 +94,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Booking ID: <span style={{ color: 'text.secondary' }}>BK-{booking.id}</span>
+                      Номер бронирования: <span style={{ color: 'text.secondary' }}>BK-{booking.id}</span>
                     </Typography>
                   }
                 />
@@ -106,7 +106,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Equipment: <span style={{ color: 'text.secondary' }}>{equipment.name}</span>
+                      Оборудование: <span style={{ color: 'text.secondary' }}>{equipment.name}</span>
                     </Typography>
                   }
                 />
@@ -118,7 +118,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Location: <span style={{ color: 'text.secondary' }}>{equipment.location}</span>
+                      Местоположение: <span style={{ color: 'text.secondary' }}>{equipment.location}</span>
                     </Typography>
                   }
                 />
@@ -130,7 +130,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Date: <span style={{ color: 'text.secondary' }}>{booking.date}</span>
+                      Дата: <span style={{ color: 'text.secondary' }}>{booking.date}</span>
                     </Typography>
                   }
                 />
@@ -142,7 +142,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Time: <span style={{ color: 'text.secondary' }}>{formatTimeSlot(booking.timeSlot)}</span>
+                      Время: <span style={{ color: 'text.secondary' }}>{formatTimeSlot(booking.timeSlot)}</span>
                     </Typography>
                   }
                 />
@@ -158,7 +158,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           onClick={onClose}
           sx={{ minWidth: 120 }}
         >
-          Continue Browsing
+          Продолжить просмотр
         </Button>
         <Button
           variant="contained"
@@ -166,7 +166,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           onClick={onViewBookings}
           sx={{ minWidth: 120 }}
         >
-          View My Bookings
+          Мои бронирования
         </Button>
       </DialogActions>
     </Dialog>

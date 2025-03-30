@@ -62,13 +62,13 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
   const getStatusChip = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Chip label="Confirmed" color="success" size="small" />;
+        return <Chip label="Подтверждено" color="success" size="small" />;
       case "pending":
-        return <Chip label="Pending" color="warning" size="small" />;
+        return <Chip label="Ожидает подтверждения" color="warning" size="small" />;
       case "completed":
-        return <Chip label="Completed" color="default" size="small" />;
+        return <Chip label="Завершено" color="default" size="small" />;
       case "cancelled":
-        return <Chip label="Cancelled" color="error" size="small" />;
+        return <Chip label="Отменено" color="error" size="small" />;
       default:
         return null;
     }
@@ -83,21 +83,21 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
     <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" fontWeight="bold" color="text.primary">
-          My Bookings
+          Мои бронирования
         </Typography>
         <FormControl size="small" sx={{ minWidth: 180 }}>
-          <InputLabel id="status-filter-label">Filter by Status</InputLabel>
+          <InputLabel id="status-filter-label">Фильтр по статусу</InputLabel>
           <Select
             labelId="status-filter-label"
             value={statusFilter}
             onChange={handleStatusFilterChange}
-            label="Filter by Status"
+            label="Фильтр по статусу"
           >
-            <MenuItem value="all">All Bookings</MenuItem>
-            <MenuItem value="confirmed">Confirmed</MenuItem>
-            <MenuItem value="pending">Pending</MenuItem>
-            <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="cancelled">Cancelled</MenuItem>
+            <MenuItem value="all">Все бронирования</MenuItem>
+            <MenuItem value="confirmed">Подтверждено</MenuItem>
+            <MenuItem value="pending">Ожидает подтверждения</MenuItem>
+            <MenuItem value="completed">Завершено</MenuItem>
+            <MenuItem value="cancelled">Отменено</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -111,17 +111,17 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
           <CardContent>
             <ErrorOutlineIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
             <Typography variant="h6" color="text.primary" gutterBottom>
-              No bookings found
+              Бронирования не найдены
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              You haven't booked any equipment yet. Book equipment to see it listed here.
+              Вы ещё не бронировали оборудование. Забронируйте оборудование, чтобы увидеть его здесь.
             </Typography>
             <Button 
               variant="contained" 
               color="primary"
               onClick={onNavigateToEquipment}
             >
-              Browse Equipment
+              Просмотр оборудования
             </Button>
           </CardContent>
         </Card>
@@ -130,11 +130,11 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
           <Table aria-label="bookings table">
             <TableHead>
               <TableRow>
-                <TableCell>Equipment</TableCell>
-                <TableCell>Booking Date</TableCell>
-                <TableCell>Time Slot</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>Оборудование</TableCell>
+                <TableCell>Дата бронирования</TableCell>
+                <TableCell>Время</TableCell>
+                <TableCell>Статус</TableCell>
+                <TableCell>Действия</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -174,7 +174,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
                         size="small"
                         onClick={() => handleCancelBooking(booking)}
                       >
-                        Cancel
+                        Отменить
                       </Button>
                     ) : (
                       <Button
@@ -183,7 +183,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
                         size="small"
                         onClick={() => handleRebook(booking.equipmentId)}
                       >
-                        Book Again
+                        Забронировать снова
                       </Button>
                     )}
                   </TableCell>

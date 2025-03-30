@@ -36,7 +36,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
 
   // Format time slot for display
   const formatTimeSlot = (timeSlot: string) => {
-    return timeSlot.replace('-', ' to ').replace(':', ':').replace(':', ':');
+    return timeSlot.replace('-', ' до ').replace(':', ':').replace(':', ':');
   };
   
   const handleCancel = () => {
@@ -55,7 +55,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
       fullWidth
     >
       <DialogTitle align="center">
-        Cancel Booking
+        Отмена бронирования
       </DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -74,7 +74,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
           </Box>
           
           <DialogContentText align="center" sx={{ mb: 3 }}>
-            Are you sure you want to cancel your booking for <b>{booking.equipment.name}</b> on <b>{booking.date}</b>? This action cannot be undone.
+            Вы уверены, что хотите отменить бронирование <b>{booking.equipment.name}</b> на <b>{booking.date}</b>? Это действие нельзя отменить.
           </DialogContentText>
           
           <Paper 
@@ -87,7 +87,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
             }}
           >
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Booking Details:
+              Детали бронирования:
             </Typography>
             
             <List dense disablePadding>
@@ -98,7 +98,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Booking ID: <span style={{ color: 'text.secondary' }}>BK-{booking.id}</span>
+                      Номер бронирования: <span style={{ color: 'text.secondary' }}>BK-{booking.id}</span>
                     </Typography>
                   }
                 />
@@ -110,7 +110,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Equipment: <span style={{ color: 'text.secondary' }}>{booking.equipment.name}</span>
+                      Оборудование: <span style={{ color: 'text.secondary' }}>{booking.equipment.name}</span>
                     </Typography>
                   }
                 />
@@ -122,7 +122,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Date: <span style={{ color: 'text.secondary' }}>{booking.date}</span>
+                      Дата: <span style={{ color: 'text.secondary' }}>{booking.date}</span>
                     </Typography>
                   }
                 />
@@ -134,7 +134,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
                 <ListItemText
                   primary={
                     <Typography variant="body2">
-                      Time: <span style={{ color: 'text.secondary' }}>{formatTimeSlot(booking.timeSlot)}</span>
+                      Время: <span style={{ color: 'text.secondary' }}>{formatTimeSlot(booking.timeSlot)}</span>
                     </Typography>
                   }
                 />
@@ -151,7 +151,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
           disabled={isPending}
           sx={{ minWidth: 120 }}
         >
-          Keep Booking
+          Сохранить бронирование
         </Button>
         <Button
           variant="contained"
@@ -160,7 +160,7 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
           disabled={isPending}
           sx={{ minWidth: 120 }}
         >
-          {isPending ? "Cancelling..." : "Cancel Booking"}
+          {isPending ? "Отмена..." : "Отменить бронирование"}
         </Button>
       </DialogActions>
     </Dialog>
