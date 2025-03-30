@@ -1,7 +1,21 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogTitle, 
+  DialogActions, 
+  DialogContentText,
+  Button,
+  Box,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import type { Booking, Equipment } from "@shared/schema";
 
 interface ConfirmationModalProps {
@@ -30,50 +44,131 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <div className="flex flex-col items-center justify-center">
-          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-            <CheckCircle className="h-6 w-6 text-green-600" />
-          </div>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle align="center">
+        Booking Confirmed
+      </DialogTitle>
+      <DialogContent>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            bgcolor: 'success.light', 
+            color: 'success.main', 
+            borderRadius: '50%', 
+            width: 64, 
+            height: 64, 
+            mb: 2 
+          }}>
+            <CheckCircleIcon fontSize="large" />
+          </Box>
           
-          <DialogHeader className="text-center mt-4">
-            <DialogTitle>Booking Confirmed</DialogTitle>
-            <DialogDescription className="text-center mt-2">
-              Your booking for <span className="font-medium text-gray-900">{equipment.name}</span> has been confirmed for <span className="font-medium text-gray-900">{booking.date}</span> from <span className="font-medium text-gray-900">{formatTimeSlot(booking.timeSlot)}</span>.
-            </DialogDescription>
-          </DialogHeader>
+          <DialogContentText align="center" sx={{ mb: 3 }}>
+            Your booking for <b>{equipment.name}</b> has been confirmed for <b>{booking.date}</b> from <b>{formatTimeSlot(booking.timeSlot)}</b>.
+          </DialogContentText>
           
-          <div className="mt-4 bg-gray-50 p-4 rounded-lg w-full">
-            <div className="text-sm">
-              <p className="font-medium text-gray-900 mb-1">Booking Details:</p>
-              <ul className="list-disc pl-5 text-gray-500 space-y-1">
-                <li>Booking ID: <span>BK-{booking.id}</span></li>
-                <li>Equipment: <span>{equipment.name}</span></li>
-                <li>Location: <span>{equipment.location}</span></li>
-                <li>Date: <span>{booking.date}</span></li>
-                <li>Time: <span>{formatTimeSlot(booking.timeSlot)}</span></li>
-              </ul>
-            </div>
-          </div>
-          
-          <DialogFooter className="flex sm:flex-row sm:justify-center gap-2 mt-6 w-full">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="sm:flex-1"
-            >
-              Continue Browsing
-            </Button>
-            <Button
-              onClick={onViewBookings}
-              className="sm:flex-1"
-            >
-              View My Bookings
-            </Button>
-          </DialogFooter>
-        </div>
+          <Paper 
+            variant="outlined" 
+            sx={{ 
+              p: 2, 
+              width: '100%', 
+              bgcolor: 'action.hover',
+              mb: 2  
+            }}
+          >
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Booking Details:
+            </Typography>
+            
+            <List dense disablePadding>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 28 }}>
+                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body2">
+                      Booking ID: <span style={{ color: 'text.secondary' }}>BK-{booking.id}</span>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 28 }}>
+                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body2">
+                      Equipment: <span style={{ color: 'text.secondary' }}>{equipment.name}</span>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 28 }}>
+                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body2">
+                      Location: <span style={{ color: 'text.secondary' }}>{equipment.location}</span>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 28 }}>
+                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body2">
+                      Date: <span style={{ color: 'text.secondary' }}>{booking.date}</span>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 28 }}>
+                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body2">
+                      Time: <span style={{ color: 'text.secondary' }}>{formatTimeSlot(booking.timeSlot)}</span>
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </List>
+          </Paper>
+        </Box>
       </DialogContent>
+      
+      <DialogActions sx={{ px: 3, pb: 3, justifyContent: 'center' }}>
+        <Button
+          variant="outlined"
+          onClick={onClose}
+          sx={{ minWidth: 120 }}
+        >
+          Continue Browsing
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onViewBookings}
+          sx={{ minWidth: 120 }}
+        >
+          View My Bookings
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

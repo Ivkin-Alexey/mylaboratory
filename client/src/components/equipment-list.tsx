@@ -145,13 +145,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           {/* Equipment Grid */}
           <Grid container spacing={3}>
             {paginatedData?.map((item: Equipment) => (
-              <Grid item key={item.id} xs={12} sm={6} md={4}>
-                <Box sx={{ p: 1 }}>
-                  <EquipmentCard 
-                    equipment={item} 
-                    onBook={onBookEquipment} 
-                  />
-                </Box>
+              <Grid key={item.id} sx={{ width: { xs: '100%', sm: '50%', md: '33.333%' }, padding: 1 }}>
+                <EquipmentCard 
+                  equipment={item} 
+                  onBook={onBookEquipment} 
+                />
               </Grid>
             ))}
           </Grid>

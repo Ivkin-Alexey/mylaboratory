@@ -135,81 +135,73 @@ const BookingModal: React.FC<BookingModalProps> = ({
               </Box>
             </Paper>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="booking-date" 
-                  label="Booking Date"
-                  type="date" 
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  inputProps={{ min: minDate }}
-                  required
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                id="booking-date" 
+                label="Booking Date"
+                type="date" 
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                inputProps={{ min: minDate }}
+                required
+                InputLabelProps={{ shrink: true }}
+              />
               
-              <Grid item xs={12}>
-                <FormControl fullWidth disabled={!date || isLoadingSlots}>
-                  <InputLabel id="time-slot-label">Time Slot</InputLabel>
-                  <Select
-                    labelId="time-slot-label"
-                    id="time-slot"
-                    value={timeSlot}
-                    onChange={handleTimeSlotChange}
-                    label="Time Slot"
-                  >
-                    {isLoadingSlots ? (
-                      <MenuItem value="" disabled>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <CircularProgress size={20} sx={{ mr: 1 }} />
-                          Loading available slots...
-                        </Box>
+              <FormControl fullWidth disabled={!date || isLoadingSlots}>
+                <InputLabel id="time-slot-label">Time Slot</InputLabel>
+                <Select
+                  labelId="time-slot-label"
+                  id="time-slot"
+                  value={timeSlot}
+                  onChange={handleTimeSlotChange}
+                  label="Time Slot"
+                >
+                  {isLoadingSlots ? (
+                    <MenuItem value="" disabled>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <CircularProgress size={20} sx={{ mr: 1 }} />
+                        Loading available slots...
+                      </Box>
+                    </MenuItem>
+                  ) : availableSlots && availableSlots.length > 0 ? (
+                    availableSlots.map((slot) => (
+                      <MenuItem key={slot} value={slot}>
+                        {slot.replace('-', ' - ').replace(':', ':').replace(':', ':')}
                       </MenuItem>
-                    ) : availableSlots && availableSlots.length > 0 ? (
-                      availableSlots.map((slot) => (
-                        <MenuItem key={slot} value={slot}>
-                          {slot.replace('-', ' - ').replace(':', ':').replace(':', ':')}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem value="" disabled>
-                        No available slots for this date
-                      </MenuItem>
-                    )}
-                  </Select>
-                  {!date && <FormHelperText>Please select a date first</FormHelperText>}
-                </FormControl>
-              </Grid>
+                    ))
+                  ) : (
+                    <MenuItem value="" disabled>
+                      No available slots for this date
+                    </MenuItem>
+                  )}
+                </Select>
+                {!date && <FormHelperText>Please select a date first</FormHelperText>}
+              </FormControl>
               
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="purpose"
-                  label="Purpose"
-                  placeholder="Briefly describe your intended use"
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                  required
-                  multiline
-                  rows={3}
-                />
-              </Grid>
+              <TextField
+                fullWidth
+                id="purpose"
+                label="Purpose"
+                placeholder="Briefly describe your intended use"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                required
+                multiline
+                rows={3}
+              />
               
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  id="additional-requirements"
-                  label="Additional Requirements"
-                  placeholder="Any special requirements or notes"
-                  value={additionalRequirements}
-                  onChange={(e) => setAdditionalRequirements(e.target.value)}
-                  multiline
-                  rows={2}
-                />
-              </Grid>
-            </Grid>
+              <TextField
+                fullWidth
+                id="additional-requirements"
+                label="Additional Requirements"
+                placeholder="Any special requirements or notes"
+                value={additionalRequirements}
+                onChange={(e) => setAdditionalRequirements(e.target.value)}
+                multiline
+                rows={2}
+              />
+            </Box>
           </Box>
         </form>
       </DialogContent>

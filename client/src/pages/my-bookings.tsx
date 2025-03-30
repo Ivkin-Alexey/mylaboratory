@@ -1,18 +1,28 @@
 import React, { useState } from "react";
 import { useUserBookings } from "@/hooks/use-bookings";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
+import { 
+  Typography, 
+  Box, 
+  Paper, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle } from "lucide-react";
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Button,
+  Chip,
+  Avatar,
+  CircularProgress,
+  Card,
+  CardContent,
+  SelectChangeEvent
+} from "@mui/material";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CancelBookingModal from "@/components/cancel-booking-modal";
 import type { BookingWithEquipment } from "@shared/schema";
 
@@ -43,17 +53,22 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
     }
   };
   
-  // Get status badge based on booking status
-  const getStatusBadge = (status: string) => {
+  // Handle status filter change
+  const handleStatusFilterChange = (event: SelectChangeEvent) => {
+    setStatusFilter(event.target.value);
+  };
+  
+  // Get status chip based on booking status
+  const getStatusChip = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Badge className="bg-green-500 hover:bg-green-600">Confirmed</Badge>;
+        return <Chip label="Confirmed" color="success" size="small" />;
       case "pending":
-        return <Badge className="bg-amber-500 hover:bg-amber-600">Pending</Badge>;
+        return <Chip label="Pending" color="warning" size="small" />;
       case "completed":
-        return <Badge className="bg-gray-500 hover:bg-gray-600">Completed</Badge>;
+        return <Chip label="Completed" color="default" size="small" />;
       case "cancelled":
-        return <Badge className="bg-red-500 hover:bg-red-600">Cancelled</Badge>;
+        return <Chip label="Cancelled" color="error" size="small" />;
       default:
         return null;
     }
@@ -65,111 +80,118 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">My Bookings</h2>
-        <div className="flex space-x-4">
-          <div className="w-48">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Bookings" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Bookings</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+    <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" fontWeight="bold" color="text.primary">
+          My Bookings
+        </Typography>
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel id="status-filter-label">Filter by Status</InputLabel>
+          <Select
+            labelId="status-filter-label"
+            value={statusFilter}
+            onChange={handleStatusFilterChange}
+            label="Filter by Status"
+          >
+            <MenuItem value="all">All Bookings</MenuItem>
+            <MenuItem value="confirmed">Confirmed</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="cancelled">Cancelled</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
       ) : !filteredBookings || filteredBookings.length === 0 ? (
-        <Card className="bg-white shadow rounded-lg py-8 text-center mb-8">
-          <CardContent className="pt-6">
-            <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-lg font-medium text-gray-900">No bookings found</h3>
-            <p className="mt-1 text-sm text-gray-500">
+        <Card elevation={1} sx={{ textAlign: 'center', py: 4, mb: 4 }}>
+          <CardContent>
+            <ErrorOutlineIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+            <Typography variant="h6" color="text.primary" gutterBottom>
+              No bookings found
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
               You haven't booked any equipment yet. Book equipment to see it listed here.
-            </p>
-            <div className="mt-6">
-              <Button onClick={onNavigateToEquipment}>
-                Browse Equipment
-              </Button>
-            </div>
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={onNavigateToEquipment}
+            >
+              Browse Equipment
+            </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Equipment</TableHead>
-                  <TableHead>Booking Date</TableHead>
-                  <TableHead>Time Slot</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+        <TableContainer component={Paper} elevation={1} sx={{ mb: 4 }}>
+          <Table aria-label="bookings table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Equipment</TableCell>
+                <TableCell>Booking Date</TableCell>
+                <TableCell>Time Slot</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredBookings.map((booking) => (
+                <TableRow key={booking.id}>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar
+                        src={booking.equipment.imageUrl || "https://via.placeholder.com/150?text=No+Image"}
+                        alt={booking.equipment.name}
+                        sx={{ width: 40, height: 40, mr: 2 }}
+                      />
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">
+                          {booking.equipment.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {booking.equipment.location}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{booking.date}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{formatTimeSlot(booking.timeSlot)}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    {getStatusChip(booking.status)}
+                  </TableCell>
+                  <TableCell>
+                    {booking.status === "confirmed" || booking.status === "pending" ? (
+                      <Button
+                        variant="text"
+                        color="error"
+                        size="small"
+                        onClick={() => handleCancelBooking(booking)}
+                      >
+                        Cancel
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="text"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleRebook(booking.equipmentId)}
+                      >
+                        Book Again
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredBookings.map((booking) => (
-                  <TableRow key={booking.id}>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <img 
-                            className="h-10 w-10 rounded-full object-cover" 
-                            src={booking.equipment.imageUrl || "https://via.placeholder.com/150?text=No+Image"}
-                            alt={booking.equipment.name}
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{booking.equipment.name}</div>
-                          <div className="text-sm text-gray-500">{booking.equipment.location}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm text-gray-900">{booking.date}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm text-gray-900">{formatTimeSlot(booking.timeSlot)}</div>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(booking.status)}
-                    </TableCell>
-                    <TableCell>
-                      {booking.status === "confirmed" || booking.status === "pending" ? (
-                        <Button
-                          variant="ghost"
-                          className="text-red-600 hover:text-red-800 font-medium"
-                          onClick={() => handleCancelBooking(booking)}
-                        >
-                          Cancel
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          className="text-primary hover:text-primary/80 font-medium"
-                          onClick={() => handleRebook(booking.equipmentId)}
-                        >
-                          Book Again
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
       
       <CancelBookingModal
@@ -177,7 +199,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
         onClose={() => setBookingToCancel(null)}
         booking={bookingToCancel}
       />
-    </div>
+    </Box>
   );
 };
 
