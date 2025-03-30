@@ -86,14 +86,24 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   return (
     <Box mb={4}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          width: '100%', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' }
+        }}>
           <TextField
             placeholder="Поиск оборудования..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             size="small"
-            sx={{ width: 250 }}
+            sx={{ 
+              width: { xs: '80%', md: '33.333%' },
+              mx: { xs: 'auto', sm: 0 },
+              mb: { xs: 2, sm: 0 }
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -103,7 +113,13 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
             }}
           />
           
-          <FormControl sx={{ minWidth: 180 }} size="small">
+          <FormControl 
+            sx={{ 
+              minWidth: 180,
+              width: { xs: '80%', sm: 'auto' },
+              mx: { xs: 'auto', sm: 0 }
+            }} 
+            size="small">
             <InputLabel id="category-select-label">Категория</InputLabel>
             <MuiSelect
               labelId="category-select-label"
