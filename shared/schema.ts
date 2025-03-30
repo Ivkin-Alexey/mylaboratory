@@ -35,6 +35,15 @@ export const EquipmentStatus = {
 
 export type EquipmentStatusType = typeof EquipmentStatus[keyof typeof EquipmentStatus];
 
+// Тип использования оборудования
+export const EquipmentUsageType = {
+  REQUIRES_BOOKING: "requires_booking", // Требуется бронирование (по умолчанию)
+  IMMEDIATE_USE: "immediate_use",       // Можно использовать сразу без бронирования
+  LONG_TERM_ONLY: "long_term_only"      // Только для длительного использования (без кнопки в карточке)
+} as const;
+
+export type EquipmentUsageTypeValue = typeof EquipmentUsageType[keyof typeof EquipmentUsageType];
+
 // Equipment table
 export const equipment = pgTable("equipment", {
   id: serial("id").primaryKey(),
@@ -44,6 +53,7 @@ export const equipment = pgTable("equipment", {
   location: text("location").notNull(),
   status: text("status").notNull().default(EquipmentStatus.AVAILABLE), // One of EquipmentStatus
   imageUrl: text("image_url"),
+  usageType: text("usage_type").notNull().default(EquipmentUsageType.REQUIRES_BOOKING), // Тип использования
 });
 
 export const insertEquipmentSchema = createInsertSchema(equipment).omit({

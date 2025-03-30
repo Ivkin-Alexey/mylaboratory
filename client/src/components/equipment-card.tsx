@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useLocation } from "wouter";
 import type { Equipment } from "@shared/schema";
+import { EquipmentUsageType } from "@shared/schema";
 
 interface EquipmentCardProps {
   equipment: Equipment;
@@ -92,6 +93,61 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
     }
   };
 
+  // Получаем информацию о типе кнопки и её поведении в зависимости от типа использования
+  const getButtonConfig = () => {
+    // Если оборудование недоступно, возвращаем неактивную кнопку
+    if (equipment.status !== "available") {
+      return {
+        variant: "outlined" as const,
+        disabled: true,
+        label: equipment.status === "maintenance" ? "На техобслуживании" : "Скоро будет доступно",
+        onClick: undefined
+      };
+    }
+    
+    // Если оборудование доступно, смотрим на тип использования
+    switch (equipment.usageType) {
+      case EquipmentUsageType.REQUIRES_BOOKING:
+        return {
+          variant: "contained" as const,
+          color: "primary" as const,
+          disabled: false,
+          label: "Забронировать",
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            onBook(equipment.id);
+          }
+        };
+      
+      case EquipmentUsageType.IMMEDIATE_USE:
+        return {
+          variant: "contained" as const,
+          color: "success" as const,
+          disabled: false,
+          label: "Доступно сейчас",
+          onClick: undefined
+        };
+      
+      case EquipmentUsageType.LONG_TERM_ONLY:
+        // Для длительного использования не отображаем кнопку в карточке
+        return null;
+      
+      default:
+        return {
+          variant: "contained" as const,
+          color: "primary" as const,
+          disabled: false,
+          label: "Забронировать",
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            onBook(equipment.id);
+          }
+        };
+    }
+  };
+  
+  const buttonConfig = getButtonConfig();
+
   return (
     <StyledCard>
       <ContentArea 
@@ -146,25 +202,15 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
       </ContentArea>
       
       <Box sx={{ p: 2, mt: 'auto' }}>
-        {equipment.status === "available" ? (
+        {buttonConfig && (
           <Button 
-            variant="contained" 
-            color="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              onBook(equipment.id);
-            }}
+            variant={buttonConfig.variant}
+            color={buttonConfig.color || "primary"}
+            disabled={buttonConfig.disabled}
+            onClick={buttonConfig.onClick}
             fullWidth
           >
-            Забронировать
-          </Button>
-        ) : (
-          <Button 
-            variant="outlined"
-            disabled
-            fullWidth
-          >
-            {equipment.status === "maintenance" ? "На техобслуживании" : "Скоро будет доступно"}
+            {buttonConfig.label}
           </Button>
         )}
       </Box>

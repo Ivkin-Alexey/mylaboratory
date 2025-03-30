@@ -19,17 +19,25 @@ import {
   Container,
   Breadcrumbs,
   Link,
-  IconButton
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  TextField
 } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CategoryIcon from '@mui/icons-material/Category';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { useEquipmentList } from "@/hooks/use-equipment";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import type { Equipment, Booking } from "@shared/schema";
+import { EquipmentUsageType } from "@shared/schema";
 
 interface EquipmentDetailsProps {
   onNavigateToBookings?: () => void;
@@ -48,6 +56,12 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  
+  // Состояние для модального окна длительного использования
+  const [isLongTermModalOpen, setIsLongTermModalOpen] = useState(false);
+  const [longTermPeriod, setLongTermPeriod] = useState("");
+  const [longTermPurpose, setLongTermPurpose] = useState("");
+  
   const [confirmedBooking, setConfirmedBooking] = useState<{
     booking: Booking | null;
     equipment: Equipment | null;
@@ -93,6 +107,21 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
     }
     
     setIsConfirmationModalOpen(true);
+  };
+  
+  // Обработчик отправки запроса на длительное использование
+  const handleLongTermRequest = () => {
+    // Здесь будет логика отправки запроса на длительное использование
+    // В реальном приложении здесь будет API-запрос
+    
+    alert(`Запрос на длительное использование отправлен!\nОборудование: ${equipment?.name}\nПериод: ${longTermPeriod}\nЦель: ${longTermPurpose}`);
+    
+    // Закрываем модальное окно
+    setIsLongTermModalOpen(false);
+    
+    // Сбрасываем форму
+    setLongTermPeriod("");
+    setLongTermPurpose("");
   };
 
   // Handle navigate back
@@ -244,15 +273,66 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
 
             <Box sx={{ mt: 3 }}>
               {equipment.status === "available" ? (
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  onClick={() => setIsBookingModalOpen(true)}
-                  fullWidth
-                  size="large"
-                >
-                  Забронировать это оборудование
-                </Button>
+                // В зависимости от типа использования отображаем разные кнопки
+                (() => {
+                  switch (equipment.usageType) {
+                    // Для оборудования требующего бронирования
+                    case EquipmentUsageType.REQUIRES_BOOKING:
+                      return (
+                        <Button 
+                          variant="contained" 
+                          color="primary"
+                          onClick={() => setIsBookingModalOpen(true)}
+                          fullWidth
+                          size="large"
+                        >
+                          Забронировать это оборудование
+                        </Button>
+                      );
+                    
+                    // Для оборудования доступного для немедленного использования
+                    case EquipmentUsageType.IMMEDIATE_USE:
+                      return (
+                        <Button 
+                          variant="contained" 
+                          color="success"
+                          fullWidth
+                          size="large"
+                        >
+                          Доступно для использования сейчас
+                        </Button>
+                      );
+                    
+                    // Для оборудования длительного использования
+                    case EquipmentUsageType.LONG_TERM_ONLY:
+                      return (
+                        <Button 
+                          variant="contained" 
+                          color="secondary"
+                          onClick={() => setIsLongTermModalOpen(true)}
+                          fullWidth
+                          size="large"
+                          startIcon={<WatchLaterIcon />}
+                        >
+                          Запросить для длительного использования
+                        </Button>
+                      );
+                    
+                    // По умолчанию показываем стандартную кнопку бронирования
+                    default:
+                      return (
+                        <Button 
+                          variant="contained" 
+                          color="primary"
+                          onClick={() => setIsBookingModalOpen(true)}
+                          fullWidth
+                          size="large"
+                        >
+                          Забронировать это оборудование
+                        </Button>
+                      );
+                  }
+                })()
               ) : (
                 <Button 
                   variant="outlined"
@@ -297,6 +377,64 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         onViewBookings={onNavigateToBookings || (() => {})}
         bookingDetails={confirmedBooking}
       />
+      
+      {/* Модальное окно для запроса на длительное использование */}
+      <Dialog 
+        open={isLongTermModalOpen} 
+        onClose={() => setIsLongTermModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Запрос на длительное использование</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 3 }}>
+            Заполните форму для запроса оборудования "{equipment?.name}" на длительный срок. После отправки запроса с вами свяжется администратор.
+          </DialogContentText>
+          
+          <TextField
+            autoFocus
+            margin="dense"
+            id="period"
+            label="Требуемый период использования"
+            placeholder="Например: 2 недели, 1 месяц"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={longTermPeriod}
+            onChange={(e) => setLongTermPeriod(e.target.value)}
+            sx={{ mb: 3 }}
+          />
+          
+          <TextField
+            margin="dense"
+            id="purpose"
+            label="Цель использования"
+            placeholder="Опишите для чего вам необходимо данное оборудование"
+            multiline
+            rows={4}
+            fullWidth
+            variant="outlined"
+            value={longTermPurpose}
+            onChange={(e) => setLongTermPurpose(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={() => setIsLongTermModalOpen(false)}
+            variant="outlined"
+          >
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleLongTermRequest}
+            variant="contained" 
+            color="secondary"
+            disabled={!longTermPeriod.trim() || !longTermPurpose.trim()}
+          >
+            Отправить запрос
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
