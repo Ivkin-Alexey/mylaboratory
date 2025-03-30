@@ -38,5 +38,7 @@ export function useAvailableTimeSlots(equipmentId: number | null, date: string |
     queryFn: () => getAvailableTimeSlots(equipmentId!, date!),
     enabled: !!equipmentId && !!date,
     refetchOnWindowFocus: false,
+    staleTime: 30000, // Кэш результата на 30 секунд
+    gcTime: 60000, // Храним в кэше 1 минуту (в v5 cacheTime переименовано в gcTime)
   });
 }

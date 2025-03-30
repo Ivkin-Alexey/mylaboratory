@@ -166,6 +166,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Создаем кэш для временных слотов
+  const slotsCache: Record<string, { slots: string[], timestamp: number }> = {};
+
   // Get available time slots for a specific equipment on a specific date
   app.get("/api/equipment/:id/available-slots", async (req: Request, res: Response) => {
     try {
@@ -174,6 +177,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (isNaN(equipmentId) || !date) {
         return res.status(400).json({ message: "Invalid equipment ID or date" });
+      }
+
+      // Проверяем кэш для быстрого ответа
+      const cacheKey = `slots_${equipmentId}_${date}`;
+      const cachedData = slotsCache[cacheKey];
+      
+      // Используем кэшированные данные, если они не старше 30 секунд
+      if (cachedData && (Date.now() - cachedData.timestamp) < 30000) {
+        return res.json({ availableSlots: cachedData.slots });
       }
 
       // Check if equipment exists
@@ -199,6 +211,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .map(booking => booking.timeSlot);
       
       const availableSlots = allTimeSlots.filter(slot => !bookedSlots.includes(slot));
+      
+      // Кэшируем результат
+      slotsCache[cacheKey] = {
+        slots: availableSlots,
+        timestamp: Date.now()
+      };
       
       res.json({ availableSlots });
     } catch (error) {

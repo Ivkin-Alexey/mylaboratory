@@ -24,6 +24,8 @@ import { useAvailableTimeSlots } from "@/hooks/use-equipment";
 import { useCreateBooking } from "@/hooks/use-bookings";
 import { format } from "date-fns";
 import type { Equipment } from "@shared/schema";
+import { queryClient } from "@/lib/queryClient";
+import { getAvailableTimeSlots } from "@/lib/api";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -47,22 +49,48 @@ const BookingModal: React.FC<BookingModalProps> = ({
   // Get minimum date (today)
   const minDate = format(new Date(), "yyyy-MM-dd");
   
-  // Fetch available time slots
+  // Определим состояние для отслеживания запроса доступных слотов
+  const [loadingSlots, setLoadingSlots] = useState<boolean>(false);
+  
+  // Fetch available time slots только когда дата выбрана
   const { data: availableSlots, isLoading: isLoadingSlots } = useAvailableTimeSlots(
     equipment?.id || null,
     date || null
   );
+  
+  // Когда запрос завершается, сбрасываем флаг loadingSlots
+  useEffect(() => {
+    if (!isLoadingSlots && loadingSlots) {
+      setLoadingSlots(false);
+    }
+  }, [isLoadingSlots, loadingSlots]);
   
   // Create booking mutation
   const { mutate: createBooking, isPending } = useCreateBooking();
   
   // Reset form when modal opens with new equipment
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && equipment) {
+      // Сбрасываем поля формы
       setDate("");
       setTimeSlot("");
       setPurpose("");
       setAdditionalRequirements("");
+      
+      // Предзагружаем слоты на сегодня и завтра для ускорения открытия модального окна
+      const today = format(new Date(), "yyyy-MM-dd");
+      const tomorrow = format(new Date(Date.now() + 86400000), "yyyy-MM-dd");
+      
+      // Используем queryClient для предзагрузки
+      queryClient.prefetchQuery({
+        queryKey: ["/api/equipment/available-slots", equipment.id, today],
+        queryFn: () => getAvailableTimeSlots(equipment.id, today)
+      });
+      
+      queryClient.prefetchQuery({
+        queryKey: ["/api/equipment/available-slots", equipment.id, tomorrow],
+        queryFn: () => getAvailableTimeSlots(equipment.id, tomorrow)
+      });
     }
   }, [isOpen, equipment]);
   
@@ -142,7 +170,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 label="Дата бронирования"
                 type="date" 
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => {
+                  // Изменение даты сбрасывает выбранный временной слот
+                  if (e.target.value !== date) {
+                    setTimeSlot("");
+                    setDate(e.target.value);
+                    setLoadingSlots(true);
+                  }
+                }}
                 inputProps={{ min: minDate }}
                 required
                 InputLabelProps={{ shrink: true }}
@@ -164,8 +199,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
                         Загрузка доступных интервалов...
                       </Box>
                     </MenuItem>
-                  ) : availableSlots && availableSlots.length > 0 ? (
-                    availableSlots.map((slot) => (
+                  ) : availableSlots && Array.isArray(availableSlots) && availableSlots.length > 0 ? (
+                    availableSlots.map((slot: string) => (
                       <MenuItem key={slot} value={slot}>
                         {slot.replace('-', ' - ').replace(':', ':').replace(':', ':')}
                       </MenuItem>
