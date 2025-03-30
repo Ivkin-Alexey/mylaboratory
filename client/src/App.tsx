@@ -6,7 +6,7 @@ import Equipment from "@/pages/equipment";
 import MyBookings from "@/pages/my-bookings";
 import EquipmentDetails from "@/pages/equipment-details";
 import AppHeader from "@/components/app-header";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Alert, Snackbar } from '@mui/material';
 import { useToast } from "@/hooks/use-toast";
@@ -40,27 +40,53 @@ const theme = createTheme({
 // Компонент для уведомлений (замена Toaster)
 function MuiToaster() {
   const { toasts, dismiss } = useToast();
+  // Создаем локальное состояние для отслеживания видимости каждого уведомления
+  const [visibleToasts, setVisibleToasts] = useState<Record<string, boolean>>({});
+  
+  // При монтировании компонента или изменении toasts, устанавливаем все новые тосты как видимые
+  useEffect(() => {
+    const newVisibleState: Record<string, boolean> = {};
+    toasts.forEach(toast => {
+      // Если состояние уже есть в visibleToasts, сохраняем его
+      // Иначе новый тост будет отображаться
+      newVisibleState[toast.id] = visibleToasts[toast.id] !== false;
+    });
+    setVisibleToasts(newVisibleState);
+  }, [toasts]);
+  
+  // Обработчик закрытия тоста
+  const handleClose = (id: string) => {
+    // Отмечаем тост как невидимый в локальном состоянии
+    setVisibleToasts(prev => ({ ...prev, [id]: false }));
+    // Также отправляем действие dismiss в глобальное состояние
+    dismiss(id);
+  };
   
   return (
     <>
-      {toasts.map(({ id, title, description, variant }) => (
-        <Snackbar 
-          key={id}
-          open={true}
-          autoHideDuration={6000}
-          onClose={() => dismiss(id)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        >
-          <Alert 
-            onClose={() => dismiss(id)} 
-            severity={variant === 'destructive' ? 'error' : 'success'} 
-            sx={{ width: '100%' }}
+      {toasts.map(({ id, title, description, variant }) => {
+        // Проверяем, должен ли тост быть видимым
+        const isVisible = visibleToasts[id] !== false;
+        
+        return isVisible ? (
+          <Snackbar 
+            key={id}
+            open={true}
+            autoHideDuration={6000}
+            onClose={() => handleClose(id)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           >
-            {title && <div><strong>{title}</strong></div>}
-            {description}
-          </Alert>
-        </Snackbar>
-      ))}
+            <Alert 
+              onClose={() => handleClose(id)} 
+              severity={variant === 'destructive' ? 'error' : 'success'} 
+              sx={{ width: '100%' }}
+            >
+              {title && <div><strong>{title}</strong></div>}
+              {description}
+            </Alert>
+          </Snackbar>
+        ) : null;
+      })}
     </>
   );
 }
