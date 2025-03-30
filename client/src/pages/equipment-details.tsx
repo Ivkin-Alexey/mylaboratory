@@ -122,15 +122,22 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
 
   // Get status chip based on equipment status
   const getStatusChip = (status: string) => {
+    // Общий стиль для чипов статуса
+    const chipStyle = { 
+      px: 2, 
+      py: 0.8, 
+      fontWeight: 'medium' 
+    };
+    
     switch (status) {
       case "available":
-        return <Chip label="Доступно" color="success" size="small" />;
+        return <Chip label="Доступно" color="success" size="small" sx={chipStyle} />;
       case "booked":
-        return <Chip label="Забронировано" color="error" size="small" />;
+        return <Chip label="Забронировано" color="error" size="small" sx={chipStyle} />;
       case "maintenance":
-        return <Chip label="На обслуживании" color="warning" size="small" />;
+        return <Chip label="На обслуживании" color="warning" size="small" sx={chipStyle} />;
       case "in_use":
-        return <Chip label="В работе" color="primary" size="small" />;
+        return <Chip label="В работе" color="primary" size="small" sx={chipStyle} />;
       default:
         return null;
     }

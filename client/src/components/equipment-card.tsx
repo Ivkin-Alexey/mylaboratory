@@ -52,6 +52,18 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   
   // Определяем цвет и текст метки статуса
   const getStatusChip = () => {
+    // Стиль для всех статусных чипов
+    const chipStyle = {
+      position: 'absolute', 
+      top: 12, 
+      left: '50%',
+      transform: 'translateX(-50%)',
+      fontWeight: 'medium',
+      zIndex: 1,
+      px: 2,
+      py: 0.8
+    };
+    
     switch (equipment.status) {
       // Для статуса "available" не показываем бейдж
       case "available":
@@ -62,14 +74,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             label="Забронировано" 
             color="error" 
             size="small"
-            sx={{ 
-              position: 'absolute', 
-              top: 12, 
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontWeight: 'medium',
-              zIndex: 1
-            }}
+            sx={chipStyle}
           />
         );
       case "maintenance":
@@ -78,14 +83,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             label="На обслуживании" 
             color="warning" 
             size="small"
-            sx={{ 
-              position: 'absolute', 
-              top: 12, 
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontWeight: 'medium',
-              zIndex: 1
-            }}
+            sx={chipStyle}
           />
         );
       case "in_use":
@@ -94,14 +92,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             label="В работе" 
             color="primary" 
             size="small"
-            sx={{ 
-              position: 'absolute', 
-              top: 12, 
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontWeight: 'medium',
-              zIndex: 1
-            }}
+            sx={chipStyle}
           />
         );
       default:
