@@ -99,8 +99,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
 
   return (
     <StyledCard>
-      <ContentArea>
-        <Box onClick={handleCardClick} sx={{ cursor: 'pointer' }}>
+      <ContentArea 
+        onClick={handleCardClick}
+        sx={{ cursor: 'pointer' }}
+      >
           <CardMedia
             component="img"
             height="180"
@@ -146,7 +148,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
               </Box>
             </Box>
           </CardContent>
-        </Box>
       </ContentArea>
       
       <Box sx={{ p: 2, mt: 'auto' }}>
