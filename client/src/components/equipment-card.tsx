@@ -111,18 +111,22 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
 
   // Получаем информацию о типе кнопки и её поведении в зависимости от типа использования
   const getButtonConfig = () => {
+    // Для оборудования в использовании с типом IMMEDIATE_USE показываем кнопку "Завершить"
+    if (equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE) {
+      return {
+        variant: "contained" as const,
+        color: "success" as const,
+        disabled: false,
+        label: "Завершить",
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation();
+          onBook(equipment.id);
+        }
+      };
+    }
+    
     // Если оборудование недоступно, возвращаем неактивную кнопку
     if (equipment.status !== "available") {
-      if (equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE) {
-        return {
-          variant: "contained" as const,
-          color: "primary" as const,
-          disabled: true,
-          label: "В работе",
-          onClick: undefined
-        };
-      }
-      
       return {
         variant: "outlined" as const,
         disabled: true,
@@ -151,7 +155,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           color: "success" as const,
           disabled: false,
           label: "Использовать",
-          onClick: undefined
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            onBook(equipment.id);
+          }
         };
       
       case EquipmentUsageType.LONG_TERM_ONLY:

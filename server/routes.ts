@@ -244,12 +244,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Equipment is not available" });
       }
       
-      // Обновить статус оборудования на "booked" (в работе)
-      const updatedEquipment = await storage.updateEquipmentStatus(equipmentId, EquipmentStatus.BOOKED);
+      // Обновить статус оборудования на "in_use" (в работе)
+      const updatedEquipment = await storage.updateEquipmentStatus(equipmentId, EquipmentStatus.IN_USE);
       
       res.json(updatedEquipment);
     } catch (error) {
       res.status(500).json({ message: "Error updating equipment status" });
+    }
+  });
+  
+  // Завершение использования оборудования
+  app.patch("/api/equipment/:id/finish", async (req: Request, res: Response) => {
+    try {
+      const equipmentId = parseInt(req.params.id);
+      
+      if (isNaN(equipmentId)) {
+        return res.status(400).json({ message: "Invalid equipment ID" });
+      }
+      
+      // Проверка существования оборудования
+      const equipment = await storage.getEquipmentById(equipmentId);
+      if (!equipment) {
+        return res.status(404).json({ message: "Equipment not found" });
+      }
+      
+      // Проверка статуса оборудования
+      if (equipment.status !== EquipmentStatus.IN_USE) {
+        return res.status(400).json({ message: "Equipment is not currently in use" });
+      }
+      
+      // Обновить статус оборудования на "available" (доступно)
+      const updatedEquipment = await storage.updateEquipmentStatus(equipmentId, EquipmentStatus.AVAILABLE);
+      
+      res.json(updatedEquipment);
+    } catch (error) {
+      res.status(500).json({ message: "Error finishing equipment usage" });
     }
   });
 

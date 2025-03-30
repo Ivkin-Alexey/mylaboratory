@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useEquipmentList, useFilteredEquipment, useSearchEquipment } from "@/hooks/use-equipment";
+import { 
+  useEquipmentList, 
+  useFilteredEquipment, 
+  useSearchEquipment, 
+  useUseEquipment,
+  useFinishUsingEquipment
+} from "@/hooks/use-equipment";
 import EquipmentCard from "./equipment-card";
 import { 
   Typography, 
@@ -36,6 +42,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   const { data: allEquipment, isLoading: isLoadingAll } = useEquipmentList();
   const { data: filteredEquipment, isLoading: isLoadingFiltered } = useFilteredEquipment(selectedCategory);
   const { data: searchResults, isLoading: isLoadingSearch } = useSearchEquipment(debouncedSearchTerm);
+  
+  // Мутации для управления статусом оборудования
+  const useEquipmentMutation = useUseEquipment();
+  const finishUsingEquipmentMutation = useFinishUsingEquipment();
 
   // Debounce search term
   useEffect(() => {
@@ -82,6 +92,24 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
+  };
+  
+  // Обработчик для кнопок "Использовать" и "Завершить"
+  const handleEquipmentAction = (equipmentId: number) => {
+    const equipment = displayData?.find(item => item.id === equipmentId);
+    
+    if (!equipment) return;
+    
+    if (equipment.status === 'in_use' && equipment.usageType === 'immediate_use') {
+      // Если оборудование используется, завершаем использование
+      finishUsingEquipmentMutation.mutate(equipmentId);
+    } else if (equipment.status === 'available' && equipment.usageType === 'immediate_use') {
+      // Если оборудование доступно и имеет тип немедленного использования, используем его
+      useEquipmentMutation.mutate(equipmentId);
+    } else {
+      // В остальных случаях используем обычный обработчик для бронирования
+      onBookEquipment(equipmentId);
+    }
   };
 
   return (
@@ -248,7 +276,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
               <Box key={item.id}>
                 <EquipmentCard 
                   equipment={item} 
-                  onBook={onBookEquipment} 
+                  onBook={handleEquipmentAction} 
                 />
               </Box>
             ))}

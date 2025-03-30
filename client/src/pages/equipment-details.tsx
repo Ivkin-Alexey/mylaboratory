@@ -33,12 +33,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CategoryIcon from '@mui/icons-material/Category';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { useEquipmentList } from "@/hooks/use-equipment";
+import { useEquipmentList, useUseEquipment, useFinishUsingEquipment } from "@/hooks/use-equipment";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import type { Equipment, Booking } from "@shared/schema";
 import { EquipmentUsageType } from "@shared/schema";
-import { useEquipment } from "../lib/api";
 import { queryClient } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
 
@@ -77,30 +76,40 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
     }
   }, [equipment]);
   
+  // Мутации для использования и завершения использования оборудования
+  const useEquipmentMutation = useUseEquipment();
+  const finishUsingEquipmentMutation = useFinishUsingEquipment();
+  
   // Обработчик для использования оборудования без бронирования
-  const handleUseEquipment = async (id: number) => {
+  const handleUseEquipment = (id: number) => {
     if (isInUse || isEquipmentLoading) return;
-    
     setIsEquipmentLoading(true);
-    try {
-      await useEquipment(id);
-      setIsInUse(true);
-      toast({
-        title: "Оборудование в работе",
-        description: "Статус оборудования обновлен на 'в работе'"
-      });
-      
-      // Обновляем данные о оборудовании
-      queryClient.invalidateQueries({ queryKey: ['/api/equipment'] });
-    } catch (error) {
-      console.error('Ошибка при обновлении статуса:', error);
-      toast({
-        title: "Ошибка",
-        description: "Не удалось обновить статус оборудования"
-      });
-    } finally {
-      setIsEquipmentLoading(false);
-    }
+    
+    useEquipmentMutation.mutate(id, {
+      onSuccess: () => {
+        setIsInUse(true);
+        setIsEquipmentLoading(false);
+      },
+      onError: () => {
+        setIsEquipmentLoading(false);
+      }
+    });
+  };
+  
+  // Обработчик для завершения использования оборудования
+  const handleFinishUsingEquipment = (id: number) => {
+    if (!isInUse || isEquipmentLoading) return;
+    setIsEquipmentLoading(true);
+    
+    finishUsingEquipmentMutation.mutate(id, {
+      onSuccess: () => {
+        setIsInUse(false);
+        setIsEquipmentLoading(false);
+      },
+      onError: () => {
+        setIsEquipmentLoading(false);
+      }
+    });
   };
   
   const [confirmedBooking, setConfirmedBooking] = useState<{
@@ -382,12 +391,14 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
               ) : equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE ? (
                 <Button 
                   variant="contained"
-                  color="primary"
-                  disabled
+                  color="success"
+                  onClick={() => handleFinishUsingEquipment(equipment.id)}
                   fullWidth
                   size="large"
+                  disabled={isEquipmentLoading}
+                  startIcon={isEquipmentLoading && <CircularProgress size={20} color="inherit" />}
                 >
-                  В работе
+                  Завершить
                 </Button>
               ) : (
                 <Button 

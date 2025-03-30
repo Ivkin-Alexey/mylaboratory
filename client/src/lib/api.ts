@@ -55,3 +55,9 @@ export const useEquipment = async (equipmentId: number): Promise<Equipment> => {
   const response = await apiRequest("PATCH", `/api/equipment/${equipmentId}/use`, undefined);
   return response.json();
 };
+
+// Функция для завершения использования оборудования
+export const finishUsingEquipment = async (equipmentId: number): Promise<Equipment> => {
+  const response = await apiRequest("PATCH", `/api/equipment/${equipmentId}/finish`, undefined);
+  return response.json();
+};
