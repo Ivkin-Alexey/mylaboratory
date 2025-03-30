@@ -48,8 +48,20 @@ export class MemStorage implements IStorage {
     this.equipmentCurrentId = 1;
     this.bookingCurrentId = 1;
     
+    // Add test user
+    this.initTestUser();
+    
     // Add sample equipment
     this.initSampleEquipment();
+  }
+
+  // Initialize test user
+  private initTestUser() {
+    const testUser = {
+      username: "testuser",
+      email: "test@example.com",
+    };
+    this.createUser(testUser);
   }
 
   // Initialize sample equipment
