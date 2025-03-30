@@ -17,16 +17,15 @@ interface EquipmentCardProps {
   onBook: (equipmentId: number) => void;
 }
 
-// Стилизованная карточка с эффектом при наведении
+// Стилизованная карточка
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  transition: 'transform 0.3s ease-in-out',
+  transition: 'box-shadow 0.3s ease-in-out',
   '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: theme.shadows[8]
+    boxShadow: theme.shadows[4]
   }
 }));
 
