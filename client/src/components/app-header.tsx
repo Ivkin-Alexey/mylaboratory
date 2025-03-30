@@ -32,21 +32,21 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
         <Toolbar>
           <ScienceIcon sx={{ mr: 2 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Lab Equipment Booking
+            Бронирование Лабораторного Оборудования
           </Typography>
           
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="body2" sx={{ mr: 2 }}>
-              John Smith
+              Иван Петров
             </Typography>
             <IconButton color="inherit" size="small">
               <SettingsIcon />
             </IconButton>
             <Avatar 
               sx={{ ml: 2, width: 32, height: 32 }}
-              alt="John Smith"
+              alt="Иван Петров"
             >
-              JS
+              ИП
             </Avatar>
           </Box>
         </Toolbar>
@@ -67,13 +67,13 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
         >
           <Tab 
             value="equipment" 
-            label="Equipment" 
+            label="Оборудование" 
             icon={<ScienceIcon />} 
             iconPosition="start"
           />
           <Tab 
             value="myBookings" 
-            label="My Bookings" 
+            label="Мои Бронирования" 
             icon={<BookmarksIcon />} 
             iconPosition="start"
           />

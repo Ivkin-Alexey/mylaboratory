@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import NotFound from "@/pages/not-found";
 import Equipment from "@/pages/equipment";
 import MyBookings from "@/pages/my-bookings";
+import EquipmentDetails from "@/pages/equipment-details";
 import AppHeader from "@/components/app-header";
 import { useState } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -74,6 +75,9 @@ function Router() {
       
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Switch>
+          <Route path="/equipment/:id">
+            <EquipmentDetails onNavigateToBookings={() => setActiveTab("myBookings")} />
+          </Route>
           <Route path="/">
             {activeTab === "equipment" ? <Equipment onNavigateToBookings={() => setActiveTab("myBookings")} /> : <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />}
           </Route>

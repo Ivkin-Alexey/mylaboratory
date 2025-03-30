@@ -2,16 +2,18 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getEquipmentList, getEquipmentByCategory, searchEquipment, getAvailableTimeSlots } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import { Equipment } from "@shared/schema";
 
 export function useEquipmentList() {
-  return useQuery({
+  return useQuery<Equipment[]>({
     queryKey: ["/api/equipment"],
+    queryFn: getEquipmentList,
     refetchOnWindowFocus: false,
   });
 }
 
 export function useFilteredEquipment(category: string) {
-  return useQuery({
+  return useQuery<Equipment[]>({
     queryKey: ["/api/equipment/category", category],
     queryFn: () => getEquipmentByCategory(category),
     enabled: !!category && category !== "all",
@@ -20,7 +22,7 @@ export function useFilteredEquipment(category: string) {
 }
 
 export function useSearchEquipment(searchTerm: string) {
-  return useQuery({
+  return useQuery<Equipment[]>({
     queryKey: ["/api/equipment/search", searchTerm],
     queryFn: () => searchEquipment(searchTerm),
     enabled: !!searchTerm,
@@ -29,7 +31,7 @@ export function useSearchEquipment(searchTerm: string) {
 }
 
 export function useAvailableTimeSlots(equipmentId: number | null, date: string | null) {
-  return useQuery({
+  return useQuery<string[]>({
     queryKey: ["/api/equipment/available-slots", equipmentId, date],
     queryFn: () => getAvailableTimeSlots(equipmentId!, date!),
     enabled: !!equipmentId && !!date,

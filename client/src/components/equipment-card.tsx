@@ -7,9 +7,10 @@ import {
   Button,
   Chip,
   Box,
-  Grid,
+  CardActionArea,
   styled
 } from "@mui/material";
+import { useLocation } from "wouter";
 import type { Equipment } from "@shared/schema";
 
 interface EquipmentCardProps {
@@ -31,13 +32,20 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
+  const [, setLocation] = useLocation();
+  
+  // Переход на страницу деталей оборудования
+  const handleCardClick = () => {
+    setLocation(`/equipment/${equipment.id}`);
+  };
+  
   // Определяем цвет и текст метки статуса
   const getStatusChip = () => {
     switch (equipment.status) {
       case "available":
         return (
           <Chip 
-            label="Available" 
+            label="Доступно" 
             color="success" 
             size="small"
             sx={{ 
@@ -51,7 +59,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
       case "booked":
         return (
           <Chip 
-            label="Booked" 
+            label="Забронировано" 
             color="error" 
             size="small"
             sx={{ 
@@ -65,7 +73,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
       case "maintenance":
         return (
           <Chip 
-            label="Maintenance" 
+            label="На обслуживании" 
             color="warning" 
             size="small"
             sx={{ 
@@ -83,59 +91,66 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
 
   return (
     <StyledCard>
-      <CardMedia
-        component="img"
-        height="180"
-        image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
-        alt={equipment.name}
-      />
-      {getStatusChip()}
+      <CardActionArea onClick={handleCardClick}>
+        <CardMedia
+          component="img"
+          height="180"
+          image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
+          alt={equipment.name}
+        />
+        {getStatusChip()}
       
-      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" component="h3" gutterBottom>
-          {equipment.name}
-        </Typography>
-        
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {equipment.description}
-        </Typography>
-        
-        <Box sx={{ mt: 'auto', mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-          <Box>
-            <Typography variant="body2" color="text.secondary" component="span">
-              Category:
-            </Typography>
-            <Typography 
-              variant="body2" 
-              component="span" 
-              sx={{ ml: 0.5, fontWeight: 'medium', textTransform: 'capitalize' }}
-            >
-              {equipment.category}
-            </Typography>
-          </Box>
+        <CardContent>
+          <Typography variant="h6" component="h3" gutterBottom>
+            {equipment.name}
+          </Typography>
           
-          <Box>
-            <Typography variant="body2" color="text.secondary" component="span">
-              Location:
-            </Typography>
-            <Typography 
-              variant="body2" 
-              component="span" 
-              sx={{ ml: 0.5, fontWeight: 'medium' }}
-            >
-              {equipment.location}
-            </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {equipment.description}
+          </Typography>
+          
+          <Box sx={{ mt: 'auto', mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+            <Box>
+              <Typography variant="body2" color="text.secondary" component="span">
+                Категория:
+              </Typography>
+              <Typography 
+                variant="body2" 
+                component="span" 
+                sx={{ ml: 0.5, fontWeight: 'medium', textTransform: 'capitalize' }}
+              >
+                {equipment.category}
+              </Typography>
+            </Box>
+            
+            <Box>
+              <Typography variant="body2" color="text.secondary" component="span">
+                Локация:
+              </Typography>
+              <Typography 
+                variant="body2" 
+                component="span" 
+                sx={{ ml: 0.5, fontWeight: 'medium' }}
+              >
+                {equipment.location}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-        
+        </CardContent>
+      </CardActionArea>
+      
+      <Box sx={{ p: 2 }}>
         {equipment.status === "available" ? (
           <Button 
             variant="contained" 
             color="primary"
-            onClick={() => onBook(equipment.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onBook(equipment.id);
+            }}
             fullWidth
           >
-            Book Now
+            Забронировать
           </Button>
         ) : (
           <Button 
@@ -143,10 +158,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             disabled
             fullWidth
           >
-            {equipment.status === "maintenance" ? "Under Maintenance" : "Next Available: Soon"}
+            {equipment.status === "maintenance" ? "На техобслуживании" : "Скоро будет доступно"}
           </Button>
         )}
-      </CardContent>
+      </Box>
     </StyledCard>
   );
 };
