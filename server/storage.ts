@@ -59,7 +59,7 @@ export class MemStorage implements IStorage {
   private initTestUser() {
     const testUser = {
       username: "testuser",
-      email: "test@example.com",
+      password: "password123", // Добавлено для соответствия схеме
     };
     this.createUser(testUser);
   }

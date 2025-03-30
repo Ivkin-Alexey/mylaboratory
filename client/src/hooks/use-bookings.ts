@@ -24,15 +24,15 @@ export function useCreateBooking() {
       queryClient.invalidateQueries({ queryKey: ["/api/bookings/user"] });
       
       toast({
-        title: "Booking Confirmed",
-        description: "Your equipment booking has been confirmed.",
+        title: "Бронирование подтверждено",
+        description: "Ваше бронирование оборудования подтверждено.",
         variant: "default",
       });
     },
     onError: (error) => {
       toast({
-        title: "Booking Failed",
-        description: error instanceof Error ? error.message : "Failed to create booking. Please try again.",
+        title: "Ошибка бронирования",
+        description: error instanceof Error ? error.message : "Не удалось создать бронирование. Пожалуйста, попробуйте снова.",
         variant: "destructive",
       });
     },
@@ -50,15 +50,15 @@ export function useCancelBooking() {
       queryClient.invalidateQueries({ queryKey: ["/api/bookings/user"] });
       
       toast({
-        title: "Booking Cancelled",
-        description: "Your booking has been cancelled successfully.",
+        title: "Бронирование отменено",
+        description: "Ваше бронирование было успешно отменено.",
         variant: "default",
       });
     },
     onError: (error) => {
       toast({
-        title: "Cancellation Failed",
-        description: error instanceof Error ? error.message : "Failed to cancel booking. Please try again.",
+        title: "Ошибка отмены",
+        description: error instanceof Error ? error.message : "Не удалось отменить бронирование. Пожалуйста, попробуйте снова.",
         variant: "destructive",
       });
     },
