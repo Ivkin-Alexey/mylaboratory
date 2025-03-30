@@ -86,55 +86,133 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   return (
     <Box mb={4}>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
-        <Box sx={{ 
-          display: 'flex', 
-          gap: 2, 
-          width: '100%', 
-          flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: { xs: 'stretch', sm: 'center' }
-        }}>
-          <TextField
-            placeholder="Поиск оборудования..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            size="small"
-            sx={{ 
-              width: { xs: '80%', md: '33.333%' },
-              mx: { xs: 'auto', sm: 0 },
-              mb: { xs: 2, sm: 0 }
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-          />
-          
-          <FormControl 
-            sx={{ 
-              minWidth: 180,
-              width: { xs: '80%', sm: 'auto' },
-              mx: { xs: 'auto', sm: 0 }
-            }} 
-            size="small">
-            <InputLabel id="category-select-label">Категория</InputLabel>
-            <MuiSelect
-              labelId="category-select-label"
-              value={selectedCategory}
-              label="Категория"
-              onChange={handleCategoryChange}
-            >
-              <MenuItem value="all">Все категории</MenuItem>
-              <MenuItem value="microscopes">Микроскопы</MenuItem>
-              <MenuItem value="analyzers">Анализаторы</MenuItem>
-              <MenuItem value="spectrometers">Спектрометры</MenuItem>
-              <MenuItem value="centrifuges">Центрифуги</MenuItem>
-            </MuiSelect>
-          </FormControl>
-        </Box>
+      {/* Поисковая строка */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        width: '100%',
+        mb: 3
+      }}>
+        <TextField
+          placeholder="Поиск оборудования..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          size="small"
+          sx={{ 
+            width: { xs: '80%', md: '33.333%' }
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+      
+      {/* Фильтры в строку */}
+      <Box sx={{ 
+        display: 'flex', 
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 2,
+        mb: 4,
+        px: { xs: 2, sm: 4 }
+      }}>
+        <FormControl 
+          sx={{ 
+            minWidth: 140,
+            flexGrow: { xs: 1, md: 0 }
+          }} 
+          size="small">
+          <InputLabel id="category-select-label">Категория</InputLabel>
+          <MuiSelect
+            labelId="category-select-label"
+            value={selectedCategory}
+            label="Категория"
+            onChange={handleCategoryChange}
+          >
+            <MenuItem value="all">Все категории</MenuItem>
+            <MenuItem value="microscopes">Микроскопы</MenuItem>
+            <MenuItem value="analyzers">Анализаторы</MenuItem>
+            <MenuItem value="spectrometers">Спектрометры</MenuItem>
+            <MenuItem value="centrifuges">Центрифуги</MenuItem>
+          </MuiSelect>
+        </FormControl>
+        
+        <FormControl 
+          sx={{ 
+            minWidth: 140,
+            flexGrow: { xs: 1, md: 0 }
+          }} 
+          size="small">
+          <InputLabel>Статус</InputLabel>
+          <MuiSelect
+            value="all"
+            label="Статус"
+          >
+            <MenuItem value="all">Все статусы</MenuItem>
+            <MenuItem value="available">Доступно</MenuItem>
+            <MenuItem value="booked">Забронировано</MenuItem>
+            <MenuItem value="maintenance">На обслуживании</MenuItem>
+          </MuiSelect>
+        </FormControl>
+        
+        <FormControl 
+          sx={{ 
+            minWidth: 140,
+            flexGrow: { xs: 1, md: 0 }
+          }} 
+          size="small">
+          <InputLabel>Локация</InputLabel>
+          <MuiSelect
+            value="all"
+            label="Локация"
+          >
+            <MenuItem value="all">Все локации</MenuItem>
+            <MenuItem value="lab1">Лаборатория 1</MenuItem>
+            <MenuItem value="lab2">Лаборатория 2</MenuItem>
+            <MenuItem value="storage">Склад</MenuItem>
+          </MuiSelect>
+        </FormControl>
+        
+        <FormControl 
+          sx={{ 
+            minWidth: 140,
+            flexGrow: { xs: 1, md: 0 }
+          }} 
+          size="small">
+          <InputLabel>Производитель</InputLabel>
+          <MuiSelect
+            value="all"
+            label="Производитель"
+          >
+            <MenuItem value="all">Все производители</MenuItem>
+            <MenuItem value="zeiss">Zeiss</MenuItem>
+            <MenuItem value="nikon">Nikon</MenuItem>
+            <MenuItem value="leica">Leica</MenuItem>
+          </MuiSelect>
+        </FormControl>
+        
+        <FormControl 
+          sx={{ 
+            minWidth: 140,
+            flexGrow: { xs: 1, md: 0 }
+          }} 
+          size="small">
+          <InputLabel>Год выпуска</InputLabel>
+          <MuiSelect
+            value="all"
+            label="Год выпуска"
+          >
+            <MenuItem value="all">Любой год</MenuItem>
+            <MenuItem value="2023">2023</MenuItem>
+            <MenuItem value="2022">2022</MenuItem>
+            <MenuItem value="2021">2021</MenuItem>
+            <MenuItem value="older">2020 и старше</MenuItem>
+          </MuiSelect>
+        </FormControl>
       </Box>
 
       {/* Loading State */}
