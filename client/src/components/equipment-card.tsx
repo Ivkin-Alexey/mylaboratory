@@ -124,7 +124,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           variant: "contained" as const,
           color: "success" as const,
           disabled: false,
-          label: "Доступно сейчас",
+          label: "Использовать",
           onClick: undefined
         };
       

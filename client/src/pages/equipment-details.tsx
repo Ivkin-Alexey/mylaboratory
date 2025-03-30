@@ -299,7 +299,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                           fullWidth
                           size="large"
                         >
-                          Доступно для использования сейчас
+                          Использовать
                         </Button>
                       );
                     
