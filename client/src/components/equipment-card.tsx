@@ -42,6 +42,8 @@ const ContentArea = styled(Box)(({ theme }) => ({
 const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   const [, setLocation] = useLocation();
   
+  console.log(`Rendering equipment card ${equipment.id}: ${equipment.name}, status: ${equipment.status}`);
+  
   // Переход на страницу деталей оборудования
   const handleCardClick = () => {
     setLocation(`/equipment/${equipment.id}`);

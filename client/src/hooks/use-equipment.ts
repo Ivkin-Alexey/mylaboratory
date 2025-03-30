@@ -8,7 +8,9 @@ export function useEquipmentList() {
   return useQuery<Equipment[]>({
     queryKey: ["/api/equipment"],
     queryFn: getEquipmentList,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // Включаем обновление при фокусе окна
+    staleTime: 1000, // Данные считаются устаревшими через 1 секунду
+    refetchInterval: 3000, // Обновляем данные каждые 3 секунды автоматически
   });
 }
 
