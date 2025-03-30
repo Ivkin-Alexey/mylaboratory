@@ -1,10 +1,23 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useEquipmentList, useFilteredEquipment, useSearchEquipment } from "@/hooks/use-equipment";
 import EquipmentCard from "./equipment-card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { 
+  Typography, 
+  Box, 
+  Grid, 
+  TextField,
+  MenuItem,
+  Select as MuiSelect,
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  Pagination as MuiPagination,
+  CircularProgress,
+  Paper,
+  FormHelperText,
+  SelectChangeEvent
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import type { Equipment } from "@shared/schema";
 
 interface EquipmentListProps {
@@ -47,10 +60,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   }, [debouncedSearchTerm, selectedCategory, searchResults, filteredEquipment, allEquipment]);
 
   // Calculate pagination
-  const totalPages = Math.ceil((displayData?.length || 0) / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
   
   const paginatedData = useMemo(() => {
-    if (!displayData) return [];
+    if (!displayData || !Array.isArray(displayData)) return [];
     
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return displayData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -63,126 +76,102 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   const isLoading = isLoadingAll || isLoadingFiltered || isLoadingSearch;
 
+  const handleCategoryChange = (event: SelectChangeEvent) => {
+    setSelectedCategory(event.target.value);
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
   return (
-    <div className="mb-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Available Equipment</h2>
-        <div className="flex space-x-4">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Search equipment..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64 pl-10"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-          <div className="w-48">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="microscopes">Microscopes</SelectItem>
-                <SelectItem value="analyzers">Analyzers</SelectItem>
-                <SelectItem value="spectrometers">Spectrometers</SelectItem>
-                <SelectItem value="centrifuges">Centrifuges</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+    <Box mb={4}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h2" fontWeight="bold" color="text.primary">
+          Available Equipment
+        </Typography>
+        
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <TextField
+            placeholder="Search equipment..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            size="small"
+            sx={{ width: 250 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          
+          <FormControl sx={{ minWidth: 180 }} size="small">
+            <InputLabel id="category-select-label">Category</InputLabel>
+            <MuiSelect
+              labelId="category-select-label"
+              value={selectedCategory}
+              label="Category"
+              onChange={handleCategoryChange}
+            >
+              <MenuItem value="all">All Categories</MenuItem>
+              <MenuItem value="microscopes">Microscopes</MenuItem>
+              <MenuItem value="analyzers">Analyzers</MenuItem>
+              <MenuItem value="spectrometers">Spectrometers</MenuItem>
+              <MenuItem value="centrifuges">Centrifuges</MenuItem>
+            </MuiSelect>
+          </FormControl>
+        </Box>
+      </Box>
 
       {/* Loading State */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      ) : displayData?.length === 0 ? (
-        <div className="bg-white shadow rounded-lg py-8 text-center mb-8">
-          <div className="mx-auto h-12 w-12 text-gray-400">
-            <Search className="h-12 w-12" />
-          </div>
-          <h3 className="mt-2 text-lg font-medium text-gray-900">No equipment found</h3>
-          <p className="mt-1 text-sm text-gray-500">
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : (!displayData || !Array.isArray(displayData) || displayData.length === 0) ? (
+        <Paper sx={{ py: 4, textAlign: 'center', mb: 4 }} elevation={1}>
+          <SearchIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
+          <Typography variant="h6" sx={{ mt: 1 }}>
+            No equipment found
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
             Try adjusting your search or filter to find what you're looking for.
-          </p>
-        </div>
+          </Typography>
+        </Paper>
       ) : (
         <>
           {/* Equipment Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Grid container spacing={3}>
             {paginatedData?.map((item: Equipment) => (
-              <EquipmentCard 
-                key={item.id} 
-                equipment={item} 
-                onBook={onBookEquipment} 
-              />
+              <Grid item key={item.id} xs={12} sm={6} md={4}>
+                <Box sx={{ p: 1 }}>
+                  <EquipmentCard 
+                    equipment={item} 
+                    onBook={onBookEquipment} 
+                  />
+                </Box>
+              </Grid>
             ))}
-          </div>
+          </Grid>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-8 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                    />
-                  </PaginationItem>
-                  
-                  {Array.from({ length: totalPages }).map((_, index) => {
-                    const pageNumber = index + 1;
-                    
-                    // Only show first, last, current, and pages around current
-                    if (
-                      pageNumber === 1 || 
-                      pageNumber === totalPages || 
-                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                    ) {
-                      return (
-                        <PaginationItem key={pageNumber}>
-                          <PaginationLink
-                            onClick={() => setCurrentPage(pageNumber)}
-                            isActive={currentPage === pageNumber}
-                          >
-                            {pageNumber}
-                          </PaginationLink>
-                        </PaginationItem>
-                      );
-                    }
-                    
-                    // Add ellipsis
-                    if (pageNumber === 2 || pageNumber === totalPages - 1) {
-                      return (
-                        <PaginationItem key={`ellipsis-${pageNumber}`}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      );
-                    }
-                    
-                    return null;
-                  })}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <MuiPagination 
+                count={totalPages} 
+                page={currentPage}
+                onChange={handlePageChange}
+                color="primary" 
+                showFirstButton 
+                showLastButton
+              />
+            </Box>
           )}
         </>
       )}
-    </div>
+    </Box>
   );
 };
 

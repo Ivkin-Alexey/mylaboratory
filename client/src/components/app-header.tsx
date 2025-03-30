@@ -1,27 +1,85 @@
 import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  IconButton,
+  Avatar,
+  Tabs,
+  Tab,
+  useTheme
+} from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
+import ScienceIcon from "@mui/icons-material/Science";
+import BookmarksIcon from "@mui/icons-material/Bookmarks";
 
-const AppHeader: React.FC = () => {
+interface AppHeaderProps {
+  activeTab: "equipment" | "myBookings";
+  setActiveTab: (tab: "equipment" | "myBookings") => void;
+}
+
+const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
+  const theme = useTheme();
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: "equipment" | "myBookings") => {
+    setActiveTab(newValue);
+  };
+
   return (
-    <header className="bg-white shadow">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex-shrink-0 flex items-center">
-            <h1 className="text-xl font-bold text-primary">Lab Equipment Booking</h1>
-          </div>
-          <div className="hidden md:block">
-            <div className="ml-4 flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">John Smith</span>
-              <button className="bg-gray-200 p-2 rounded-full text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" color="primary" elevation={1}>
+        <Toolbar>
+          <ScienceIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Lab Equipment Booking
+          </Typography>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body2" sx={{ mr: 2 }}>
+              John Smith
+            </Typography>
+            <IconButton color="inherit" size="small">
+              <SettingsIcon />
+            </IconButton>
+            <Avatar 
+              sx={{ ml: 2, width: 32, height: 32 }}
+              alt="John Smith"
+            >
+              JS
+            </Avatar>
+          </Box>
+        </Toolbar>
+        
+        <Tabs 
+          value={activeTab}
+          onChange={handleTabChange}
+          textColor="inherit"
+          indicatorColor="secondary"
+          sx={{ 
+            bgcolor: theme.palette.primary.main,
+            '& .MuiTab-root': { 
+              minWidth: 'auto',
+              py: 1.5,
+              px: 2
+            }
+          }}
+        >
+          <Tab 
+            value="equipment" 
+            label="Equipment" 
+            icon={<ScienceIcon />} 
+            iconPosition="start"
+          />
+          <Tab 
+            value="myBookings" 
+            label="My Bookings" 
+            icon={<BookmarksIcon />} 
+            iconPosition="start"
+          />
+        </Tabs>
+      </AppBar>
+    </Box>
   );
 };
 

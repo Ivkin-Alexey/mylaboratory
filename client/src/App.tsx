@@ -1,13 +1,68 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Equipment from "@/pages/equipment";
 import MyBookings from "@/pages/my-bookings";
 import AppHeader from "@/components/app-header";
-import TabNavigation from "@/components/tab-navigation";
 import { useState } from "react";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline, Container, Alert, Snackbar } from '@mui/material';
+import { useToast } from "@/hooks/use-toast";
+
+// Создаем тему MUI
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#3f51b5',
+    },
+    secondary: {
+      main: '#f50057',
+    },
+    background: {
+      default: '#f5f5f5',
+    },
+  },
+  typography: {
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+    ].join(','),
+  },
+});
+
+// Компонент для уведомлений (замена Toaster)
+function MuiToaster() {
+  const { toasts, dismiss } = useToast();
+  
+  return (
+    <>
+      {toasts.map(({ id, title, description, variant }) => (
+        <Snackbar 
+          key={id}
+          open={true}
+          autoHideDuration={6000}
+          onClose={() => dismiss(id)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert 
+            onClose={() => dismiss(id)} 
+            severity={variant === 'destructive' ? 'error' : 'success'} 
+            sx={{ width: '100%' }}
+          >
+            {title && <div><strong>{title}</strong></div>}
+            {description}
+          </Alert>
+        </Snackbar>
+      ))}
+    </>
+  );
+}
 
 function Router() {
   // This state tracks which tab is currently active
@@ -15,20 +70,18 @@ function Router() {
 
   return (
     <div>
-      <AppHeader />
+      <AppHeader activeTab={activeTab} setActiveTab={setActiveTab} />
       
-      <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Switch>
           <Route path="/">
-            {activeTab === "equipment" ? <Equipment /> : <MyBookings />}
+            {activeTab === "equipment" ? <Equipment onNavigateToBookings={() => setActiveTab("myBookings")} /> : <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />}
           </Route>
           <Route component={NotFound} />
         </Switch>
-      </main>
+      </Container>
       
-      <Toaster />
+      <MuiToaster />
     </div>
   );
 }
@@ -36,7 +89,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

@@ -1,7 +1,15 @@
 import React from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Button,
+  Chip,
+  Box,
+  Grid,
+  styled
+} from "@mui/material";
 import type { Equipment } from "@shared/schema";
 
 interface EquipmentCardProps {
@@ -9,27 +17,64 @@ interface EquipmentCardProps {
   onBook: (equipmentId: number) => void;
 }
 
+// Стилизованная карточка с эффектом при наведении
+const StyledCard = styled(Card)(({ theme }) => ({
+  position: 'relative',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+    boxShadow: theme.shadows[8]
+  }
+}));
+
 const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
-  // Determine status badge color and text
-  const getStatusBadge = () => {
+  // Определяем цвет и текст метки статуса
+  const getStatusChip = () => {
     switch (equipment.status) {
       case "available":
         return (
-          <Badge className="bg-green-500 hover:bg-green-600">
-            Available
-          </Badge>
+          <Chip 
+            label="Available" 
+            color="success" 
+            size="small"
+            sx={{ 
+              position: 'absolute', 
+              top: 12, 
+              right: 12,
+              fontWeight: 'medium'
+            }}
+          />
         );
       case "booked":
         return (
-          <Badge className="bg-red-500 hover:bg-red-600">
-            Booked
-          </Badge>
+          <Chip 
+            label="Booked" 
+            color="error" 
+            size="small"
+            sx={{ 
+              position: 'absolute', 
+              top: 12, 
+              right: 12,
+              fontWeight: 'medium'
+            }}
+          />
         );
       case "maintenance":
         return (
-          <Badge className="bg-amber-500 hover:bg-amber-600">
-            Maintenance
-          </Badge>
+          <Chip 
+            label="Maintenance" 
+            color="warning" 
+            size="small"
+            sx={{ 
+              position: 'absolute', 
+              top: 12, 
+              right: 12,
+              fontWeight: 'medium'
+            }}
+          />
         );
       default:
         return null;
@@ -37,48 +82,72 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   };
 
   return (
-    <Card className="overflow-hidden transition-transform transform hover:scale-105">
-      <div className="relative">
-        <img 
-          src={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"} 
-          alt={equipment.name} 
-          className="w-full h-48 object-cover"
-        />
-        <div className="absolute top-0 right-0 mt-2 mr-2">
-          {getStatusBadge()}
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800">{equipment.name}</h3>
-        <p className="text-gray-600 text-sm mt-1">{equipment.description}</p>
+    <StyledCard>
+      <CardMedia
+        component="img"
+        height="180"
+        image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
+        alt={equipment.name}
+      />
+      {getStatusChip()}
+      
+      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <Typography variant="h6" component="h3" gutterBottom>
+          {equipment.name}
+        </Typography>
         
-        <div className="mt-4 flex justify-between items-center">
-          <div className="text-sm">
-            <span className="text-gray-500">Category:</span>
-            <span className="text-gray-700 font-medium ml-1 capitalize">{equipment.category}</span>
-          </div>
-          <div className="text-sm">
-            <span className="text-gray-500">Location:</span>
-            <span className="text-gray-700 font-medium ml-1">{equipment.location}</span>
-          </div>
-        </div>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {equipment.description}
+        </Typography>
+        
+        <Box sx={{ mt: 'auto', mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+          <Box>
+            <Typography variant="body2" color="text.secondary" component="span">
+              Category:
+            </Typography>
+            <Typography 
+              variant="body2" 
+              component="span" 
+              sx={{ ml: 0.5, fontWeight: 'medium', textTransform: 'capitalize' }}
+            >
+              {equipment.category}
+            </Typography>
+          </Box>
+          
+          <Box>
+            <Typography variant="body2" color="text.secondary" component="span">
+              Location:
+            </Typography>
+            <Typography 
+              variant="body2" 
+              component="span" 
+              sx={{ ml: 0.5, fontWeight: 'medium' }}
+            >
+              {equipment.location}
+            </Typography>
+          </Box>
+        </Box>
         
         {equipment.status === "available" ? (
           <Button 
-            className="mt-4 w-full"
-            onClick={() => onBook(equipment.id)}>
+            variant="contained" 
+            color="primary"
+            onClick={() => onBook(equipment.id)}
+            fullWidth
+          >
             Book Now
           </Button>
         ) : (
           <Button 
-            className="mt-4 w-full"
-            variant="outline"
-            disabled>
+            variant="outlined"
+            disabled
+            fullWidth
+          >
             {equipment.status === "maintenance" ? "Under Maintenance" : "Next Available: Soon"}
           </Button>
         )}
-      </div>
-    </Card>
+      </CardContent>
+    </StyledCard>
   );
 };
 
