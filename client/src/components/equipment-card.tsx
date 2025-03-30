@@ -59,8 +59,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             sx={{ 
               position: 'absolute', 
               top: 12, 
-              right: 12,
-              fontWeight: 'medium'
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontWeight: 'medium',
+              zIndex: 1
             }}
           />
         );
@@ -73,8 +75,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             sx={{ 
               position: 'absolute', 
               top: 12, 
-              right: 12,
-              fontWeight: 'medium'
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontWeight: 'medium',
+              zIndex: 1
             }}
           />
         );
@@ -87,8 +91,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             sx={{ 
               position: 'absolute', 
               top: 12, 
-              right: 12,
-              fontWeight: 'medium'
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontWeight: 'medium',
+              zIndex: 1
             }}
           />
         );
