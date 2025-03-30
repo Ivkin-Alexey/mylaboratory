@@ -135,7 +135,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     {isLoadingSlots ? (
-                      <SelectItem value="" disabled>Loading available slots...</SelectItem>
+                      <SelectItem value="loading" disabled>Loading available slots...</SelectItem>
                     ) : availableSlots && availableSlots.length > 0 ? (
                       availableSlots.map((slot) => (
                         <SelectItem key={slot} value={slot}>
@@ -143,7 +143,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="" disabled>No available slots for this date</SelectItem>
+                      <SelectItem value="no-slots" disabled>No available slots for this date</SelectItem>
                     )}
                   </SelectContent>
                 </Select>
