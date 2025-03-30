@@ -88,6 +88,22 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             }}
           />
         );
+      case "in_use":
+        return (
+          <Chip 
+            label="В работе" 
+            color="primary" 
+            size="small"
+            sx={{ 
+              position: 'absolute', 
+              top: 12, 
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontWeight: 'medium',
+              zIndex: 1
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -97,6 +113,16 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   const getButtonConfig = () => {
     // Если оборудование недоступно, возвращаем неактивную кнопку
     if (equipment.status !== "available") {
+      if (equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE) {
+        return {
+          variant: "contained" as const,
+          color: "primary" as const,
+          disabled: true,
+          label: "В работе",
+          onClick: undefined
+        };
+      }
+      
       return {
         variant: "outlined" as const,
         disabled: true,

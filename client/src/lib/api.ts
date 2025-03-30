@@ -49,3 +49,9 @@ export const cancelBooking = async (bookingId: number): Promise<Booking> => {
   const response = await apiRequest("PATCH", `/api/bookings/${bookingId}/cancel`, undefined);
   return response.json();
 };
+
+// Функция для отметки оборудования как "в использовании"
+export const useEquipment = async (equipmentId: number): Promise<Equipment> => {
+  const response = await apiRequest("PATCH", `/api/equipment/${equipmentId}/use`, undefined);
+  return response.json();
+};

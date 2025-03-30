@@ -31,6 +31,7 @@ export const EquipmentStatus = {
   AVAILABLE: "available",
   BOOKED: "booked",
   MAINTENANCE: "maintenance",
+  IN_USE: "in_use",
 } as const;
 
 export type EquipmentStatusType = typeof EquipmentStatus[keyof typeof EquipmentStatus];

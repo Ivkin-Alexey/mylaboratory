@@ -224,6 +224,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Обновление статуса оборудования (для немедленного использования)
+  app.patch("/api/equipment/:id/use", async (req: Request, res: Response) => {
+    try {
+      const equipmentId = parseInt(req.params.id);
+      
+      if (isNaN(equipmentId)) {
+        return res.status(400).json({ message: "Invalid equipment ID" });
+      }
+      
+      // Проверка существования оборудования
+      const equipment = await storage.getEquipmentById(equipmentId);
+      if (!equipment) {
+        return res.status(404).json({ message: "Equipment not found" });
+      }
+      
+      // Проверка доступности оборудования
+      if (equipment.status !== EquipmentStatus.AVAILABLE) {
+        return res.status(400).json({ message: "Equipment is not available" });
+      }
+      
+      // Обновить статус оборудования на "booked" (в работе)
+      const updatedEquipment = await storage.updateEquipmentStatus(equipmentId, EquipmentStatus.BOOKED);
+      
+      res.json(updatedEquipment);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating equipment status" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

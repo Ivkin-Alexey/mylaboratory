@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { 
   Typography, 
@@ -38,6 +38,9 @@ import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import type { Equipment, Booking } from "@shared/schema";
 import { EquipmentUsageType } from "@shared/schema";
+import { useEquipment } from "../lib/api";
+import { queryClient } from "../lib/queryClient";
+import { useToast } from "../hooks/use-toast";
 
 interface EquipmentDetailsProps {
   onNavigateToBookings?: () => void;
@@ -48,6 +51,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   const [, setLocation] = useLocation();
   const equipmentId = params ? parseInt(params.id) : null;
   const { data: equipmentList, isLoading } = useEquipmentList();
+  const { toast } = useToast();
 
   // Find the selected equipment from the list
   const equipment = equipmentId && equipmentList && Array.isArray(equipmentList)
@@ -61,6 +65,43 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   const [isLongTermModalOpen, setIsLongTermModalOpen] = useState(false);
   const [longTermPeriod, setLongTermPeriod] = useState("");
   const [longTermPurpose, setLongTermPurpose] = useState("");
+  
+  // Состояния для функции немедленного использования
+  const [isEquipmentLoading, setIsEquipmentLoading] = useState(false);
+  const [isInUse, setIsInUse] = useState(equipment?.status === "in_use");
+  
+  // Обновляем статус кнопки при изменении данных оборудования
+  useEffect(() => {
+    if (equipment) {
+      setIsInUse(equipment.status === "in_use");
+    }
+  }, [equipment]);
+  
+  // Обработчик для использования оборудования без бронирования
+  const handleUseEquipment = async (id: number) => {
+    if (isInUse || isEquipmentLoading) return;
+    
+    setIsEquipmentLoading(true);
+    try {
+      await useEquipment(id);
+      setIsInUse(true);
+      toast({
+        title: "Оборудование в работе",
+        description: "Статус оборудования обновлен на 'в работе'"
+      });
+      
+      // Обновляем данные о оборудовании
+      queryClient.invalidateQueries({ queryKey: ['/api/equipment'] });
+    } catch (error) {
+      console.error('Ошибка при обновлении статуса:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить статус оборудования"
+      });
+    } finally {
+      setIsEquipmentLoading(false);
+    }
+  };
   
   const [confirmedBooking, setConfirmedBooking] = useState<{
     booking: Booking | null;
@@ -79,6 +120,8 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         return <Chip label="Забронировано" color="error" size="small" />;
       case "maintenance":
         return <Chip label="На обслуживании" color="warning" size="small" />;
+      case "in_use":
+        return <Chip label="В работе" color="primary" size="small" />;
       default:
         return null;
     }
@@ -295,11 +338,14 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                       return (
                         <Button 
                           variant="contained" 
-                          color="success"
+                          color={isInUse ? "primary" : "success"}
                           fullWidth
                           size="large"
+                          onClick={() => handleUseEquipment(equipment.id)}
+                          disabled={isInUse || isEquipmentLoading}
+                          startIcon={isEquipmentLoading && <CircularProgress size={20} color="inherit" />}
                         >
-                          Использовать
+                          {isInUse ? "В работе" : "Использовать"}
                         </Button>
                       );
                     
@@ -333,6 +379,16 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                       );
                   }
                 })()
+              ) : equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE ? (
+                <Button 
+                  variant="contained"
+                  color="primary"
+                  disabled
+                  fullWidth
+                  size="large"
+                >
+                  В работе
+                </Button>
               ) : (
                 <Button 
                   variant="outlined"
