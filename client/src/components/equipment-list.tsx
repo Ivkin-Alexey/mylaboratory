@@ -143,16 +143,26 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       ) : (
         <>
           {/* Equipment Grid */}
-          <Grid container spacing={2}>
+          <Box 
+            sx={{ 
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(4, 1fr)'
+              },
+              gap: 2
+            }}
+          >
             {paginatedData?.map((item: Equipment) => (
-              <Grid item xs={12} sm={6} md={3} key={item.id}>
+              <Box key={item.id}>
                 <EquipmentCard 
                   equipment={item} 
                   onBook={onBookEquipment} 
                 />
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
 
           {/* Pagination */}
           {totalPages > 1 && (

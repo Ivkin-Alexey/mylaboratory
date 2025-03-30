@@ -17,12 +17,15 @@ interface EquipmentCardProps {
   onBook: (equipmentId: number) => void;
 }
 
-// Стилизованная карточка
+// Стилизованная карточка с фиксированной шириной
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
+  maxWidth: '250px',
+  width: '100%',
+  margin: '0 auto',
   transition: 'box-shadow 0.3s ease-in-out',
   '&:hover': {
     boxShadow: theme.shadows[4]
