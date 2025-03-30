@@ -52,22 +52,9 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   // Определяем цвет и текст метки статуса
   const getStatusChip = () => {
     switch (equipment.status) {
+      // Для статуса "available" не показываем бейдж
       case "available":
-        return (
-          <Chip 
-            label="Доступно" 
-            color="success" 
-            size="small"
-            sx={{ 
-              position: 'absolute', 
-              top: 12, 
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontWeight: 'medium',
-              zIndex: 1
-            }}
-          />
-        );
+        return null;
       case "booked":
         return (
           <Chip 
