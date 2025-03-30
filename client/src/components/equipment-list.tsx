@@ -24,7 +24,7 @@ interface EquipmentListProps {
   onBookEquipment: (equipmentId: number) => void;
 }
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 8;
 
 const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -143,9 +143,9 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       ) : (
         <>
           {/* Equipment Grid */}
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             {paginatedData?.map((item: Equipment) => (
-              <Grid key={item.id} sx={{ width: { xs: '100%', sm: '50%', md: '33.333%' }, padding: 1 }}>
+              <Grid item xs={12} sm={6} md={3} key={item.id}>
                 <EquipmentCard 
                   equipment={item} 
                   onBook={onBookEquipment} 
