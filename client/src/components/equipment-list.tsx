@@ -86,11 +86,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   return (
     <Box mb={4}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h2" fontWeight="bold" color="text.primary">
-          Доступное оборудование
-        </Typography>
-        
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
             placeholder="Поиск оборудования..."
