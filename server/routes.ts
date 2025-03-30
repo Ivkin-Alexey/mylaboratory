@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { 
   insertBookingSchema, 
+  insertEquipmentSchema,
   EquipmentStatus, 
   BookingStatus 
 } from "@shared/schema";
@@ -60,6 +61,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(equipment);
     } catch (error) {
       res.status(500).json({ message: "Error filtering equipment" });
+    }
+  });
+
+  // Create new equipment
+  app.post("/api/equipment", async (req: Request, res: Response) => {
+    try {
+      const equipmentData = insertEquipmentSchema.parse(req.body);
+      const equipment = await storage.createEquipment(equipmentData);
+      res.status(201).json(equipment);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Некорректные данные оборудования", errors: error.errors });
+      }
+      res.status(500).json({ message: "Ошибка при добавлении оборудования" });
     }
   });
 

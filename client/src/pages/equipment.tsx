@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useLocation } from "wouter";
+import { Box, Button, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import EquipmentList from "@/components/equipment-list";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
@@ -10,6 +13,7 @@ interface EquipmentPageProps {
 }
 
 const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) => {
+  const [, navigate] = useLocation();
   const { data: equipmentList } = useEquipmentList();
   
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<number | null>(null);
@@ -49,6 +53,7 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
           timeSlot: "9:00-11:00",
           purpose: "Research",
           status: "confirmed",
+          additionalRequirements: null,
           createdAt: new Date()
         },
         equipment: selectedEquipment
@@ -57,9 +62,28 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
     
     setIsConfirmationModalOpen(true);
   };
+  
+  // Перейти на страницу добавления оборудования
+  const handleAddEquipment = () => {
+    navigate("/equipment/add");
+  };
 
   return (
     <>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h5" component="h1">
+          Доступное оборудование
+        </Typography>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          startIcon={<AddIcon />}
+          onClick={handleAddEquipment}
+        >
+          Добавить оборудование
+        </Button>
+      </Box>
+      
       <EquipmentList onBookEquipment={handleBookEquipment} />
       
       <BookingModal
