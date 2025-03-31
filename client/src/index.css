@@ -5,10 +5,16 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
   }
 
   body {
-    @apply font-sans antialiased text-foreground;
+    @apply antialiased text-foreground;
     background-color: #ffffff;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
   }
 }

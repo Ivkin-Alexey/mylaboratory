@@ -29,11 +29,8 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
       'Roboto',
-      '"Helvetica Neue"',
+      'Helvetica',
       'Arial',
       'sans-serif',
     ].join(','),
