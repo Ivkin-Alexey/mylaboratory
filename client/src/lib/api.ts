@@ -164,13 +164,10 @@ export const searchEquipment = async (searchTerm: string, filters?: Record<strin
         }
       }
       
-      // Устанавливаем таймаут для запроса
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд таймаут
+      // Выполняем поиск на внешнем API без AbortController (на некоторых платформах есть проблемы)
+      const response = await fetch(url);
       
-      // Выполняем поиск на внешнем API с таймаутом
-      const response = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeoutId);
+      // Если ответа нет в течение 5 секунд, продолжаем с локальной фильтрацией
       
       if (!response.ok) {
         throw new Error(`Ошибка при запросе: ${response.status}`);
