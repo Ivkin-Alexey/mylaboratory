@@ -188,7 +188,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           </Box>
           {getStatusChip()}
         
-          <CardContent>
+          <CardContent sx={{ pb: 0 }}>
             <Typography 
               variant="h6" 
               component="h3" 
