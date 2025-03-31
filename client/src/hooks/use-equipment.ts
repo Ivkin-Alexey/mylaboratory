@@ -31,11 +31,11 @@ export function useSearchEquipment(searchTerm: string) {
   });
 }
 
-export function useFindEquipment(searchTerm: string) {
+export function useFindEquipment(searchTerm: string, filters?: Record<string, string[]>) {
   return useQuery<Equipment[]>({
-    queryKey: ["equipment-find", searchTerm],
-    queryFn: () => findEquipment(searchTerm),
-    enabled: !!searchTerm,
+    queryKey: ["equipment-find", searchTerm, filters],
+    queryFn: () => searchEquipment(searchTerm, filters),
+    enabled: !!searchTerm || (filters && Object.values(filters).some(values => values.length > 0)),
     refetchOnWindowFocus: false,
   });
 }

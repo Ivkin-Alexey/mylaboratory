@@ -136,17 +136,30 @@ export const getEquipmentById = async (id: number): Promise<Equipment> => {
   }
 };
 
-export const searchEquipment = async (searchTerm: string): Promise<Equipment[]> => {
+export const searchEquipment = async (searchTerm: string, filters?: Record<string, string[]>): Promise<Equipment[]> => {
   try {
-    // Если поисковый запрос пустой, возвращаем весь список
-    if (!searchTerm) {
+    // Если поисковый запрос пустой и нет фильтров, возвращаем весь список
+    if (!searchTerm && (!filters || Object.keys(filters).length === 0)) {
       return getEquipmentList();
     }
     
+    // Формируем базовый URL для запроса
+    let url = `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm || '')}&page=1&pageSize=${PAGE_SIZE}`;
+    
+    // Добавляем фильтры к URL, если они есть
+    if (filters && Object.keys(filters).length > 0) {
+      for (const [key, values] of Object.entries(filters)) {
+        if (values && values.length > 0) {
+          // Добавляем каждое значение фильтра как отдельный параметр
+          values.forEach(value => {
+            url += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+          });
+        }
+      }
+    }
+    
     // Выполняем поиск на внешнем API
-    const response = await fetchFromExternalApi(
-      `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm)}&page=1&pageSize=${PAGE_SIZE}`
-    );
+    const response = await fetchFromExternalApi(url);
     
     // Преобразуем результаты
     if (response && response.results && Array.isArray(response.results)) {

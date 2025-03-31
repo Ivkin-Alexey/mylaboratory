@@ -44,8 +44,14 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   
   // Fetch equipment data
   const { data: allEquipment, isLoading: isLoadingAll } = useEquipmentList();
-  // Используем новый API метод поиска с параметром q
-  const { data: searchResults, isLoading: isLoadingSearch } = useFindEquipment(debouncedSearchTerm);
+  // Используем новый API метод поиска с параметром q и фильтрами
+  const { data: searchResults, isLoading: isLoadingSearch } = useFindEquipment(
+    debouncedSearchTerm,
+    // Передаем только активные фильтры (с непустыми значениями)
+    Object.entries(selectedFilters)
+      .filter(([_, values]) => values && values.length > 0)
+      .reduce((acc, [key, values]) => ({ ...acc, [key]: values }), {})
+  );
   
   // Мутации для управления статусом оборудования
   const useEquipmentMutation = useUseEquipment();
@@ -62,48 +68,18 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     };
   }, [searchTerm]);
 
-  // Determine which data to display with filter support
+  // Determine which data to display
   const displayData = useMemo(() => {
-    // Начальные данные на основе поиска
-    let result = debouncedSearchTerm ? searchResults : allEquipment;
+    // Используем результаты из API, которые уже учитывают фильтры
+    // Если поиск активен (включая поиск с пустой строкой при активных фильтрах)
+    const hasActiveFilters = Object.values(selectedFilters).some(values => values && values.length > 0);
     
-    // Применяем дополнительные фильтры
-    if (result && Array.isArray(result)) {
-      // Если есть выбранные фильтры, применяем их
-      const activeFilters = Object.entries(selectedFilters).filter(([_, values]) => 
-        values && Array.isArray(values) && values.length > 0
-      );
-      
-      if (activeFilters.length > 0) {
-        result = result.filter(item => {
-          // Проверяем, соответствует ли элемент всем выбранным фильтрам
-          return activeFilters.every(([filterName, filterValues]) => {
-            // @ts-ignore: динамический доступ к свойствам оборудования
-            const itemValue = item[filterName];
-            
-            // Если значение элемента является строкой
-            if (typeof itemValue === 'string') {
-              // Хотя бы одно значение из выбранных должно соответствовать
-              return filterValues.some(filterValue => 
-                itemValue === filterValue || itemValue.includes(filterValue)
-              );
-            }
-            
-            // Если значение элемента - массив
-            if (Array.isArray(itemValue)) {
-              // Должно быть пересечение между значениями элемента и выбранными фильтрами
-              return filterValues.some(filterValue => 
-                itemValue.includes(filterValue)
-              );
-            }
-            
-            return false;
-          });
-        });
-      }
+    if (debouncedSearchTerm || hasActiveFilters) {
+      return searchResults || [];
     }
     
-    return result;
+    // Если нет поиска и фильтров, используем полный список
+    return allEquipment || [];
   }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment]);
 
   // Calculate pagination
