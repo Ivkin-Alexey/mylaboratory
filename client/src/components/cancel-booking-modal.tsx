@@ -17,7 +17,7 @@ import {
 import WarningIcon from "@mui/icons-material/Warning";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { useCancelBooking } from "@/hooks/use-bookings";
-import type { BookingWithEquipment } from "@shared/schema";
+import type { BookingWithEquipment } from "@/lib/api";
 
 interface CancelBookingModalProps {
   isOpen: boolean;

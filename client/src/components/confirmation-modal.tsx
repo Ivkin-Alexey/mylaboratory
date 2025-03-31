@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import type { Booking, Equipment } from "@shared/schema";
+import type { Booking, Equipment } from "@/lib/api";
 
 interface ConfirmationModalProps {
   isOpen: boolean;

@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAvailableTimeSlots } from "@/hooks/use-equipment";
 import { useCreateBooking } from "@/hooks/use-bookings";
 import { format } from "date-fns";
-import type { Equipment } from "@shared/schema";
+import type { Equipment } from "@/lib/api";
 import { queryClient } from "@/lib/queryClient";
 import { getAvailableTimeSlots } from "@/lib/api";
 
@@ -83,12 +83,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
       
       // Используем queryClient для предзагрузки
       queryClient.prefetchQuery({
-        queryKey: ["/api/equipment/available-slots", equipment.id, today],
+        queryKey: ["available-slots", equipment.id, today],
         queryFn: () => getAvailableTimeSlots(equipment.id, today)
       });
       
       queryClient.prefetchQuery({
-        queryKey: ["/api/equipment/available-slots", equipment.id, tomorrow],
+        queryKey: ["available-slots", equipment.id, tomorrow],
         queryFn: () => getAvailableTimeSlots(equipment.id, tomorrow)
       });
     }
@@ -116,7 +116,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
       timeSlot,
       purpose,
       additionalRequirements,
-      status: "confirmed", // Default status for new bookings
     }, {
       onSuccess: () => {
         onClose();

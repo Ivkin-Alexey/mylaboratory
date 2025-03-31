@@ -1,12 +1,11 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getUserBookings, createBooking, cancelBooking } from "@/lib/api";
+import { getUserBookings, createBooking, cancelBooking, InsertBooking } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import type { InsertBooking } from "@shared/schema";
 
 export function useUserBookings() {
   return useQuery({
-    queryKey: ["/api/bookings/user"],
+    queryKey: ["user-bookings"],
     queryFn: getUserBookings,
     refetchOnWindowFocus: false,
   });
@@ -20,8 +19,8 @@ export function useCreateBooking() {
       createBooking(bookingData),
     onSuccess: () => {
       // Invalidate both equipment and bookings queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["/api/equipment"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/bookings/user"] });
+      queryClient.invalidateQueries({ queryKey: ["equipment"] });
+      queryClient.invalidateQueries({ queryKey: ["user-bookings"] });
       
       toast({
         title: "Бронирование подтверждено",
@@ -46,8 +45,8 @@ export function useCancelBooking() {
     mutationFn: (bookingId: number) => cancelBooking(bookingId),
     onSuccess: () => {
       // Invalidate both equipment and bookings queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["/api/equipment"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/bookings/user"] });
+      queryClient.invalidateQueries({ queryKey: ["equipment"] });
+      queryClient.invalidateQueries({ queryKey: ["user-bookings"] });
       
       toast({
         title: "Бронирование отменено",

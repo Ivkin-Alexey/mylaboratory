@@ -25,7 +25,7 @@ import {
   ListItemText
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import type { Equipment } from "@shared/schema";
+import type { Equipment } from "@/lib/api";
 
 interface EquipmentListProps {
   onBookEquipment: (equipmentId: number) => void;

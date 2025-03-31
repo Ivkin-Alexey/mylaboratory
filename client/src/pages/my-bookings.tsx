@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CancelBookingModal from "@/components/cancel-booking-modal";
-import type { BookingWithEquipment } from "@shared/schema";
+import type { BookingWithEquipment } from "@/lib/api";
 
 interface MyBookingsProps {
   onNavigateToEquipment?: () => void;

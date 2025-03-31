@@ -1,14 +1,54 @@
-import { apiRequest } from "./queryClient";
-import type { Equipment, InsertBooking, BookingWithEquipment, Booking } from "@shared/schema";
-import { IEquipmentItem } from "@/models/equipments";
-import { apiRoutes, encodeQueryParams, SEARCH_PARAM_NAME } from "@/constants";
+import { encodeQueryParams } from "@/constants";
 
-// User ID (mock user for demo, in a real app this would come from auth)
+// Определение типов для клиентской части
+export interface Booking {
+  id: number;
+  equipmentId: number;
+  userId: number;
+  date: string;
+  timeSlot: string;
+  purpose: string;
+  additionalRequirements: string | null;
+  status: string;
+  createdAt: Date;
+}
+
+export interface BookingWithEquipment extends Booking {
+  equipment: Equipment;
+}
+
+// User ID (mock user for demo, в реальном приложении это пришло бы из авторизации)
 const CURRENT_USER_ID = 1;
 
-// Внешний API URL
+// API URL
 const EXTERNAL_API_BASE_URL = "https://scmp-bot-server.ru/api";
 const PAGE_SIZE = 100; // Большой размер страницы для получения всех результатов
+
+// Тип Equipment для внутреннего использования в клиенте
+export interface Equipment {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  location: string;
+  status: string;
+  imageUrl: string;
+  usageType: string;
+  brand?: string;
+  model?: string;
+  serialNumber?: string;
+  inventoryNumber?: string;
+}
+
+// Тип InsertBooking для бронирований
+export interface InsertBooking {
+  equipmentId: number;
+  userId: number;
+  date: string;
+  timeSlot: string;
+  purpose: string;
+  additionalRequirements?: string | null;
+}
 
 // Функция для маппинга данных с внешнего API в формат нашего приложения
 const mapExternalEquipmentToLocal = (item: any): Equipment => {
@@ -21,6 +61,10 @@ const mapExternalEquipmentToLocal = (item: any): Equipment => {
     status: "available", // По умолчанию все оборудование доступно
     imageUrl: item.imgUrl,
     usageType: "requires_booking", // По умолчанию требуется бронирование
+    brand: item.brand,
+    model: item.model,
+    serialNumber: item.serialNumber,
+    inventoryNumber: item.inventoryNumber,
   };
 };
 
@@ -48,21 +92,9 @@ export interface ExternalFilter {
 // Функция для получения фильтров с внешнего API
 export const getEquipmentFilters = async (): Promise<ExternalFilter[]> => {
   try {
-    // Сначала пытаемся получить фильтры с локального API
-    try {
-      const response = await fetch(apiRoutes.EQUIPMENT_FILTER);
-      if (response.ok) {
-        const data = await response.json();
-        return data as ExternalFilter[] || [];
-      } else {
-        throw new Error(`Ошибка запроса: ${response.status}`);
-      }
-    } catch (localError) {
-      console.log("Локальный API фильтров недоступен, использую внешний:", localError);
-      // Если локальный API недоступен, используем внешний
-      const response = await fetchFromExternalApi(`${EXTERNAL_API_BASE_URL}/equipments/filters`);
-      return response || [];
-    }
+    // Используем только внешний API
+    const response = await fetchFromExternalApi(`${EXTERNAL_API_BASE_URL}/equipments/filters`);
+    return response || [];
   } catch (error) {
     console.error("Ошибка при получении фильтров:", error);
     return [];
@@ -128,31 +160,11 @@ export const searchEquipment = async (searchTerm: string): Promise<Equipment[]> 
   }
 };
 
-// Альтернативный метод поиска с параметром q из констант
+// Метод для поиска оборудования
 export const findEquipment = async (searchTerm: string): Promise<Equipment[]> => {
-  try {
-    // Сначала попробуем использовать локальный API
-    try {
-      const queryParams = encodeQueryParams({ [SEARCH_PARAM_NAME]: searchTerm });
-      const response = await fetch(`${apiRoutes.EQUIPMENT_FIND}${queryParams}`);
-      if (response.ok) {
-        const data = await response.json();
-        return data as Equipment[] || [];
-      } else {
-        throw new Error(`Ошибка запроса: ${response.status}`);
-      }
-    } catch (localError) {
-      console.log("Локальный API поиска недоступен, использую внешний:", localError);
-      // Если локальный API недоступен, используем внешний через поиск
-      return searchEquipment(searchTerm);
-    }
-  } catch (error) {
-    console.error("Ошибка при поиске оборудования:", error);
-    return [];
-  }
+  // Используем существующий метод searchEquipment
+  return searchEquipment(searchTerm);
 };
-
-
 
 // Генерируем фиксированный список доступных временных слотов для каждой даты
 export const getAvailableTimeSlots = async (equipmentId: number, date: string): Promise<string[]> => {
@@ -169,7 +181,6 @@ export const getAvailableTimeSlots = async (equipmentId: number, date: string): 
       "17:00-18:00"
     ];
     
-    // В реальном приложении здесь был бы запрос к API для проверки доступности
     return standardTimeSlots;
   } catch (error) {
     console.error(`Ошибка при получении доступных слотов для оборудования ${equipmentId}:`, error);

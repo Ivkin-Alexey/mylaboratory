@@ -36,8 +36,8 @@ import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { useEquipmentList, useUseEquipment, useFinishUsingEquipment } from "@/hooks/use-equipment";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
-import type { Equipment, Booking } from "@shared/schema";
-import { EquipmentUsageType } from "@shared/schema";
+import type { Equipment } from "@/lib/api";
+import type { Booking } from "@/lib/api";
 import { queryClient } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
 
@@ -336,7 +336,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                 (() => {
                   switch (equipment.usageType) {
                     // Для оборудования требующего бронирования
-                    case EquipmentUsageType.REQUIRES_BOOKING:
+                    case 'booking_required':
                       return (
                         <Button 
                           variant="contained" 
@@ -350,7 +350,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                       );
                     
                     // Для оборудования доступного для немедленного использования
-                    case EquipmentUsageType.IMMEDIATE_USE:
+                    case 'immediate_use':
                       return (
                         <Button 
                           variant="contained" 
@@ -366,7 +366,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                       );
                     
                     // Для оборудования длительного использования
-                    case EquipmentUsageType.LONG_TERM_ONLY:
+                    case 'long_term':
                       return (
                         <Button 
                           variant="contained" 
@@ -395,7 +395,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                       );
                   }
                 })()
-              ) : equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE ? (
+              ) : equipment.status === "in_use" && equipment.usageType === 'immediate_use' ? (
                 <Button 
                   variant="contained"
                   color="success"

@@ -7,36 +7,33 @@ import {
   useEquipment,
   finishUsingEquipment,
   getEquipmentFilters,
-  ExternalFilter
+  ExternalFilter,
+  Equipment
 } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
-import { Equipment } from "@shared/schema";
+import { API_BASE_URL } from "@/constants";
 
 export function useEquipmentList() {
   return useQuery<Equipment[]>({
-    queryKey: ["/api/equipment"],
+    queryKey: ["equipment-list"],
     queryFn: getEquipmentList,
-    refetchOnWindowFocus: true, // Включаем обновление при фокусе окна
-    staleTime: 60000, // Данные считаются устаревшими через 1 минуту
+    refetchOnWindowFocus: false, 
+    staleTime: 60000,
   });
 }
 
-
-
 export function useSearchEquipment(searchTerm: string) {
   return useQuery<Equipment[]>({
-    queryKey: ["/api/equipment/search", searchTerm],
+    queryKey: ["equipment-search", searchTerm],
     queryFn: () => searchEquipment(searchTerm),
     enabled: !!searchTerm,
     refetchOnWindowFocus: false,
   });
 }
 
-// Новый хук для нового API метода поиска
 export function useFindEquipment(searchTerm: string) {
   return useQuery<Equipment[]>({
-    queryKey: ["/api/equipment/find", searchTerm],
+    queryKey: ["equipment-find", searchTerm],
     queryFn: () => findEquipment(searchTerm),
     enabled: !!searchTerm,
     refetchOnWindowFocus: false,
@@ -45,12 +42,12 @@ export function useFindEquipment(searchTerm: string) {
 
 export function useAvailableTimeSlots(equipmentId: number | null, date: string | null) {
   return useQuery<string[]>({
-    queryKey: ["/api/equipment/available-slots", equipmentId, date],
+    queryKey: ["available-slots", equipmentId, date],
     queryFn: () => getAvailableTimeSlots(equipmentId!, date!),
     enabled: !!equipmentId && !!date,
     refetchOnWindowFocus: false,
-    staleTime: 30000, // Кэш результата на 30 секунд
-    gcTime: 60000, // Храним в кэше 1 минуту (в v5 cacheTime переименовано в gcTime)
+    staleTime: 30000,
+    gcTime: 60000,
   });
 }
 
@@ -69,7 +66,7 @@ export function useUseEquipment() {
         description: "Оборудование отмечено как используемое",
       });
       // После успешного изменения статуса инвалидируем все запросы к оборудованию
-      queryClient.invalidateQueries({ queryKey: ['/api/equipment'] });
+      queryClient.invalidateQueries({ queryKey: ["equipment-list"] });
     },
     onError: (error) => {
       toast({
@@ -97,7 +94,7 @@ export function useFinishUsingEquipment() {
         description: "Оборудование снова доступно",
       });
       // После успешного изменения статуса инвалидируем все запросы к оборудованию
-      queryClient.invalidateQueries({ queryKey: ['/api/equipment'] });
+      queryClient.invalidateQueries({ queryKey: ["equipment-list"] });
     },
     onError: (error) => {
       toast({
@@ -110,10 +107,10 @@ export function useFinishUsingEquipment() {
   });
 }
 
-// Новый хук для получения фильтров с внешнего API
+// Хук для получения фильтров с внешнего API
 export function useEquipmentFilters() {
   return useQuery<ExternalFilter[]>({
-    queryKey: ["/api/equipment/filters"],
+    queryKey: ["equipment-filters"],
     queryFn: getEquipmentFilters,
     staleTime: 3600000, // Кэшируем фильтры на 1 час
     gcTime: 3600000, // Данные хранятся в кэше 1 час

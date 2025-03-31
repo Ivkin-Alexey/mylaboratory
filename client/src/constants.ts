@@ -1,19 +1,14 @@
-// Константы для локальной работы
+// Константы для работы
 export const DEFAULT_SEARCH_TERM = '';
-export const SEARCH_PARAM_NAME = 'q'; // Название параметра для поиска оборудования
+export const SEARCH_PARAM_NAME = 'term'; // Название параметра для поиска оборудования во внешнем API
 
 // API пути для внешнего API
+export const API_BASE_URL = 'https://scmp-bot-server.ru/api';
 export const apiRoutes = {
-  EQUIPMENT: '/api/equipment',
-  EQUIPMENT_SEARCH: '/api/equipment/search',
-  EQUIPMENT_FIND: '/api/equipment/find',
-  EQUIPMENT_FILTER: '/api/equipment/filters',
-  EQUIPMENT_DETAILS: '/api/equipment',
-  AVAILABLE_SLOTS: '/api/equipment/available-slots',
-  BOOKINGS: '/api/bookings',
-  BOOKINGS_USER: '/api/bookings/user',
-  EQUIPMENT_USE: '/api/equipment/use',
-  EQUIPMENT_FINISH: '/api/equipment/finish',
+  EQUIPMENT: `${API_BASE_URL}/equipments/search`,
+  EQUIPMENT_SEARCH: `${API_BASE_URL}/equipments/search`,
+  EQUIPMENT_FIND: `${API_BASE_URL}/equipments/search`,
+  EQUIPMENT_FILTER: `${API_BASE_URL}/equipments/filters`,
 };
 
 export const encodeQueryParams = (params: Record<string, any>): string => {
