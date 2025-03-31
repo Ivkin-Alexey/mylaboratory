@@ -190,34 +190,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {equipment.description}
             </Typography>
-            
-            <Box sx={{ mt: 'auto', mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-              <Box>
-                <Typography variant="body2" color="text.secondary" component="span">
-                  Категория:
-                </Typography>
-                <Typography 
-                  variant="body2" 
-                  component="span" 
-                  sx={{ ml: 0.5, fontWeight: 'medium', textTransform: 'capitalize' }}
-                >
-                  {equipment.category}
-                </Typography>
-              </Box>
-              
-              <Box>
-                <Typography variant="body2" color="text.secondary" component="span">
-                  Локация:
-                </Typography>
-                <Typography 
-                  variant="body2" 
-                  component="span" 
-                  sx={{ ml: 0.5, fontWeight: 'medium' }}
-                >
-                  {equipment.location}
-                </Typography>
-              </Box>
-            </Box>
           </CardContent>
       </ContentArea>
       
