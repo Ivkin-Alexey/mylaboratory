@@ -50,6 +50,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint для получения доступных фильтров
+  app.get("/api/equipment/filters", async (req: Request, res: Response) => {
+    try {
+      // Возвращаем статический список доступных фильтров
+      const filters = [
+        {
+          name: "location",
+          label: "Местоположение",
+          options: ["Корпус 1", "Корпус 2", "Корпус 3", "Лаборатория"]
+        },
+        {
+          name: "usageType",
+          label: "Тип использования",
+          options: ["requires_booking", "immediate_use", "long_term_use"]
+        },
+        {
+          name: "status",
+          label: "Статус",
+          options: ["available", "in_use", "maintenance"]
+        }
+      ];
+      res.json(filters);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching filters" });
+    }
+  });
+
 
 
   // Create new equipment
