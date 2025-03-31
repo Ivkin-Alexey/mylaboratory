@@ -1,49 +1,16 @@
 import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { Box, Button, Typography, Paper, Divider } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EquipmentList from "@/components/equipment-list";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import { useEquipmentList } from "@/hooks/use-equipment";
-import { useExternalEquipmentList } from "@/hooks/use-external-api";
-import ExternalEquipmentList from "@/components/external-equipment-list";
-import { IEquipmentItem } from "@/models/equipments";
 import type { Equipment, Booking } from "@shared/schema";
 
 interface EquipmentPageProps {
   onNavigateToBookings?: () => void;
 }
-
-// Компонент для отображения внешнего оборудования из поиска по запросу "весы"
-const ExternalEquipmentSection: React.FC = () => {
-  const { data: equipmentList, isLoading, error } = useExternalEquipmentList('весы');
-  
-  return (
-    <Box sx={{ mt: 4 }}>
-      <Typography variant="h5" component="h2" gutterBottom>
-        Внешний каталог - Весы
-      </Typography>
-      <Typography variant="body2" sx={{ mb: 2 }}>
-        Результаты поиска по запросу "весы" из внешнего каталога:
-      </Typography>
-      
-      {error && (
-        <Box sx={{ p: 2, bgcolor: 'rgba(255, 235, 235, 0.5)', borderRadius: 1, mb: 2 }}>
-          <Typography color="error" align="center" gutterBottom>
-            <i>Ошибка при загрузке данных из внешнего API: {(error as Error).message}</i>
-          </Typography>
-        </Box>
-      )}
-      
-      <ExternalEquipmentList 
-        equipmentList={equipmentList || []} 
-        isLoading={isLoading}
-        onSearch={() => {}} // Пустая функция, поскольку поиск предустановлен
-      />
-    </Box>
-  );
-};
 
 const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) => {
   const [, navigate] = useLocation();
@@ -118,9 +85,6 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
       </Box>
       
       <EquipmentList onBookEquipment={handleBookEquipment} />
-      
-      {/* Добавляем раздел с внешним оборудованием */}
-      <ExternalEquipmentSection />
       
       <BookingModal
         isOpen={isBookingModalOpen}

@@ -6,7 +6,6 @@ import Equipment from "@/pages/equipment";
 import MyBookings from "@/pages/my-bookings";
 import EquipmentDetails from "@/pages/equipment-details";
 import AddEquipment from "@/pages/add-equipment";
-import ExternalEquipmentPage from "@/pages/external-equipment";
 import AppHeader from "@/components/app-header";
 import React, { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -97,7 +96,7 @@ function MuiToaster() {
 
 function Router() {
   // This state tracks which tab is currently active
-  const [activeTab, setActiveTab] = useState<"equipment" | "myBookings" | "externalEquipment">("equipment");
+  const [activeTab, setActiveTab] = useState<"equipment" | "myBookings">("equipment");
 
   return (
     <div>
@@ -114,10 +113,8 @@ function Router() {
           <Route path="/">
             {activeTab === "equipment" ? (
               <Equipment onNavigateToBookings={() => setActiveTab("myBookings")} />
-            ) : activeTab === "myBookings" ? (
-              <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />
             ) : (
-              <ExternalEquipmentPage onNavigateToEquipment={() => setActiveTab("equipment")} />
+              <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />
             )}
           </Route>
           <Route component={NotFound} />

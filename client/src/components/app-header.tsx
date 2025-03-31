@@ -13,17 +13,16 @@ import {
 import SettingsIcon from "@mui/icons-material/Settings";
 import ScienceIcon from "@mui/icons-material/Science";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
-import CloudIcon from "@mui/icons-material/Cloud";
 
 interface AppHeaderProps {
-  activeTab: "equipment" | "myBookings" | "externalEquipment";
-  setActiveTab: (tab: "equipment" | "myBookings" | "externalEquipment") => void;
+  activeTab: "equipment" | "myBookings";
+  setActiveTab: (tab: "equipment" | "myBookings") => void;
 }
 
 const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
   const theme = useTheme();
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: "equipment" | "myBookings" | "externalEquipment") => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: "equipment" | "myBookings") => {
     setActiveTab(newValue);
   };
 
@@ -76,12 +75,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             value="myBookings" 
             label="Мои Бронирования" 
             icon={<BookmarksIcon />} 
-            iconPosition="start"
-          />
-          <Tab 
-            value="externalEquipment" 
-            label="Внешний каталог" 
-            icon={<CloudIcon />} 
             iconPosition="start"
           />
         </Tabs>
