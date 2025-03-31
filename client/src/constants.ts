@@ -1,5 +1,6 @@
 // Константы для локальной работы
 export const DEFAULT_SEARCH_TERM = '';
+export const SEARCH_PARAM_NAME = 'q'; // Название параметра для поиска оборудования
 
 export const encodeQueryParams = (params: Record<string, any>): string => {
   const queryParams = Object.entries(params)

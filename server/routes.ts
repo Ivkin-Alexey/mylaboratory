@@ -28,29 +28,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get equipment by ID
-  app.get("/api/equipment/:id", async (req: Request, res: Response) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid equipment ID" });
-      }
-
-      const equipment = await storage.getEquipmentById(id);
-      if (!equipment) {
-        return res.status(404).json({ message: "Equipment not found" });
-      }
-
-      res.json(equipment);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching equipment" });
-    }
-  });
-
   // Search equipment
   app.get("/api/equipment/search", async (req: Request, res: Response) => {
     try {
       const searchTerm = req.query.term as string || "";
+      const equipment = await storage.searchEquipment(searchTerm);
+      res.json(equipment);
+    } catch (error) {
+      res.status(500).json({ message: "Error searching equipment" });
+    }
+  });
+  
+  // Альтернативный endpoint для поиска оборудования с параметром q
+  app.get("/api/equipment/find", async (req: Request, res: Response) => {
+    try {
+      const searchTerm = req.query.q as string || "";
       const equipment = await storage.searchEquipment(searchTerm);
       res.json(equipment);
     } catch (error) {
@@ -284,6 +276,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedEquipment);
     } catch (error) {
       res.status(500).json({ message: "Error finishing equipment usage" });
+    }
+  });
+  
+  // Get equipment by ID (размещаем после всех специфических маршрутов с :id в конце)
+  app.get("/api/equipment/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid equipment ID" });
+      }
+
+      const equipment = await storage.getEquipmentById(id);
+      if (!equipment) {
+        return res.status(404).json({ message: "Equipment not found" });
+      }
+
+      res.json(equipment);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching equipment" });
     }
   });
 

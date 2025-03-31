@@ -2,7 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   getEquipmentList, 
   getEquipmentByCategory, 
-  searchEquipment, 
+  searchEquipment,
+  findEquipment,
   getAvailableTimeSlots,
   useEquipment,
   finishUsingEquipment
@@ -16,8 +17,7 @@ export function useEquipmentList() {
     queryKey: ["/api/equipment"],
     queryFn: getEquipmentList,
     refetchOnWindowFocus: true, // Включаем обновление при фокусе окна
-    staleTime: 1000, // Данные считаются устаревшими через 1 секунду
-    refetchInterval: 3000, // Обновляем данные каждые 3 секунды автоматически
+    staleTime: 60000, // Данные считаются устаревшими через 1 минуту
   });
 }
 
@@ -34,6 +34,16 @@ export function useSearchEquipment(searchTerm: string) {
   return useQuery<Equipment[]>({
     queryKey: ["/api/equipment/search", searchTerm],
     queryFn: () => searchEquipment(searchTerm),
+    enabled: !!searchTerm,
+    refetchOnWindowFocus: false,
+  });
+}
+
+// Новый хук для нового API метода поиска
+export function useFindEquipment(searchTerm: string) {
+  return useQuery<Equipment[]>({
+    queryKey: ["/api/equipment/find", searchTerm],
+    queryFn: () => findEquipment(searchTerm),
     enabled: !!searchTerm,
     refetchOnWindowFocus: false,
   });

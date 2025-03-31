@@ -20,6 +20,12 @@ export const searchEquipment = async (searchTerm: string): Promise<Equipment[]> 
   return response.json();
 };
 
+// Альтернативный метод поиска с параметром q
+export const findEquipment = async (searchTerm: string): Promise<Equipment[]> => {
+  const response = await apiRequest("GET", `/api/equipment/find?q=${encodeURIComponent(searchTerm)}`, undefined);
+  return response.json();
+};
+
 export const getEquipmentByCategory = async (category: string): Promise<Equipment[]> => {
   const response = await apiRequest("GET", `/api/equipment/category/${category}`, undefined);
   return response.json();

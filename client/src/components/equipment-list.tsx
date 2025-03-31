@@ -3,6 +3,7 @@ import {
   useEquipmentList, 
   useFilteredEquipment, 
   useSearchEquipment, 
+  useFindEquipment,
   useUseEquipment,
   useFinishUsingEquipment
 } from "@/hooks/use-equipment";
@@ -41,7 +42,8 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   // Fetch equipment data
   const { data: allEquipment, isLoading: isLoadingAll } = useEquipmentList();
   const { data: filteredEquipment, isLoading: isLoadingFiltered } = useFilteredEquipment(selectedCategory);
-  const { data: searchResults, isLoading: isLoadingSearch } = useSearchEquipment(debouncedSearchTerm);
+  // Используем новый API метод поиска с параметром q
+  const { data: searchResults, isLoading: isLoadingSearch } = useFindEquipment(debouncedSearchTerm);
   
   // Мутации для управления статусом оборудования
   const useEquipmentMutation = useUseEquipment();
