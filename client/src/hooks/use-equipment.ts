@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
-  getEquipmentList, 
-  getEquipmentByCategory, 
+  getEquipmentList,
   searchEquipment,
   findEquipment,
   getAvailableTimeSlots,
   useEquipment,
-  finishUsingEquipment
+  finishUsingEquipment,
+  getEquipmentFilters,
+  ExternalFilter
 } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
@@ -21,14 +22,7 @@ export function useEquipmentList() {
   });
 }
 
-export function useFilteredEquipment(category: string) {
-  return useQuery<Equipment[]>({
-    queryKey: ["/api/equipment/category", category],
-    queryFn: () => getEquipmentByCategory(category),
-    enabled: !!category && category !== "all",
-    refetchOnWindowFocus: false,
-  });
-}
+
 
 export function useSearchEquipment(searchTerm: string) {
   return useQuery<Equipment[]>({
@@ -113,5 +107,16 @@ export function useFinishUsingEquipment() {
       });
       console.error("Ошибка при завершении использования:", error);
     }
+  });
+}
+
+// Новый хук для получения фильтров с внешнего API
+export function useEquipmentFilters() {
+  return useQuery<ExternalFilter[]>({
+    queryKey: ["/api/equipment/filters"],
+    queryFn: getEquipmentFilters,
+    staleTime: 3600000, // Кэшируем фильтры на 1 час
+    gcTime: 3600000, // Данные хранятся в кэше 1 час
+    refetchOnWindowFocus: false
   });
 }

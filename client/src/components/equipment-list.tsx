@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { 
   useEquipmentList, 
-  useFilteredEquipment, 
   useSearchEquipment, 
   useFindEquipment,
   useUseEquipment,
-  useFinishUsingEquipment
+  useFinishUsingEquipment,
+  useEquipmentFilters
 } from "@/hooks/use-equipment";
 import EquipmentCard from "./equipment-card";
 import { 
@@ -35,13 +35,15 @@ const ITEMS_PER_PAGE = 8;
 
 const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
 
+  // Получаем фильтры с внешнего API
+  const { data: externalFilters, isLoading: isLoadingFilters } = useEquipmentFilters();
+  
   // Fetch equipment data
   const { data: allEquipment, isLoading: isLoadingAll } = useEquipmentList();
-  const { data: filteredEquipment, isLoading: isLoadingFiltered } = useFilteredEquipment(selectedCategory);
   // Используем новый API метод поиска с параметром q
   const { data: searchResults, isLoading: isLoadingSearch } = useFindEquipment(debouncedSearchTerm);
   
@@ -60,16 +62,30 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     };
   }, [searchTerm]);
 
-  // Determine which data to display
+  // Determine which data to display with filter support
   const displayData = useMemo(() => {
-    if (debouncedSearchTerm) {
-      return searchResults;
-    } else if (selectedCategory !== "all") {
-      return filteredEquipment;
-    } else {
-      return allEquipment;
+    // Начальные данные на основе поиска
+    let result = debouncedSearchTerm ? searchResults : allEquipment;
+    
+    // Применяем дополнительные фильтры
+    if (result && Array.isArray(result)) {
+      // Если есть выбранные фильтры, применяем их
+      const activeFilters = Object.entries(selectedFilters).filter(([_, value]) => value !== "all");
+      
+      if (activeFilters.length > 0) {
+        result = result.filter(item => {
+          // Проверяем, соответствует ли элемент всем выбранным фильтрам
+          return activeFilters.every(([filterName, filterValue]) => {
+            // @ts-ignore: динамический доступ к свойствам оборудования
+            const itemValue = item[filterName];
+            return itemValue && (itemValue === filterValue || itemValue.includes(filterValue));
+          });
+        });
+      }
     }
-  }, [debouncedSearchTerm, selectedCategory, searchResults, filteredEquipment, allEquipment]);
+    
+    return result;
+  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment]);
 
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
@@ -84,16 +100,20 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm, selectedCategory]);
+  }, [debouncedSearchTerm, selectedFilters]);
 
-  const isLoading = isLoadingAll || isLoadingFiltered || isLoadingSearch;
-
-  const handleCategoryChange = (event: SelectChangeEvent) => {
-    setSelectedCategory(event.target.value);
-  };
+  const isLoading = isLoadingAll || isLoadingSearch || isLoadingFilters;
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
+  };
+  
+  // Обработчик изменения динамических фильтров
+  const handleFilterChange = (filterName: string, value: string) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
   };
   
   // Обработчик для кнопок "Использовать" и "Завершить"
@@ -141,7 +161,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         />
       </Box>
       
-      {/* Фильтры в строку */}
+      {/* Фильтры в строку - динамические из внешнего API */}
       <Box sx={{ 
         display: 'flex', 
         flexWrap: 'wrap',
@@ -150,99 +170,33 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         mb: 4,
         px: { xs: 2, sm: 4 }
       }}>
-        <FormControl 
-          sx={{ 
-            minWidth: 140,
-            flexGrow: { xs: 1, md: 0 }
-          }} 
-          size="small">
-          <InputLabel id="category-select-label">Категория</InputLabel>
-          <MuiSelect
-            labelId="category-select-label"
-            value={selectedCategory}
-            label="Категория"
-            onChange={handleCategoryChange}
-          >
-            <MenuItem value="all">Все категории</MenuItem>
-            <MenuItem value="microscopes">Микроскопы</MenuItem>
-            <MenuItem value="analyzers">Анализаторы</MenuItem>
-            <MenuItem value="spectrometers">Спектрометры</MenuItem>
-            <MenuItem value="centrifuges">Центрифуги</MenuItem>
-          </MuiSelect>
-        </FormControl>
+
         
-        <FormControl 
-          sx={{ 
-            minWidth: 140,
-            flexGrow: { xs: 1, md: 0 }
-          }} 
-          size="small">
-          <InputLabel>Статус</InputLabel>
-          <MuiSelect
-            value="all"
-            label="Статус"
+        {/* Динамические фильтры из API */}
+        {externalFilters && externalFilters.map((filter) => (
+          <FormControl 
+            key={filter.name}
+            sx={{ 
+              minWidth: 140,
+              flexGrow: { xs: 1, md: 0 }
+            }} 
+            size="small"
           >
-            <MenuItem value="all">Все статусы</MenuItem>
-            <MenuItem value="available">Доступно</MenuItem>
-            <MenuItem value="booked">Забронировано</MenuItem>
-            <MenuItem value="maintenance">На обслуживании</MenuItem>
-          </MuiSelect>
-        </FormControl>
-        
-        <FormControl 
-          sx={{ 
-            minWidth: 140,
-            flexGrow: { xs: 1, md: 0 }
-          }} 
-          size="small">
-          <InputLabel>Локация</InputLabel>
-          <MuiSelect
-            value="all"
-            label="Локация"
-          >
-            <MenuItem value="all">Все локации</MenuItem>
-            <MenuItem value="lab1">Лаборатория 1</MenuItem>
-            <MenuItem value="lab2">Лаборатория 2</MenuItem>
-            <MenuItem value="storage">Склад</MenuItem>
-          </MuiSelect>
-        </FormControl>
-        
-        <FormControl 
-          sx={{ 
-            minWidth: 140,
-            flexGrow: { xs: 1, md: 0 }
-          }} 
-          size="small">
-          <InputLabel>Производитель</InputLabel>
-          <MuiSelect
-            value="all"
-            label="Производитель"
-          >
-            <MenuItem value="all">Все производители</MenuItem>
-            <MenuItem value="zeiss">Zeiss</MenuItem>
-            <MenuItem value="nikon">Nikon</MenuItem>
-            <MenuItem value="leica">Leica</MenuItem>
-          </MuiSelect>
-        </FormControl>
-        
-        <FormControl 
-          sx={{ 
-            minWidth: 140,
-            flexGrow: { xs: 1, md: 0 }
-          }} 
-          size="small">
-          <InputLabel>Год выпуска</InputLabel>
-          <MuiSelect
-            value="all"
-            label="Год выпуска"
-          >
-            <MenuItem value="all">Любой год</MenuItem>
-            <MenuItem value="2023">2023</MenuItem>
-            <MenuItem value="2022">2022</MenuItem>
-            <MenuItem value="2021">2021</MenuItem>
-            <MenuItem value="older">2020 и старше</MenuItem>
-          </MuiSelect>
-        </FormControl>
+            <InputLabel>{filter.label}</InputLabel>
+            <MuiSelect
+              value={selectedFilters[filter.name] || "all"}
+              label={filter.label}
+              onChange={(e) => handleFilterChange(filter.name, e.target.value)}
+            >
+              <MenuItem value="all">{`Все ${filter.label.toLowerCase()}`}</MenuItem>
+              {filter.options.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </MuiSelect>
+          </FormControl>
+        ))}
       </Box>
 
       {/* Loading State */}

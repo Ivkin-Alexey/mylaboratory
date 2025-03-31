@@ -1,6 +1,7 @@
 import { apiRequest } from "./queryClient";
 import type { Equipment, InsertBooking, BookingWithEquipment, Booking } from "@shared/schema";
 import { IEquipmentItem } from "@/models/equipments";
+import { apiRoutes, encodeQueryParams, SEARCH_PARAM_NAME } from "@/constants";
 
 // User ID (mock user for demo, in a real app this would come from auth)
 const CURRENT_USER_ID = 1;
@@ -34,6 +35,37 @@ const fetchFromExternalApi = async (url: string) => {
   } catch (error) {
     console.error("Ошибка при обращении к внешнему API:", error);
     throw error;
+  }
+};
+
+// Интерфейс для фильтров с внешнего API
+export interface ExternalFilter {
+  name: string;
+  label: string;
+  options: string[];
+}
+
+// Функция для получения фильтров с внешнего API
+export const getEquipmentFilters = async (): Promise<ExternalFilter[]> => {
+  try {
+    // Сначала пытаемся получить фильтры с локального API
+    try {
+      const response = await fetch(apiRoutes.EQUIPMENT_FILTER);
+      if (response.ok) {
+        const data = await response.json();
+        return data as ExternalFilter[] || [];
+      } else {
+        throw new Error(`Ошибка запроса: ${response.status}`);
+      }
+    } catch (localError) {
+      console.log("Локальный API фильтров недоступен, использую внешний:", localError);
+      // Если локальный API недоступен, используем внешний
+      const response = await fetchFromExternalApi(`${EXTERNAL_API_BASE_URL}/equipments/filters`);
+      return response || [];
+    }
+  } catch (error) {
+    console.error("Ошибка при получении фильтров:", error);
+    return [];
   }
 };
 
@@ -96,31 +128,31 @@ export const searchEquipment = async (searchTerm: string): Promise<Equipment[]> 
   }
 };
 
-// Альтернативный метод поиска с параметром q (использует тот же внешний API)
+// Альтернативный метод поиска с параметром q из констант
 export const findEquipment = async (searchTerm: string): Promise<Equipment[]> => {
-  return searchEquipment(searchTerm);
-};
-
-export const getEquipmentByCategory = async (category: string): Promise<Equipment[]> => {
   try {
-    // Получаем весь список оборудования и фильтруем по категории
-    const allEquipment = await getEquipmentList();
-    
-    // Если категория "all", возвращаем весь список
-    if (category === "all") {
-      return allEquipment;
+    // Сначала попробуем использовать локальный API
+    try {
+      const queryParams = encodeQueryParams({ [SEARCH_PARAM_NAME]: searchTerm });
+      const response = await fetch(`${apiRoutes.EQUIPMENT_FIND}${queryParams}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data as Equipment[] || [];
+      } else {
+        throw new Error(`Ошибка запроса: ${response.status}`);
+      }
+    } catch (localError) {
+      console.log("Локальный API поиска недоступен, использую внешний:", localError);
+      // Если локальный API недоступен, используем внешний через поиск
+      return searchEquipment(searchTerm);
     }
-    
-    // Иначе фильтруем по категории
-    return allEquipment.filter(item => {
-      // Проверяем, содержит ли категория оборудования нужную подстроку
-      return item.category.toLowerCase().includes(category.toLowerCase());
-    });
   } catch (error) {
-    console.error(`Ошибка при получении оборудования по категории ${category}:`, error);
+    console.error("Ошибка при поиске оборудования:", error);
     return [];
   }
 };
+
+
 
 // Генерируем фиксированный список доступных временных слотов для каждой даты
 export const getAvailableTimeSlots = async (equipmentId: number, date: string): Promise<string[]> => {

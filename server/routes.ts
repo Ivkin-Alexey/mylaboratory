@@ -50,16 +50,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Filter equipment by category
-  app.get("/api/equipment/category/:category", async (req: Request, res: Response) => {
-    try {
-      const category = req.params.category;
-      const equipment = await storage.getEquipmentByCategory(category);
-      res.json(equipment);
-    } catch (error) {
-      res.status(500).json({ message: "Error filtering equipment" });
-    }
-  });
+
 
   // Create new equipment
   app.post("/api/equipment", async (req: Request, res: Response) => {
