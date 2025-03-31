@@ -196,7 +196,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           <FormControl 
             key={filter.name}
             sx={{ 
-              width: { xs: '100%', sm: 250 },
+              width: { xs: '100%', sm: 170 },
               flexShrink: 0
             }} 
             size="small"
