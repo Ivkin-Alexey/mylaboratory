@@ -50,30 +50,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Endpoint для получения доступных фильтров
+  // Маршрут для проксирования запросов к внешнему API для получения фильтров
   app.get("/api/equipment/filters", async (req: Request, res: Response) => {
     try {
-      // Возвращаем статический список доступных фильтров
-      const filters = [
-        {
-          name: "location",
-          label: "Местоположение",
-          options: ["Корпус 1", "Корпус 2", "Корпус 3", "Лаборатория"]
-        },
-        {
-          name: "usageType",
-          label: "Тип использования",
-          options: ["requires_booking", "immediate_use", "long_term_use"]
-        },
-        {
-          name: "status",
-          label: "Статус",
-          options: ["available", "in_use", "maintenance"]
-        }
-      ];
-      res.json(filters);
+      // Здесь мы отправляем запрос к внешнему API для получения фильтров
+      const response = await fetch("https://scmp-bot-server.ru/api/equipments/filters");
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка при запросе к внешнему API: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      res.json(data);
     } catch (error) {
-      res.status(500).json({ message: "Error fetching filters" });
+      console.error("Error fetching filters from external API:", error);
+      res.status(500).json({ message: "Error fetching filters from external API" });
     }
   });
 
