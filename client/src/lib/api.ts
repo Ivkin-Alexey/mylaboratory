@@ -146,78 +146,35 @@ export const searchEquipment = async (searchTerm: string, filters?: Record<strin
       return getEquipmentList();
     }
     
-    // Если есть фильтры, но внешний API возвращает ошибку, получаем общий список
-    // и фильтруем локально
-    try {
-      // Формируем базовый URL для запроса
-      let url = `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm || '')}&page=1&pageSize=${PAGE_SIZE}`;
-      
-      // Добавляем фильтры к URL, если они есть
-      if (hasActiveFilters) {
-        for (const [key, values] of Object.entries(filters!)) {
-          if (values && values.length > 0) {
-            // Добавляем каждое значение фильтра как отдельный параметр
-            values.forEach(value => {
-              url += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-            });
-          }
+    // Формируем базовый URL для запроса
+    let url = `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm || '')}&page=1&pageSize=${PAGE_SIZE}`;
+    
+    // Добавляем фильтры к URL, если они есть
+    if (hasActiveFilters) {
+      for (const [key, values] of Object.entries(filters!)) {
+        if (values && values.length > 0) {
+          // Добавляем каждое значение фильтра как отдельный параметр
+          values.forEach(value => {
+            url += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+          });
         }
       }
-      
-      // Выполняем поиск на внешнем API без AbortController (на некоторых платформах есть проблемы)
-      const response = await fetch(url);
-      
-      // Если ответа нет в течение 5 секунд, продолжаем с локальной фильтрацией
-      
-      if (!response.ok) {
-        throw new Error(`Ошибка при запросе: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Преобразуем результаты
-      if (data && data.results && Array.isArray(data.results)) {
-        return data.results.map(mapExternalEquipmentToLocal);
-      }
-    } catch (apiError) {
-      console.error("Ошибка при обращении к внешнему API с фильтрами:", apiError);
-      
-      // Если запрос с фильтрами не удался, получаем все оборудование и фильтруем локально
-      const allEquipment = await getEquipmentList();
-      
-      let filteredEquipment = allEquipment;
-      
-      // Фильтрация по поисковому запросу
-      if (searchTerm) {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        filteredEquipment = filteredEquipment.filter(item => 
-          item.name.toLowerCase().includes(lowerSearchTerm) || 
-          item.description.toLowerCase().includes(lowerSearchTerm) ||
-          (item.category && item.category.toLowerCase().includes(lowerSearchTerm))
-        );
-      }
-      
-      // Применяем дополнительные фильтры локально
-      if (hasActiveFilters) {
-        for (const [filterName, filterValues] of Object.entries(filters!)) {
-          if (filterValues && filterValues.length > 0) {
-            filteredEquipment = filteredEquipment.filter(item => {
-              // Получаем значение для этого фильтра у оборудования
-              const itemValue = item[filterName as keyof Equipment];
-              
-              if (typeof itemValue === 'string') {
-                return filterValues.some(value => 
-                  itemValue === value || itemValue.includes(value)
-                );
-              }
-              
-              return false;
-            });
-          }
-        }
-      }
-      
-      return filteredEquipment;
+    }
+    
+    console.log("Запрос к внешнему API:", url);
+    
+    // Выполняем запрос к внешнему API
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Ошибка при запросе: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Преобразуем результаты
+    if (data && data.results && Array.isArray(data.results)) {
+      return data.results.map(mapExternalEquipmentToLocal);
     }
     
     return [];

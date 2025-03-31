@@ -70,15 +70,15 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   // Determine which data to display
   const displayData = useMemo(() => {
-    // Используем результаты из API, которые уже учитывают фильтры
-    // Если поиск активен (включая поиск с пустой строкой при активных фильтрах)
+    // Проверяем, есть ли активные фильтры или поисковый запрос
     const hasActiveFilters = Object.values(selectedFilters).some(values => values && values.length > 0);
     
+    // Если активны фильтры или поиск - используем данные из поиска
     if (debouncedSearchTerm || hasActiveFilters) {
       return searchResults || [];
     }
     
-    // Если нет поиска и фильтров, используем полный список
+    // Иначе показываем все оборудование
     return allEquipment || [];
   }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment]);
 
