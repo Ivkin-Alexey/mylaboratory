@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Box, Paper } from '@mui/material';
 import ExternalEquipmentList from '@/components/external-equipment-list';
 import { useExternalEquipmentList } from '@/hooks/use-external-api';
@@ -10,7 +10,8 @@ interface ExternalEquipmentPageProps {
 }
 
 const ExternalEquipmentPage: React.FC<ExternalEquipmentPageProps> = ({ onNavigateToEquipment }) => {
-  const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
+  // Начинаем с поиска весов по умолчанию
+  const [searchTerm, setSearchTerm] = useState('весы');
   const { 
     data: equipmentListData, 
     isLoading: isEquipmentLoading 

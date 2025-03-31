@@ -1,26 +1,26 @@
-export const BASE_API_URL = 'http://92.53.101.85';
+export const BASE_API_URL = 'http://92.53.101.85/api';
 export const DEFAULT_SEARCH_TERM = '';
 
 export const apiRoutes = {
   get: {
     equipments: {
-      equipments: `${BASE_API_URL}/api/equipments`,
-      equipment: `${BASE_API_URL}/api/equipment`,
-      search: `${BASE_API_URL}/api/equipments/search`,
-      favorite: `${BASE_API_URL}/api/equipments/favorite`,
-      filters: `${BASE_API_URL}/api/equipments/filters`,
-      searchHistory: `${BASE_API_URL}/api/equipments/search-history`
+      equipments: `${BASE_API_URL}/equipments`,
+      equipment: `${BASE_API_URL}/equipment`,
+      search: `${BASE_API_URL}/equipments/search`,
+      favorite: `${BASE_API_URL}/equipments/favorite`,
+      filters: `${BASE_API_URL}/equipments/filters`,
+      searchHistory: `${BASE_API_URL}/equipments/search-history`
     }
   },
   post: {
     equipments: {
-      searchHistory: `${BASE_API_URL}/api/equipments/search-history`
+      searchHistory: `${BASE_API_URL}/equipments/search-history`
     }
   },
   delete: {
     equipments: {
-      favorite: `${BASE_API_URL}/api/equipments/favorite`,
-      searchHistory: `${BASE_API_URL}/api/equipments/search-history`
+      favorite: `${BASE_API_URL}/equipments/favorite`,
+      searchHistory: `${BASE_API_URL}/equipments/search-history`
     }
   }
 };

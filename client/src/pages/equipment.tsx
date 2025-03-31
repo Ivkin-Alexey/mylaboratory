@@ -1,16 +1,79 @@
 import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Paper, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EquipmentList from "@/components/equipment-list";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import { useEquipmentList } from "@/hooks/use-equipment";
+import { useExternalEquipmentList } from "@/hooks/use-external-api";
+import ExternalEquipmentList from "@/components/external-equipment-list";
+import { IEquipmentItem } from "@/models/equipments";
 import type { Equipment, Booking } from "@shared/schema";
 
 interface EquipmentPageProps {
   onNavigateToBookings?: () => void;
 }
+
+// Компонент для отображения внешнего оборудования из поиска по запросу "весы"
+const ExternalEquipmentSection: React.FC = () => {
+  // Создаем заглушки для внешнего оборудования вместо реального API
+  const mockEquipment: IEquipmentItem[] = [
+    {
+      id: 1001,
+      name: 'Аналитические весы OHAUS',
+      description: 'Высокоточные весы с точностью измерения до 0.0001 г',
+      category: 'Измерительное оборудование',
+      location: 'Лаборатория химического анализа',
+      status: 'available',
+      usageType: 'immediate',
+      isFavorite: false
+    },
+    {
+      id: 1002,
+      name: 'Лабораторные весы Sartorius',
+      description: 'Электронные весы с максимальной нагрузкой до 3000 г',
+      category: 'Измерительное оборудование',
+      location: 'Центральная лаборатория',
+      status: 'available',
+      usageType: 'booking',
+      isFavorite: true
+    },
+    {
+      id: 1003,
+      name: 'Прецизионные весы AND',
+      description: 'Весы для точных измерений с защитой от вибраций',
+      category: 'Измерительное оборудование',
+      location: 'Аналитический центр',
+      status: 'available',
+      usageType: 'booking',
+      isFavorite: false
+    }
+  ];
+  
+  return (
+    <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Внешний каталог - Весы
+      </Typography>
+      <Typography variant="body2" sx={{ mb: 2 }}>
+        Результаты поиска по запросу "весы" из внешнего каталога:
+      </Typography>
+      
+      <Box sx={{ p: 2, bgcolor: 'rgba(224, 224, 224, 0.3)', borderRadius: 1, mb: 2 }}>
+        <Typography color="text.secondary" align="center" gutterBottom>
+          <i>Примечание: Внешний API недоступен. Отображаются демонстрационные данные.</i>
+        </Typography>
+      </Box>
+      
+      <ExternalEquipmentList 
+        equipmentList={mockEquipment} 
+        isLoading={false}
+        onSearch={() => {}} // Пустая функция, поскольку поиск предустановлен
+      />
+    </Paper>
+  );
+};
 
 const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) => {
   const [, navigate] = useLocation();
@@ -85,6 +148,9 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
       </Box>
       
       <EquipmentList onBookEquipment={handleBookEquipment} />
+      
+      {/* Добавляем раздел с внешним оборудованием */}
+      <ExternalEquipmentSection />
       
       <BookingModal
         isOpen={isBookingModalOpen}
