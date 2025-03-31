@@ -229,7 +229,6 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
                 </MenuItem>
               ))}
             </MuiSelect>
-            <FormHelperText>Выберите несколько значений</FormHelperText>
           </FormControl>
         ))}
       </Box>
