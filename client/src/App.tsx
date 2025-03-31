@@ -6,11 +6,14 @@ import Equipment from "@/pages/equipment";
 import MyBookings from "@/pages/my-bookings";
 import EquipmentDetails from "@/pages/equipment-details";
 import AddEquipment from "@/pages/add-equipment";
+import ExternalEquipmentPage from "@/pages/external-equipment";
 import AppHeader from "@/components/app-header";
 import React, { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Alert, Snackbar } from '@mui/material';
 import { useToast } from "@/hooks/use-toast";
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
 // Создаем тему MUI
 const theme = createTheme({
@@ -94,7 +97,7 @@ function MuiToaster() {
 
 function Router() {
   // This state tracks which tab is currently active
-  const [activeTab, setActiveTab] = useState<"equipment" | "myBookings">("equipment");
+  const [activeTab, setActiveTab] = useState<"equipment" | "myBookings" | "externalEquipment">("equipment");
 
   return (
     <div>
@@ -109,7 +112,13 @@ function Router() {
             <EquipmentDetails onNavigateToBookings={() => setActiveTab("myBookings")} />
           </Route>
           <Route path="/">
-            {activeTab === "equipment" ? <Equipment onNavigateToBookings={() => setActiveTab("myBookings")} /> : <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />}
+            {activeTab === "equipment" ? (
+              <Equipment onNavigateToBookings={() => setActiveTab("myBookings")} />
+            ) : activeTab === "myBookings" ? (
+              <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />
+            ) : (
+              <ExternalEquipmentPage onNavigateToEquipment={() => setActiveTab("equipment")} />
+            )}
           </Route>
           <Route component={NotFound} />
         </Switch>
@@ -122,12 +131,14 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
