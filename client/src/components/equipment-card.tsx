@@ -174,13 +174,18 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
         onClick={handleCardClick}
         sx={{ cursor: 'pointer' }}
       >
-          <CardMedia
-            component="img"
-            height="170"
-            image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
-            alt={equipment.name}
-            sx={{ objectFit: 'contain' }}
-          />
+          <Box sx={{ height: '170px', overflow: 'hidden' }}>
+            <CardMedia
+              component="img"
+              sx={{ 
+                height: '170px', 
+                objectFit: 'contain',
+                maxHeight: '170px'
+              }}
+              image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
+              alt={equipment.name}
+            />
+          </Box>
           {getStatusChip()}
         
           <CardContent>
