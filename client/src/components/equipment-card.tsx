@@ -198,7 +198,11 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
               {equipment.name}
             </Typography>
             
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              sx={{ mb: 2, fontSize: '0.875rem' }}
+            >
               {equipment.description}
             </Typography>
           </CardContent>
