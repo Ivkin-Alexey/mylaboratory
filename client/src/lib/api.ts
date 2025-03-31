@@ -104,8 +104,9 @@ export const getEquipmentFilters = async (): Promise<ExternalFilter[]> => {
 // Equipment API
 export const getEquipmentList = async (): Promise<Equipment[]> => {
   try {
-    // Получаем данные с внешнего API (используем пустой поисковый запрос для получения всех данных)
-    const response = await fetchFromExternalApi(`${EXTERNAL_API_BASE_URL}/equipments/search?term=&page=1&pageSize=${PAGE_SIZE}`);
+    // API требует, чтобы были указаны либо поисковая фраза, либо фильтры
+    // Указываем фиктивный фильтр для получения всех данных
+    const response = await fetchFromExternalApi(`${EXTERNAL_API_BASE_URL}/equipments/search?kind=Научное оборудование&page=1&pageSize=${PAGE_SIZE}`);
     
     // Преобразуем данные в формат приложения
     if (response && response.results && Array.isArray(response.results)) {
@@ -141,13 +142,16 @@ export const searchEquipment = async (searchTerm: string, filters?: Record<strin
     // Проверяем наличие активных фильтров
     const hasActiveFilters = filters && Object.values(filters).some(values => values && values.length > 0);
     
-    // Если нет поискового запроса и нет фильтров, возвращаем весь список
-    if (!searchTerm && !hasActiveFilters) {
-      return getEquipmentList();
-    }
+    // Если нет поискового запроса и нет фильтров, добавляем фиктивный фильтр
+    // (API требует наличие поискового запроса или хотя бы одного фильтра)
     
     // Формируем базовый URL для запроса
     let url = `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm || '')}&page=1&pageSize=${PAGE_SIZE}`;
+    
+    // Если нет ни поискового запроса, ни фильтров, добавляем фиктивный фильтр для получения всех данных
+    if (!searchTerm && !hasActiveFilters) {
+      url += '&kind=Научное оборудование';
+    }
     
     // Добавляем фильтры к URL, если они есть
     if (hasActiveFilters) {
