@@ -176,9 +176,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
       >
           <CardMedia
             component="img"
-            height="180"
+            height="170"
             image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
             alt={equipment.name}
+            sx={{ objectFit: 'contain' }}
           />
           {getStatusChip()}
         
