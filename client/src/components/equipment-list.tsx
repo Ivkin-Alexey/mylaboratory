@@ -152,7 +152,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   };
 
   return (
-    <Box mb={4}>
+    <Box mb={4} sx={{ backgroundColor: '#ffffff' }}>
       {/* Поисковая строка */}
       <Box sx={{ 
         display: 'flex', 
@@ -236,7 +236,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           <CircularProgress />
         </Box>
       ) : (!displayData || !Array.isArray(displayData) || displayData.length === 0) ? (
-        <Paper sx={{ py: 4, textAlign: 'center', mb: 4 }} elevation={1}>
+        <Paper sx={{ py: 4, textAlign: 'center', mb: 4, backgroundColor: '#ffffff' }} elevation={1}>
           <SearchIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
           <Typography variant="h6" sx={{ mt: 1 }}>
             Оборудование не найдено

@@ -26,6 +26,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: '250px',
   width: '100%',
   margin: '0 auto',
+  backgroundColor: '#ffffff',
   transition: 'box-shadow 0.3s ease-in-out',
   '&:hover': {
     boxShadow: theme.shadows[4]
