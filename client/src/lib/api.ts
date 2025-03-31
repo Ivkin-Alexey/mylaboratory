@@ -138,32 +138,89 @@ export const getEquipmentById = async (id: number): Promise<Equipment> => {
 
 export const searchEquipment = async (searchTerm: string, filters?: Record<string, string[]>): Promise<Equipment[]> => {
   try {
-    // Если поисковый запрос пустой и нет фильтров, возвращаем весь список
-    if (!searchTerm && (!filters || Object.keys(filters).length === 0)) {
+    // Проверяем наличие активных фильтров
+    const hasActiveFilters = filters && Object.values(filters).some(values => values && values.length > 0);
+    
+    // Если нет поискового запроса и нет фильтров, возвращаем весь список
+    if (!searchTerm && !hasActiveFilters) {
       return getEquipmentList();
     }
     
-    // Формируем базовый URL для запроса
-    let url = `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm || '')}&page=1&pageSize=${PAGE_SIZE}`;
-    
-    // Добавляем фильтры к URL, если они есть
-    if (filters && Object.keys(filters).length > 0) {
-      for (const [key, values] of Object.entries(filters)) {
-        if (values && values.length > 0) {
-          // Добавляем каждое значение фильтра как отдельный параметр
-          values.forEach(value => {
-            url += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-          });
+    // Если есть фильтры, но внешний API возвращает ошибку, получаем общий список
+    // и фильтруем локально
+    try {
+      // Формируем базовый URL для запроса
+      let url = `${EXTERNAL_API_BASE_URL}/equipments/search?term=${encodeURIComponent(searchTerm || '')}&page=1&pageSize=${PAGE_SIZE}`;
+      
+      // Добавляем фильтры к URL, если они есть
+      if (hasActiveFilters) {
+        for (const [key, values] of Object.entries(filters!)) {
+          if (values && values.length > 0) {
+            // Добавляем каждое значение фильтра как отдельный параметр
+            values.forEach(value => {
+              url += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+            });
+          }
         }
       }
-    }
-    
-    // Выполняем поиск на внешнем API
-    const response = await fetchFromExternalApi(url);
-    
-    // Преобразуем результаты
-    if (response && response.results && Array.isArray(response.results)) {
-      return response.results.map(mapExternalEquipmentToLocal);
+      
+      // Устанавливаем таймаут для запроса
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд таймаут
+      
+      // Выполняем поиск на внешнем API с таймаутом
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка при запросе: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Преобразуем результаты
+      if (data && data.results && Array.isArray(data.results)) {
+        return data.results.map(mapExternalEquipmentToLocal);
+      }
+    } catch (apiError) {
+      console.error("Ошибка при обращении к внешнему API с фильтрами:", apiError);
+      
+      // Если запрос с фильтрами не удался, получаем все оборудование и фильтруем локально
+      const allEquipment = await getEquipmentList();
+      
+      let filteredEquipment = allEquipment;
+      
+      // Фильтрация по поисковому запросу
+      if (searchTerm) {
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        filteredEquipment = filteredEquipment.filter(item => 
+          item.name.toLowerCase().includes(lowerSearchTerm) || 
+          item.description.toLowerCase().includes(lowerSearchTerm) ||
+          (item.category && item.category.toLowerCase().includes(lowerSearchTerm))
+        );
+      }
+      
+      // Применяем дополнительные фильтры локально
+      if (hasActiveFilters) {
+        for (const [filterName, filterValues] of Object.entries(filters!)) {
+          if (filterValues && filterValues.length > 0) {
+            filteredEquipment = filteredEquipment.filter(item => {
+              // Получаем значение для этого фильтра у оборудования
+              const itemValue = item[filterName as keyof Equipment];
+              
+              if (typeof itemValue === 'string') {
+                return filterValues.some(value => 
+                  itemValue === value || itemValue.includes(value)
+                );
+              }
+              
+              return false;
+            });
+          }
+        }
+      }
+      
+      return filteredEquipment;
     }
     
     return [];

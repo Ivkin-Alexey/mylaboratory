@@ -96,8 +96,28 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedSearchTerm, selectedFilters]);
-
+  
+  // Проверяем текущий статус загрузки
   const isLoading = isLoadingAll || isLoadingSearch || isLoadingFilters;
+  
+  // Используем состояние для контролируемого отображения индикатора загрузки
+  const [showLoading, setShowLoading] = useState(false);
+  
+  useEffect(() => {
+    if (isLoading) {
+      // Показываем индикатор загрузки только после небольшой задержки
+      const timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoading(false);
+    }
+  }, [isLoading]);
+  
+  // Базовая проверка на ошибки 
+  const hasError = !displayData || !Array.isArray(displayData);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
@@ -210,7 +230,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       </Box>
 
       {/* Loading State */}
-      {isLoading ? (
+      {showLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </Box>

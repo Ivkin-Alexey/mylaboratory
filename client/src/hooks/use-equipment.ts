@@ -35,8 +35,10 @@ export function useFindEquipment(searchTerm: string, filters?: Record<string, st
   return useQuery<Equipment[]>({
     queryKey: ["equipment-find", searchTerm, filters],
     queryFn: () => searchEquipment(searchTerm, filters),
-    enabled: !!searchTerm || (filters && Object.values(filters).some(values => values.length > 0)),
+    enabled: true, // Всегда активно, но с разными параметрами
     refetchOnWindowFocus: false,
+    retry: 1, // Меньше повторных запросов при ошибке
+    staleTime: 30000, // Кеширование данных на 30 секунд
   });
 }
 
