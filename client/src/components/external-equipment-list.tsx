@@ -44,8 +44,8 @@ const ExternalEquipmentList: React.FC<ExternalEquipmentListProps> = ({
     }
   };
 
-  const handleToggleFavorite = (equipmentId: number, isFavorite: boolean | undefined) => {
-    toggleFavorite(equipmentId, isFavorite);
+  const handleToggleFavorite = (equipmentId: string, isFavorite: boolean | undefined) => {
+    toggleFavorite(Number(equipmentId), isFavorite);
   };
 
   return (
@@ -80,11 +80,11 @@ const ExternalEquipmentList: React.FC<ExternalEquipmentListProps> = ({
             {equipmentList.map((equipment) => (
               <Box key={equipment.id} sx={{ p: 1, width: { xs: '100%', sm: '50%', md: '25%' } }}>
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', maxWidth: 250, mx: 'auto' }}>
-                  {equipment.imageUrl ? (
+                  {equipment.imgUrl ? (
                     <CardMedia
                       component="img"
                       height="140"
-                      image={equipment.imageUrl}
+                      image={equipment.imgUrl}
                       alt={equipment.name}
                     />
                   ) : (

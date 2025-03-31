@@ -78,7 +78,10 @@ export function useFavoriteEquipment() {
       const url = apiRoutes.get.equipments.favorite;
       const method = isFavorite ? 'DELETE' : 'POST';
       
-      const response = await fetch(`${url}?login=user1&equipmentId=${equipmentId}`, {
+      // Преобразуем ID в строку, если необходимо
+      const stringId = equipmentId.toString();
+      
+      const response = await fetch(`${url}?login=user1&equipmentId=${stringId}`, {
         method,
         headers: {
           'Content-Type': 'application/json'
