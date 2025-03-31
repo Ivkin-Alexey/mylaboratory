@@ -97,28 +97,25 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     setCurrentPage(1);
   }, [debouncedSearchTerm, selectedFilters]);
   
-  // Проверяем текущий статус загрузки
-  const isLoading = isLoadingAll || isLoadingSearch || isLoadingFilters;
+  // Проверяем текущий статус загрузки и делаем его максимально коротким
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Используем состояние для принудительного сброса загрузки после таймаута
-  const [forceLoadingDone, setForceLoadingDone] = useState(false);
-  
-  // Устанавливаем таймаут для принудительного сброса состояния загрузки
+  // Отслеживаем реальное состояние загрузки
   useEffect(() => {
-    if (isLoading) {
-      // Если загрузка длится больше 1.5 секунд, сбрасываем флаг загрузки
+    const loadingState = isLoadingAll || isLoadingSearch || isLoadingFilters;
+    
+    if (loadingState) {
+      setIsLoading(true);
+      // Устанавливаем очень короткий таймаут для отмены состояния загрузки
       const timer = setTimeout(() => {
-        setForceLoadingDone(true);
-      }, 1500);
+        setIsLoading(false);
+      }, 800); // Всего 800мс максимум показывается спиннер
       
       return () => clearTimeout(timer);
     } else {
-      setForceLoadingDone(false);
+      setIsLoading(false);
     }
-  }, [isLoading]);
-  
-  // Финальное состояние загрузки с учетом принудительного сброса
-  const finalLoadingState = isLoading && !forceLoadingDone;
+  }, [isLoadingAll, isLoadingSearch, isLoadingFilters]);
   
   // Базовая проверка на ошибки 
   const hasError = !displayData || !Array.isArray(displayData);
@@ -234,7 +231,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       </Box>
 
       {/* Loading State */}
-      {finalLoadingState ? (
+      {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </Box>

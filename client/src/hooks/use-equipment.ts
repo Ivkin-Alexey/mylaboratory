@@ -37,7 +37,7 @@ export function useFindEquipment(searchTerm: string, filters?: Record<string, st
     queryFn: () => searchEquipment(searchTerm, filters),
     enabled: true, // Всегда активно, но с разными параметрами
     refetchOnWindowFocus: false,
-    retry: 0, // Отключаем повторы при ошибке, сразу идем в локальный режим
+    retry: false, // Отключаем повторы при ошибке
     staleTime: 30000, // Кеширование данных на 30 секунд
     retryOnMount: false, // Не пытаемся повторить при монтировании
   });
