@@ -189,7 +189,12 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           {getStatusChip()}
         
           <CardContent>
-            <Typography variant="h6" component="h3" gutterBottom>
+            <Typography 
+              variant="h6" 
+              component="h3" 
+              gutterBottom
+              sx={{ fontSize: '1rem' }}
+            >
               {equipment.name}
             </Typography>
             
