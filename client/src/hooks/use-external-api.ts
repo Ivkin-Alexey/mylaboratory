@@ -14,28 +14,27 @@ export function useExternalEquipmentList(searchTerm: string = DEFAULT_SEARCH_TER
   };
 
   const encodedParams = encodeQueryParams(params);
-  // Используем маршрут из apiRoutes или прямой URL, если у нас параметр поиска "весы"
-  const url = searchTerm === 'весы' 
-    ? `${BASE_API_URL}/equipments${encodedParams}` 
-    : `${apiRoutes.get.equipments.equipments}${encodedParams}`;
+  // Правильный URL для запроса к API с поддержкой HTTPS
+  const url = `${apiRoutes.get.equipments.equipments}${encodedParams}`;
 
   return useQuery({
     queryKey: ['externalEquipment', searchTerm],
     queryFn: async () => {
-      try {
-        console.log('Выполняем запрос к URL:', url);
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Ошибка при загрузке данных');
-        }
-        const data = await response.json();
-        console.log('Получены данные:', data);
-        return data as IEquipmentItem[];
-      } catch (error) {
-        console.error('Ошибка загрузки оборудования:', error);
-        return [] as IEquipmentItem[];
+      console.log('Выполняем запрос к URL:', url);
+      
+      // Делаем запрос без try/catch, чтобы TanStack Query мог обработать ошибки
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка ${response.status}: ${response.statusText || 'Проблема с доступом к внешнему API'}`);
       }
-    }
+      
+      const data = await response.json();
+      console.log('Получены данные:', data);
+      return data as IEquipmentItem[];
+    },
+    retry: 1, // Повторить запрос только один раз при ошибке
+    refetchOnWindowFocus: false // Не обновлять при фокусе окна
   });
 }
 
@@ -43,23 +42,25 @@ export function useExternalEquipmentList(searchTerm: string = DEFAULT_SEARCH_TER
  * Хук для получения детальной информации о внешнем оборудовании
  */
 export function useExternalEquipmentById(equipmentId: string) {
-  const url = `${apiRoutes.get.equipments.equipment}/${equipmentId}?login=user1`;
+  const url = `${apiRoutes.get.equipments.equipments}/${equipmentId}?login=user1`;
   
   return useQuery({
     queryKey: ['externalEquipment', equipmentId],
     queryFn: async () => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Ошибка при загрузке данных');
-        }
-        const data = await response.json();
-        return data as IEquipmentItem;
-      } catch (error) {
-        console.error('Ошибка загрузки данных оборудования:', error);
-        throw error;
+      console.log('Выполняем запрос к URL для получения информации об оборудовании:', url);
+      
+      // Делаем запрос без try/catch, чтобы TanStack Query мог обработать ошибки
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка ${response.status}: ${response.statusText || 'Проблема с доступом к внешнему API'}`);
       }
+      
+      const data = await response.json();
+      return data as IEquipmentItem;
     },
+    retry: 1,
+    refetchOnWindowFocus: false,
     enabled: !!equipmentId
   });
 }

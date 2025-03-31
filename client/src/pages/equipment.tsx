@@ -17,54 +17,7 @@ interface EquipmentPageProps {
 
 // Компонент для отображения внешнего оборудования из поиска по запросу "весы"
 const ExternalEquipmentSection: React.FC = () => {
-  // Создаем заглушки для внешнего оборудования вместо реального API
-  const mockEquipment: IEquipmentItem[] = [
-    {
-      id: "1001",
-      name: 'Аналитические весы OHAUS',
-      description: 'Высокоточные весы с точностью измерения до 0.0001 г',
-      category: 'Измерительное оборудование',
-      brand: 'OHAUS',
-      model: 'Pioneer PX',
-      imgUrl: 'https://via.placeholder.com/300x200',
-      serialNumber: 'SN-OHAUS-1234',
-      inventoryNumber: 'ИНВТ-2023-001',
-      location: 'Лаборатория химического анализа',
-      status: 'available',
-      usageType: 'immediate',
-      isFavorite: false
-    },
-    {
-      id: "1002",
-      name: 'Лабораторные весы Sartorius',
-      description: 'Электронные весы с максимальной нагрузкой до 3000 г',
-      category: 'Измерительное оборудование',
-      brand: 'Sartorius',
-      model: 'Entris II',
-      imgUrl: 'https://via.placeholder.com/300x200',
-      serialNumber: 'SN-SART-5678',
-      inventoryNumber: 'ИНВТ-2023-002',
-      location: 'Центральная лаборатория',
-      status: 'available',
-      usageType: 'booking',
-      isFavorite: true
-    },
-    {
-      id: "1003",
-      name: 'Прецизионные весы AND',
-      description: 'Весы для точных измерений с защитой от вибраций',
-      category: 'Измерительное оборудование',
-      brand: 'AND',
-      model: 'GF-1000',
-      imgUrl: 'https://via.placeholder.com/300x200',
-      serialNumber: 'SN-AND-91011',
-      inventoryNumber: 'ИНВТ-2023-003',
-      location: 'Аналитический центр',
-      status: 'available',
-      usageType: 'booking',
-      isFavorite: false
-    }
-  ];
+  const { data: equipmentList, isLoading, error } = useExternalEquipmentList('весы');
   
   return (
     <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
@@ -75,15 +28,17 @@ const ExternalEquipmentSection: React.FC = () => {
         Результаты поиска по запросу "весы" из внешнего каталога:
       </Typography>
       
-      <Box sx={{ p: 2, bgcolor: 'rgba(224, 224, 224, 0.3)', borderRadius: 1, mb: 2 }}>
-        <Typography color="text.secondary" align="center" gutterBottom>
-          <i>Примечание: Внешний API недоступен. Отображаются демонстрационные данные.</i>
-        </Typography>
-      </Box>
+      {error && (
+        <Box sx={{ p: 2, bgcolor: 'rgba(255, 235, 235, 0.5)', borderRadius: 1, mb: 2 }}>
+          <Typography color="error" align="center" gutterBottom>
+            <i>Ошибка при загрузке данных из внешнего API: {(error as Error).message}</i>
+          </Typography>
+        </Box>
+      )}
       
       <ExternalEquipmentList 
-        equipmentList={mockEquipment} 
-        isLoading={false}
+        equipmentList={equipmentList || []} 
+        isLoading={isLoading}
         onSearch={() => {}} // Пустая функция, поскольку поиск предустановлен
       />
     </Paper>
