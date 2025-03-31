@@ -81,9 +81,15 @@ const ExternalEquipmentPage: React.FC<ExternalEquipmentPageProps> = ({ onNavigat
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3 }}>
+        <Box sx={{ p: 2, bgcolor: 'rgba(224, 224, 224, 0.3)', borderRadius: 1, mb: 2 }}>
+          <Typography color="text.secondary" align="center" gutterBottom>
+            <i>Примечание: Внешний API недоступен. Отображаются демонстрационные данные.</i>
+          </Typography>
+        </Box>
+        
         <ExternalEquipmentList 
-          equipmentList={equipmentList} 
-          isLoading={isEquipmentLoading}
+          equipmentList={filteredEquipment} 
+          isLoading={false}
           onSearch={handleSearch}
         />
       </Paper>
