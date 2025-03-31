@@ -102,72 +102,17 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
 
   // Получаем информацию о типе кнопки и её поведении в зависимости от типа использования
   const getButtonConfig = () => {
-    // Для оборудования в использовании с типом IMMEDIATE_USE показываем кнопку "Завершить"
-    if (equipment.status === "in_use" && equipment.usageType === EquipmentUsageType.IMMEDIATE_USE) {
-      return {
-        variant: "contained" as const,
-        color: "success" as const,
-        disabled: false,
-        label: "Завершить",
-        onClick: (e: React.MouseEvent) => {
-          e.stopPropagation();
-          onBook(equipment.id);
-        }
-      };
-    }
-    
-    // Если оборудование недоступно, возвращаем неактивную кнопку
-    if (equipment.status !== "available") {
-      return {
-        variant: "outlined" as const,
-        disabled: true,
-        label: equipment.status === "maintenance" ? "На техобслуживании" : "Скоро будет доступно",
-        onClick: undefined
-      };
-    }
-    
-    // Если оборудование доступно, смотрим на тип использования
-    switch (equipment.usageType) {
-      case EquipmentUsageType.REQUIRES_BOOKING:
-        return {
-          variant: "contained" as const,
-          color: "primary" as const,
-          disabled: false,
-          label: "Забронировать",
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation();
-            onBook(equipment.id);
-          }
-        };
-      
-      case EquipmentUsageType.IMMEDIATE_USE:
-        return {
-          variant: "contained" as const,
-          color: "success" as const,
-          disabled: false,
-          label: "Использовать",
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation();
-            onBook(equipment.id);
-          }
-        };
-      
-      case EquipmentUsageType.LONG_TERM_ONLY:
-        // Для длительного использования не отображаем кнопку в карточке
-        return null;
-      
-      default:
-        return {
-          variant: "contained" as const,
-          color: "primary" as const,
-          disabled: false,
-          label: "Забронировать",
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation();
-            onBook(equipment.id);
-          }
-        };
-    }
+    // Для внешнего оборудования всегда показываем кнопку "Забронировать"
+    return {
+      variant: "contained" as const,
+      color: "primary" as const,
+      disabled: false,
+      label: "Забронировать",
+      onClick: (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onBook(equipment.id);
+      }
+    };
   };
   
   const buttonConfig = getButtonConfig();
