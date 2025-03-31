@@ -1,4 +1,4 @@
-export const BASE_API_URL = 'http://92.53.101.85/api';
+export const BASE_API_URL = 'https://92.53.101.85/api';
 export const DEFAULT_SEARCH_TERM = '';
 
 export const apiRoutes = {
