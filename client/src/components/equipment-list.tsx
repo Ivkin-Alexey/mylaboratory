@@ -100,21 +100,25 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   // Проверяем текущий статус загрузки
   const isLoading = isLoadingAll || isLoadingSearch || isLoadingFilters;
   
-  // Используем состояние для контролируемого отображения индикатора загрузки
-  const [showLoading, setShowLoading] = useState(false);
+  // Используем состояние для принудительного сброса загрузки после таймаута
+  const [forceLoadingDone, setForceLoadingDone] = useState(false);
   
+  // Устанавливаем таймаут для принудительного сброса состояния загрузки
   useEffect(() => {
     if (isLoading) {
-      // Показываем индикатор загрузки только после небольшой задержки
+      // Если загрузка длится больше 1.5 секунд, сбрасываем флаг загрузки
       const timer = setTimeout(() => {
-        setShowLoading(true);
-      }, 300);
+        setForceLoadingDone(true);
+      }, 1500);
       
       return () => clearTimeout(timer);
     } else {
-      setShowLoading(false);
+      setForceLoadingDone(false);
     }
   }, [isLoading]);
+  
+  // Финальное состояние загрузки с учетом принудительного сброса
+  const finalLoadingState = isLoading && !forceLoadingDone;
   
   // Базовая проверка на ошибки 
   const hasError = !displayData || !Array.isArray(displayData);
@@ -230,7 +234,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       </Box>
 
       {/* Loading State */}
-      {showLoading ? (
+      {finalLoadingState ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </Box>
