@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { 
   useEquipmentList, 
-  useSearchEquipment, 
   useFindEquipment,
   useUseEquipment,
   useFinishUsingEquipment,
@@ -11,7 +10,6 @@ import EquipmentCard from "./equipment-card";
 import { 
   Typography, 
   Box, 
-  Grid, 
   TextField,
   MenuItem,
   Select as MuiSelect,
@@ -22,7 +20,9 @@ import {
   CircularProgress,
   Paper,
   FormHelperText,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Checkbox,
+  ListItemText
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import type { Equipment } from "@shared/schema";
@@ -37,7 +37,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
   // Получаем фильтры с внешнего API
   const { data: externalFilters, isLoading: isLoadingFilters } = useEquipmentFilters();
@@ -70,15 +70,34 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     // Применяем дополнительные фильтры
     if (result && Array.isArray(result)) {
       // Если есть выбранные фильтры, применяем их
-      const activeFilters = Object.entries(selectedFilters).filter(([_, value]) => value !== "all");
+      const activeFilters = Object.entries(selectedFilters).filter(([_, values]) => 
+        values && Array.isArray(values) && values.length > 0
+      );
       
       if (activeFilters.length > 0) {
         result = result.filter(item => {
           // Проверяем, соответствует ли элемент всем выбранным фильтрам
-          return activeFilters.every(([filterName, filterValue]) => {
+          return activeFilters.every(([filterName, filterValues]) => {
             // @ts-ignore: динамический доступ к свойствам оборудования
             const itemValue = item[filterName];
-            return itemValue && (itemValue === filterValue || itemValue.includes(filterValue));
+            
+            // Если значение элемента является строкой
+            if (typeof itemValue === 'string') {
+              // Хотя бы одно значение из выбранных должно соответствовать
+              return filterValues.some(filterValue => 
+                itemValue === filterValue || itemValue.includes(filterValue)
+              );
+            }
+            
+            // Если значение элемента - массив
+            if (Array.isArray(itemValue)) {
+              // Должно быть пересечение между значениями элемента и выбранными фильтрами
+              return filterValues.some(filterValue => 
+                itemValue.includes(filterValue)
+              );
+            }
+            
+            return false;
           });
         });
       }
@@ -109,10 +128,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   };
   
   // Обработчик изменения динамических фильтров
-  const handleFilterChange = (filterName: string, value: string) => {
+  const handleFilterChange = (filterName: string, event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
     setSelectedFilters(prev => ({
       ...prev,
-      [filterName]: value
+      [filterName]: typeof value === 'string' ? [value] : value
     }));
   };
   
@@ -170,31 +190,46 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         mb: 4,
         px: { xs: 2, sm: 4 }
       }}>
-
         
         {/* Динамические фильтры из API */}
         {externalFilters && externalFilters.map((filter) => (
           <FormControl 
             key={filter.name}
             sx={{ 
-              minWidth: 140,
+              minWidth: 200,
               flexGrow: { xs: 1, md: 0 }
             }} 
             size="small"
           >
             <InputLabel>{filter.label}</InputLabel>
             <MuiSelect
-              value={selectedFilters[filter.name] || "all"}
+              multiple
+              value={selectedFilters[filter.name] || []}
               label={filter.label}
-              onChange={(e) => handleFilterChange(filter.name, e.target.value)}
+              onChange={(e) => handleFilterChange(filter.name, e)}
+              renderValue={(selected) => {
+                const selectedArray = selected as string[];
+                if (selectedArray.length === 0) {
+                  return `Все ${filter.label.toLowerCase()}`;
+                }
+                return selectedArray.join(', ');
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300
+                  }
+                }
+              }}
             >
-              <MenuItem value="all">{`Все ${filter.label.toLowerCase()}`}</MenuItem>
               {filter.options.map((option) => (
                 <MenuItem key={option} value={option}>
-                  {option}
+                  <Checkbox checked={(selectedFilters[filter.name] || []).indexOf(option) > -1} />
+                  <ListItemText primary={option} />
                 </MenuItem>
               ))}
             </MuiSelect>
+            <FormHelperText>Выберите несколько значений</FormHelperText>
           </FormControl>
         ))}
       </Box>
