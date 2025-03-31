@@ -106,11 +106,22 @@ export const getEquipmentList = async (): Promise<Equipment[]> => {
   try {
     // API требует, чтобы были указаны либо поисковая фраза, либо фильтры
     // Указываем фиктивный фильтр для получения всех данных
-    const response = await fetchFromExternalApi(`${EXTERNAL_API_BASE_URL}/equipments/search?kind=Научное оборудование&page=1&pageSize=${PAGE_SIZE}`);
+    const defaultFilter = ["Научное оборудование"];
+    const encodedFilter = encodeURIComponent(JSON.stringify(defaultFilter));
+    const url = `${EXTERNAL_API_BASE_URL}/equipments/search?kind=${encodedFilter}&page=1&pageSize=${PAGE_SIZE}`;
+    console.log("Запрос к внешнему API:", url);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Ошибка при запросе: ${response.status}`);
+    }
+    
+    const data = await response.json();
     
     // Преобразуем данные в формат приложения
-    if (response && response.results && Array.isArray(response.results)) {
-      return response.results.map(mapExternalEquipmentToLocal);
+    if (data && data.results && Array.isArray(data.results)) {
+      return data.results.map(mapExternalEquipmentToLocal);
     }
     
     return [];
@@ -150,17 +161,17 @@ export const searchEquipment = async (searchTerm: string, filters?: Record<strin
     
     // Если нет ни поискового запроса, ни фильтров, добавляем фиктивный фильтр для получения всех данных
     if (!searchTerm && !hasActiveFilters) {
-      url += '&kind=Научное оборудование';
+      const defaultFilter = ["Научное оборудование"];
+      url += `&kind=${encodeURIComponent(JSON.stringify(defaultFilter))}`;
     }
     
     // Добавляем фильтры к URL, если они есть
     if (hasActiveFilters) {
       for (const [key, values] of Object.entries(filters!)) {
         if (values && values.length > 0) {
-          // Добавляем каждое значение фильтра как отдельный параметр
-          values.forEach(value => {
-            url += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-          });
+          // Добавляем значения фильтра как массив JSON
+          const encodedValues = encodeURIComponent(JSON.stringify(values));
+          url += `&${encodeURIComponent(key)}=${encodedValues}`;
         }
       }
     }
