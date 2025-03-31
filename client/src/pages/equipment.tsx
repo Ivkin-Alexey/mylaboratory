@@ -20,7 +20,7 @@ const ExternalEquipmentSection: React.FC = () => {
   const { data: equipmentList, isLoading, error } = useExternalEquipmentList('весы');
   
   return (
-    <Paper elevation={3} sx={{ p: 3, mt: 4 }}>
+    <Box sx={{ mt: 4 }}>
       <Typography variant="h5" component="h2" gutterBottom>
         Внешний каталог - Весы
       </Typography>
@@ -41,7 +41,7 @@ const ExternalEquipmentSection: React.FC = () => {
         isLoading={isLoading}
         onSearch={() => {}} // Пустая функция, поскольку поиск предустановлен
       />
-    </Paper>
+    </Box>
   );
 };
 

@@ -12,6 +12,11 @@ import { z } from "zod";
 export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
   // prefix all routes with /api
+  
+  // Тестовый маршрут для проверки API
+  app.get('/test', (req: Request, res: Response) => {
+    res.send('привет');
+  });
 
   // Get all equipment
   app.get("/api/equipment", async (req: Request, res: Response) => {
