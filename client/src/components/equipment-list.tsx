@@ -497,7 +497,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
               }
             }}
           >
-            {showOnlyFavorites ? "Все оборудование" : "Отмеченные звездой"}
+            {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
           </Button>
         )}
       </Box>

@@ -187,7 +187,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   return (
     <StyledCard>
       {/* Кнопка добавления в избранное */}
-      <Tooltip title={isEquipmentFavorite ? "Убрать звезду" : "Отметить звездой"}>
+      <Tooltip title={isEquipmentFavorite ? "Удалить из избранного" : "Добавить в избранное"}>
         <IconButton 
           sx={{
             position: 'absolute',
