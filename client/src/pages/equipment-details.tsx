@@ -359,6 +359,18 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                   secondaryTypographyProps={{ variant: 'body1' }}
                 />
               </ListItem>
+              <Divider component="li" variant="inset" />
+              <ListItem>
+                <ListItemIcon>
+                  <CategoryIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Количество" 
+                  secondary={equipment.quantity ? `${equipment.quantity} шт.` : "1 шт."}
+                  primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                  secondaryTypographyProps={{ variant: 'body1', fontWeight: 'bold' }}
+                />
+              </ListItem>
             </List>
 
             <Box sx={{ mt: 3 }}>

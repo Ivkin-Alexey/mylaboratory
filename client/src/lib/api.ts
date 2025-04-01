@@ -46,6 +46,7 @@ export interface Equipment {
   type?: string;              // Тип оборудования
   kind?: string;              // Вид оборудования
   filesUrl?: string;          // Ссылка на документацию/файлы
+  quantity?: number;          // Количество единиц оборудования
 }
 
 // Тип InsertBooking для бронирований
@@ -99,6 +100,7 @@ const mapExternalEquipmentToLocal = (item: any): Equipment => {
     type: item.type || "",
     kind: item.kind || "",
     filesUrl: item.filesUrl || "",
+    quantity: item.quantity || 1, // Если quantity не указано, считаем что есть 1 единица
   };
 };
 
