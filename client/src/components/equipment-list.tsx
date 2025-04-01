@@ -248,24 +248,32 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       ) : (!displayData || !Array.isArray(displayData) || displayData.length === 0) ? (
         <Paper sx={{ py: 4, textAlign: 'center', mb: 4, backgroundColor: '#ffffff' }} elevation={1}>
           <SearchIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
-          <Typography variant="h6" sx={{ mt: 1 }}>
-            Оборудование не найдено
-          </Typography>
           <Typography variant="body2" color="text.secondary">
-            Попробуйте изменить параметры поиска или фильтры, чтобы найти нужное оборудование.
+            Нет данных для отображения. Попробуйте изменить параметры поиска или фильтры.
           </Typography>
         </Paper>
       ) : (
         <>
           {/* Отображение количества оборудования */}
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="body1" color="text.secondary">
-              Найдено оборудования: <strong>{displayData?.length || 0}</strong>
+          <Paper 
+            elevation={1} 
+            sx={{ 
+              mb: 3, 
+              p: 2, 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              backgroundColor: '#f7f7f7',
+              borderLeft: '4px solid #1976d2'
+            }}
+          >
+            <Typography variant="body1">
+              Всего найдено оборудования: <strong style={{ fontSize: '1.1rem' }}>{displayData?.length || 0}</strong>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Показано на странице: <strong>{paginatedData?.length || 0}</strong>
+              Показано на странице: <strong>{paginatedData?.length || 0}</strong> из <strong>{displayData?.length || 0}</strong>
             </Typography>
-          </Box>
+          </Paper>
           
           {/* Equipment Grid */}
           <Box 
