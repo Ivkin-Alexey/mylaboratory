@@ -73,6 +73,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
 
   // Determine which data to display
   const displayData = useMemo(() => {
+    // Если данные еще загружаются, вернем null, чтобы показать состояние загрузки
+    if (isLoadingAll || isLoadingSearch) {
+      return null;
+    }
+    
     // Проверяем, есть ли активные фильтры или поисковый запрос
     const hasActiveFilters = Object.values(selectedFilters).some(values => values && values.length > 0);
     
@@ -83,7 +88,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     
     // Иначе показываем все оборудование
     return allEquipment || [];
-  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment]);
+  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment, isLoadingAll, isLoadingSearch]);
 
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
@@ -111,7 +116,8 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   }, [debouncedSearchTerm, selectedFilters]);
   
   // Проверяем текущий статус загрузки и делаем его максимально коротким
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Начинаем с состояния загрузки
+  const [showNoDataMessage, setShowNoDataMessage] = useState(false);
   
   // Отслеживаем реальное состояние загрузки
   useEffect(() => {
@@ -119,6 +125,8 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     
     if (loadingState) {
       setIsLoading(true);
+      setShowNoDataMessage(false);
+      
       // Устанавливаем очень короткий таймаут для отмены состояния загрузки
       const timer = setTimeout(() => {
         setIsLoading(false);
@@ -127,6 +135,13 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       return () => clearTimeout(timer);
     } else {
       setIsLoading(false);
+      
+      // Добавляем задержку перед отображением сообщения об отсутствии данных
+      const noDataTimer = setTimeout(() => {
+        setShowNoDataMessage(true);
+      }, 300);
+      
+      return () => clearTimeout(noDataTimer);
     }
   }, [isLoadingAll, isLoadingSearch, isLoadingFilters]);
   
@@ -436,11 +451,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       )}
 
       {/* Loading State */}
-      {isLoading ? (
+      {isLoading || isLoadingAll || isLoadingSearch ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </Box>
-      ) : (!displayData || !Array.isArray(displayData) || displayData.length === 0) ? (
+      ) : (!displayData || !Array.isArray(displayData) || displayData.length === 0) && showNoDataMessage ? (
         <Paper sx={{ py: 4, textAlign: 'center', mb: 4, backgroundColor: '#ffffff' }} elevation={1}>
           <SearchIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
           <Typography variant="body2" color="text.secondary">
