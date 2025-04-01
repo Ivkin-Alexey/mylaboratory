@@ -247,6 +247,16 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         </Paper>
       ) : (
         <>
+          {/* Отображение количества оборудования */}
+          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="body1" color="text.secondary">
+              Найдено оборудования: <strong>{displayData?.length || 0}</strong>
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Показано на странице: <strong>{paginatedData?.length || 0}</strong>
+            </Typography>
+          </Box>
+          
           {/* Equipment Grid */}
           <Box 
             sx={{ 
