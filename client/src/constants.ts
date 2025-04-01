@@ -9,6 +9,7 @@ export const apiRoutes = {
   EQUIPMENT_SEARCH: `${API_BASE_URL}/equipments/search`,
   EQUIPMENT_FIND: `${API_BASE_URL}/equipments/search`,
   EQUIPMENT_FILTER: `${API_BASE_URL}/equipments/filters`,
+  EQUIPMENT_BY_ID: `${API_BASE_URL}/equipments/:id`, // Шаблон для получения оборудования по ID
 };
 
 export const encodeQueryParams = (params: Record<string, any>): string => {

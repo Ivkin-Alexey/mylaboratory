@@ -33,7 +33,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CategoryIcon from '@mui/icons-material/Category';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import { useEquipmentList, useUseEquipment, useFinishUsingEquipment } from "@/hooks/use-equipment";
+import { useEquipmentList, useUseEquipment, useFinishUsingEquipment, useEquipmentById } from "@/hooks/use-equipment";
+import { useQuery } from "@tanstack/react-query";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import type { Equipment } from "@/lib/api";
@@ -49,13 +50,15 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   const [_, params] = useRoute("/equipment/:id");
   const [, setLocation] = useLocation();
   const equipmentId = params ? parseInt(params.id) : null;
-  const { data: equipmentList, isLoading } = useEquipmentList();
+  const { data: equipment, isLoading, isError } = useEquipmentById(equipmentId);
   const { toast } = useToast();
-
-  // Find the selected equipment from the list
-  const equipment = equipmentId && equipmentList && Array.isArray(equipmentList)
-    ? equipmentList.find((item: Equipment) => item.id === equipmentId) || null
-    : null;
+  
+  // Для отладки
+  useEffect(() => {
+    if (equipment) {
+      console.log("Загружены данные оборудования с ID", equipmentId, equipment);
+    }
+  }, [equipment, equipmentId]);
   
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);

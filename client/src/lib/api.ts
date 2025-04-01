@@ -133,15 +133,32 @@ export const getEquipmentList = async (): Promise<Equipment[]> => {
 
 export const getEquipmentById = async (id: number): Promise<Equipment> => {
   try {
-    // Получаем все оборудование и ищем нужный id
-    const allEquipment = await getEquipmentList();
-    const equipment = allEquipment.find(item => item.id === id);
+    // Формируем URL для запроса к внешнему API
+    const externalId = id.toString().padStart(19, '0'); // Преобразуем ID в формат внешнего API
+    const url = `${EXTERNAL_API_BASE_URL}/equipments/${externalId}`;
     
-    if (!equipment) {
-      throw new Error(`Оборудование с ID ${id} не найдено`);
+    console.log(`Запрос к внешнему API для получения оборудования по ID: ${url}`);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error(`Ошибка при запросе к внешнему API: ${response.status}`);
+      // Если запрос не удался, возвращаемся к старому методу - поиску в списке
+      const allEquipment = await getEquipmentList();
+      const equipment = allEquipment.find(item => item.id === id);
+      
+      if (!equipment) {
+        throw new Error(`Оборудование с ID ${id} не найдено`);
+      }
+      
+      return equipment;
     }
     
-    return equipment;
+    // Обрабатываем ответ от внешнего API
+    const externalEquipment = await response.json();
+    
+    // Маппим данные в наш формат
+    return mapExternalEquipmentToLocal(externalEquipment);
   } catch (error) {
     console.error(`Ошибка при получении оборудования с ID ${id}:`, error);
     throw error;

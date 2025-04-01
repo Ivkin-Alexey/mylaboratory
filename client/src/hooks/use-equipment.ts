@@ -7,6 +7,7 @@ import {
   useEquipment,
   finishUsingEquipment,
   getEquipmentFilters,
+  getEquipmentById,
   ExternalFilter,
   Equipment
 } from "@/lib/api";
@@ -118,5 +119,17 @@ export function useEquipmentFilters() {
     staleTime: 3600000, // Кэшируем фильтры на 1 час
     gcTime: 3600000, // Данные хранятся в кэше 1 час
     refetchOnWindowFocus: false
+  });
+}
+
+// Хук для получения информации об оборудовании по ID
+export function useEquipmentById(equipmentId: number | null) {
+  return useQuery<Equipment>({
+    queryKey: ["equipment", equipmentId],
+    queryFn: () => getEquipmentById(equipmentId!),
+    enabled: !!equipmentId, // Запрос выполняется только если есть ID
+    refetchOnWindowFocus: false,
+    staleTime: 60000, // Кэшируем данные на 1 минуту
+    gcTime: 300000, // Данные хранятся в кэше 5 минут после использования
   });
 }
