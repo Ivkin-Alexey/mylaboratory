@@ -12,8 +12,8 @@ import {
   Tooltip
 } from "@mui/material";
 import { useLocation } from "wouter";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import type { Equipment } from "@/lib/api";
 import { useFavorites } from '@/hooks/use-favorites';
 
@@ -187,7 +187,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   return (
     <StyledCard>
       {/* Кнопка добавления в избранное */}
-      <Tooltip title={isEquipmentFavorite ? "Удалить из избранного" : "Добавить в избранное"}>
+      <Tooltip title={isEquipmentFavorite ? "Убрать звезду" : "Отметить звездой"}>
         <IconButton 
           sx={{
             position: 'absolute',
@@ -203,7 +203,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           size="small"
           color={isEquipmentFavorite ? "error" : "default"}
         >
-          {isEquipmentFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          {isEquipmentFavorite ? <StarIcon /> : <StarBorderIcon />}
         </IconButton>
       </Tooltip>
       

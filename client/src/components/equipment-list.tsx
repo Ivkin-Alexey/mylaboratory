@@ -8,8 +8,8 @@ import {
 } from "@/hooks/use-equipment";
 import { useFavorites } from "@/hooks/use-favorites";
 import EquipmentCard from "./equipment-card";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { 
   Typography, 
   Box, 
@@ -485,7 +485,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
             variant={showOnlyFavorites ? "contained" : "outlined"}
             color="error"
             size="small"
-            startIcon={showOnlyFavorites ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
             onClick={() => setShowOnlyFavorites(prev => !prev)}
             sx={{
               borderRadius: 4,
@@ -497,7 +497,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
               }
             }}
           >
-            {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
+            {showOnlyFavorites ? "Все оборудование" : "Отмеченные звездой"}
           </Button>
         )}
       </Box>
