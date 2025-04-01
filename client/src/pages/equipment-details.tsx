@@ -513,8 +513,6 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                 </Button>
               </Box>
             )}
-            
-            <Divider sx={{ my: 2 }} />
           </Paper>
         </Box>
       </Box>
