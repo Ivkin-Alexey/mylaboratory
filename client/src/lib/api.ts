@@ -58,10 +58,30 @@ export interface InsertBooking {
   additionalRequirements?: string | null;
 }
 
+// Функция для создания уникального ID из инвентарного и серийного номеров
+const generateUniqueId = (item: any): number => {
+  // Проверяем наличие инвентарного и серийного номеров
+  if (item.inventoryNumber && item.serialNumber) {
+    // Берем последние 4 символа из каждого номера и объединяем их
+    const invSuffix = String(item.inventoryNumber).slice(-4).padStart(4, '0');
+    const serialSuffix = String(item.serialNumber).slice(-4).padStart(4, '0');
+    return Number(invSuffix + serialSuffix);
+  } else if (item.inventoryNumber) {
+    // Если есть только инвентарный номер
+    return Number(String(item.inventoryNumber).slice(-9).padStart(9, '0'));
+  } else if (item.serialNumber) {
+    // Если есть только серийный номер
+    return Number(String(item.serialNumber).slice(-9).padStart(9, '0'));
+  } else {
+    // Если нет ни одного номера, используем ID с API
+    return Number(item.id.substring(0, 9));
+  }
+};
+
 // Функция для маппинга данных с внешнего API в формат нашего приложения
 const mapExternalEquipmentToLocal = (item: any): Equipment => {
   return {
-    id: Number(item.id.substring(0, 9)), // Берем первые символы id для преобразования в number
+    id: generateUniqueId(item), // Используем комбинацию инвентарного и серийного номеров
     name: item.name,
     description: item.description,
     category: item.classification ? item.classification.toLowerCase().split(' ')[0] : "other",
