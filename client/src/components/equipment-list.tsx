@@ -480,26 +480,27 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         )}
         
         {/* Кнопка переключения режима "Только избранное" */}
-        {hasFavorites && (
-          <Button
-            variant={showOnlyFavorites ? "contained" : "outlined"}
-            color="error"
-            size="small"
-            startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
-            onClick={() => setShowOnlyFavorites(prev => !prev)}
-            sx={{
-              borderRadius: 4,
-              textTransform: 'none',
-              fontWeight: 'bold',
+        <Button
+          variant={showOnlyFavorites ? "contained" : "outlined"}
+          color="error"
+          size="small"
+          startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
+          onClick={() => {
+            console.log('Переключение фильтра избранного');
+            setShowOnlyFavorites(prev => !prev);
+          }}
+          sx={{
+            borderRadius: 4,
+            textTransform: 'none',
+            fontWeight: 'bold',
+            boxShadow: 'none',
+            '&:hover': {
               boxShadow: 'none',
-              '&:hover': {
-                boxShadow: 'none',
-              }
-            }}
-          >
-            {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
-          </Button>
-        )}
+            }
+          }}
+        >
+          {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
+        </Button>
       </Box>
 
       {/* Loading State */}
