@@ -237,6 +237,9 @@ export const searchEquipment = async (searchTerm: string, filters?: Record<strin
     
     const data = await response.json();
     
+    // Выводим в консоль полный ответ API для анализа структуры
+    console.log("Ответ от API поиска оборудования:", data);
+    
     // Преобразуем результаты
     if (data && data.results && Array.isArray(data.results)) {
       return data.results.map(mapExternalEquipmentToLocal);
