@@ -22,7 +22,7 @@ const CURRENT_USER_ID = 1;
 
 // API URL
 const EXTERNAL_API_BASE_URL = "https://scmp-bot-server.ru/api";
-const PAGE_SIZE = 100; // Большой размер страницы для получения всех результатов
+const PAGE_SIZE = 38; // Количество карточек на странице по запросу пользователя
 
 // Тип Equipment для внутреннего использования в клиенте
 export interface Equipment {

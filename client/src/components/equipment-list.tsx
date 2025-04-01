@@ -31,7 +31,7 @@ interface EquipmentListProps {
   onBookEquipment: (equipmentId: number) => void;
 }
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 38;
 
 const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
