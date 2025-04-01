@@ -7,6 +7,7 @@ import {
   useEquipmentFilters
 } from "@/hooks/use-equipment";
 import { useFavorites } from "@/hooks/use-favorites";
+import { getFavoriteIdsFromStorage } from "@/hooks/use-favorites";
 import EquipmentCard from "./equipment-card";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -100,12 +101,24 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     }
     
     // Применяем фильтр избранного, если он активен
-    if (showOnlyFavorites && baseData.length > 0) {
-      return baseData.filter(item => favoriteIds.includes(item.id));
+    if (showOnlyFavorites) {
+      // Получаем актуальный список избранного напрямую из localStorage
+      const currentFavorites = getFavoriteIdsFromStorage();
+      console.log('Текущий список избранного при фильтрации:', currentFavorites);
+      
+      if (baseData && baseData.length > 0 && currentFavorites.length > 0) {
+        // Фильтруем базовые данные, оставляя только те, чьи ID есть в избранном
+        const filteredData = baseData.filter(item => currentFavorites.includes(item.id));
+        console.log('Отфильтрованные данные избранного:', filteredData.length);
+        return filteredData;
+      } else {
+        console.log('Нет избранных элементов или базовых данных');
+        return [];
+      }
     }
     
     return baseData;
-  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment, isLoadingAll, isLoadingSearch, showOnlyFavorites, favoriteIds]);
+  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment, isLoadingAll, isLoadingSearch, showOnlyFavorites]);
 
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);

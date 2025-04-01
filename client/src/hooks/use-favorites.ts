@@ -7,7 +7,7 @@ const FAVORITES_STORAGE_KEY = 'equipment-favorites';
 /**
  * Получение списка избранных ID из локального хранилища
  */
-const getFavoriteIdsFromStorage = (): string[] => {
+export const getFavoriteIdsFromStorage = (): string[] => {
   try {
     const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
     return storedFavorites ? JSON.parse(storedFavorites) : [];
