@@ -38,6 +38,14 @@ export interface Equipment {
   model?: string;
   serialNumber?: string;
   inventoryNumber?: string;
+  
+  // Дополнительные поля из API
+  classification?: string;    // Классификация оборудования 
+  measurements?: string;      // Измерения, которые может делать оборудование
+  department?: string;        // Подразделение/кафедра
+  type?: string;              // Тип оборудования
+  kind?: string;              // Вид оборудования
+  filesUrl?: string;          // Ссылка на документацию/файлы
 }
 
 // Тип InsertBooking для бронирований
@@ -60,11 +68,19 @@ const mapExternalEquipmentToLocal = (item: any): Equipment => {
     location: item.department || "Не указано",
     status: "available", // По умолчанию все оборудование доступно
     imageUrl: item.imgUrl,
-    usageType: "requires_booking", // По умолчанию требуется бронирование
+    usageType: "booking_required", // По умолчанию требуется бронирование
     brand: item.brand,
     model: item.model,
     serialNumber: item.serialNumber,
     inventoryNumber: item.inventoryNumber,
+    
+    // Дополнительные поля из внешнего API
+    classification: item.classification || "",
+    measurements: item.measurements || "",
+    department: item.department || "",
+    type: item.type || "",
+    kind: item.kind || "",
+    filesUrl: item.filesUrl || "",
   };
 };
 

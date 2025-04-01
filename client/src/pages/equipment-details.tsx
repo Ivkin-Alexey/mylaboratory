@@ -289,8 +289,8 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                   <CategoryIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Категория" 
-                  secondary={equipment.category}
+                  primary="Классификация" 
+                  secondary={equipment.classification || "Не указано"}
                   primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
                   secondaryTypographyProps={{ variant: 'body1' }}
                 />
@@ -301,8 +301,32 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                   <LocationOnIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Местоположение" 
-                  secondary={equipment.location}
+                  primary="Подразделение" 
+                  secondary={equipment.department || "Не указано"}
+                  primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                  secondaryTypographyProps={{ variant: 'body1' }}
+                />
+              </ListItem>
+              <Divider component="li" variant="inset" />
+              <ListItem>
+                <ListItemIcon>
+                  <CategoryIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Тип оборудования" 
+                  secondary={equipment.type || "Не указано"}
+                  primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
+                  secondaryTypographyProps={{ variant: 'body1' }}
+                />
+              </ListItem>
+              <Divider component="li" variant="inset" />
+              <ListItem>
+                <ListItemIcon>
+                  <CategoryIcon color="primary" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Вид оборудования" 
+                  secondary={equipment.kind || "Не указано"}
                   primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
                   secondaryTypographyProps={{ variant: 'body1' }}
                 />
@@ -313,8 +337,8 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                   <AccessTimeIcon color="primary" />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Стандартная длительность сессии" 
-                  secondary="2 часа"
+                  primary="Выполняемые измерения" 
+                  secondary={equipment.measurements || "Не указано"}
                   primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
                   secondaryTypographyProps={{ variant: 'body1' }}
                 />
@@ -326,7 +350,10 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                 </ListItemIcon>
                 <ListItemText 
                   primary="Статус" 
-                  secondary={equipment.status.charAt(0).toUpperCase() + equipment.status.slice(1)}
+                  secondary={equipment.status === "available" ? "Доступно" : 
+                           equipment.status === "in_use" ? "В работе" : 
+                           equipment.status === "booked" ? "Забронировано" : 
+                           equipment.status === "maintenance" ? "На обслуживании" : "Неизвестно"}
                   primaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
                   secondaryTypographyProps={{ variant: 'body1' }}
                 />
@@ -425,15 +452,67 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
 
           <Paper elevation={1} sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Инструкция по использованию
+              Техническая информация
             </Typography>
-            <Typography variant="body2" paragraph>
-              Данное оборудование требует специального обучения перед использованием. Убедитесь, что вы прошли 
-              необходимую программу обучения перед бронированием. Обратитесь к руководителю лаборатории для получения дополнительной информации.
-            </Typography>
-            <Typography variant="body2">
-              По любым вопросам, связанным с данным оборудованием, обращайтесь в техническую поддержку по адресу 
-              <Box component="span" sx={{ color: 'primary.main', ml: 0.5 }}>support@labequipment.com</Box>
+            
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid item xs={12} sm={4}>
+                <Typography variant="body2" color="text.secondary">
+                  Марка:
+                </Typography>
+                <Typography variant="body1">
+                  {equipment.brand || "Не указано"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Typography variant="body2" color="text.secondary">
+                  Модель:
+                </Typography>
+                <Typography variant="body1">
+                  {equipment.model || "Не указано"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Typography variant="body2" color="text.secondary">
+                  Серийный номер:
+                </Typography>
+                <Typography variant="body1">
+                  {equipment.serialNumber || "Не указано"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Typography variant="body2" color="text.secondary">
+                  Инвентарный номер:
+                </Typography>
+                <Typography variant="body1">
+                  {equipment.inventoryNumber || "Не указано"}
+                </Typography>
+              </Grid>
+            </Grid>
+            
+            {equipment.filesUrl && (
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Документация по оборудованию:
+                </Typography>
+                <Button 
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  href={equipment.filesUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Открыть документацию
+                </Button>
+              </Box>
+            )}
+            
+            <Divider sx={{ my: 2 }} />
+            
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              По любым вопросам, связанным с данным оборудованием, обращайтесь к руководителю подразделения: 
+              <Box component="span" sx={{ color: 'primary.main', ml: 0.5 }}>{equipment.department || "Ответственное подразделение"}</Box>
             </Typography>
           </Paper>
         </Box>
