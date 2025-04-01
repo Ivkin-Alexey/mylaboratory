@@ -85,11 +85,21 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
   
+  // Для отладки
+  useEffect(() => {
+    console.log("Данные оборудования:", displayData);
+    console.log("Общее количество оборудования:", displayData?.length || 0);
+    console.log("Текущая страница:", currentPage);
+    console.log("Всего страниц:", totalPages);
+  }, [displayData, currentPage, totalPages]);
+  
   const paginatedData = useMemo(() => {
     if (!displayData || !Array.isArray(displayData)) return [];
     
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return displayData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const result = displayData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    console.log("Данные на текущей странице:", result.length);
+    return result;
   }, [displayData, currentPage]);
 
   // Reset pagination when filters change
