@@ -3,7 +3,7 @@ import { encodeQueryParams } from "@/constants";
 // Определение типов для клиентской части
 export interface Booking {
   id: number;
-  equipmentId: number;
+  equipmentId: string; // ID оборудования теперь строка
   userId: number;
   date: string;
   timeSlot: string;
@@ -26,7 +26,7 @@ const PAGE_SIZE = 38; // Количество карточек на страни
 
 // Тип Equipment для внутреннего использования в клиенте
 export interface Equipment {
-  id: number;
+  id: string;
   name: string;
   description: string;
   category: string;
@@ -50,7 +50,7 @@ export interface Equipment {
 
 // Тип InsertBooking для бронирований
 export interface InsertBooking {
-  equipmentId: number;
+  equipmentId: string;
   userId: number;
   date: string;
   timeSlot: string;
@@ -59,22 +59,20 @@ export interface InsertBooking {
 }
 
 // Функция для создания уникального ID из инвентарного и серийного номеров
-const generateUniqueId = (item: any): number => {
+const generateUniqueId = (item: any): string => {
   // Проверяем наличие инвентарного и серийного номеров
   if (item.inventoryNumber && item.serialNumber) {
-    // Берем последние 4 символа из каждого номера и объединяем их
-    const invSuffix = String(item.inventoryNumber).slice(-4).padStart(4, '0');
-    const serialSuffix = String(item.serialNumber).slice(-4).padStart(4, '0');
-    return Number(invSuffix + serialSuffix);
+    // Объединяем инвентарный и серийный номера в строку
+    return `${item.inventoryNumber}${item.serialNumber}`;
   } else if (item.inventoryNumber) {
     // Если есть только инвентарный номер
-    return Number(String(item.inventoryNumber).slice(-9).padStart(9, '0'));
+    return item.inventoryNumber;
   } else if (item.serialNumber) {
     // Если есть только серийный номер
-    return Number(String(item.serialNumber).slice(-9).padStart(9, '0'));
+    return item.serialNumber;
   } else {
     // Если нет ни одного номера, используем ID с API
-    return Number(item.id.substring(0, 9));
+    return item.id;
   }
 };
 
@@ -167,11 +165,10 @@ export const getEquipmentList = async (): Promise<Equipment[]> => {
   }
 };
 
-export const getEquipmentById = async (id: number): Promise<Equipment> => {
+export const getEquipmentById = async (id: string): Promise<Equipment> => {
   try {
-    // Формируем URL для запроса к внешнему API
-    const externalId = id.toString().padStart(19, '0'); // Преобразуем ID в формат внешнего API
-    const url = `${EXTERNAL_API_BASE_URL}/equipments/${externalId}`;
+    // Используем ID напрямую для запроса к внешнему API
+    const url = `${EXTERNAL_API_BASE_URL}/equipments/${id}`;
     
     console.log(`Запрос к внешнему API для получения оборудования по ID: ${url}`);
     
@@ -259,7 +256,7 @@ export const findEquipment = async (searchTerm: string): Promise<Equipment[]> =>
 };
 
 // Генерируем фиксированный список доступных временных слотов для каждой даты
-export const getAvailableTimeSlots = async (equipmentId: number, date: string): Promise<string[]> => {
+export const getAvailableTimeSlots = async (equipmentId: string, date: string): Promise<string[]> => {
   try {
     // Генерируем стандартные временные слоты для любой даты и оборудования
     const standardTimeSlots = [
@@ -311,7 +308,7 @@ export const createBooking = async (bookingData: Omit<InsertBooking, "userId">):
 };
 
 // Локальное хранилище состояния оборудования
-const equipmentStatus: Record<number, { status: string }> = {};
+const equipmentStatus: Record<string, { status: string }> = {};
 
 export const getUserBookings = async (): Promise<BookingWithEquipment[]> => {
   try {
@@ -367,7 +364,7 @@ export const cancelBooking = async (bookingId: number): Promise<Booking> => {
 };
 
 // Функция для отметки оборудования как "в использовании"
-export const useEquipment = async (equipmentId: number): Promise<Equipment> => {
+export const useEquipment = async (equipmentId: string): Promise<Equipment> => {
   try {
     // Получаем информацию об оборудовании
     const equipment = await getEquipmentById(equipmentId);
@@ -387,7 +384,7 @@ export const useEquipment = async (equipmentId: number): Promise<Equipment> => {
 };
 
 // Функция для завершения использования оборудования
-export const finishUsingEquipment = async (equipmentId: number): Promise<Equipment> => {
+export const finishUsingEquipment = async (equipmentId: string): Promise<Equipment> => {
   try {
     // Получаем информацию об оборудовании
     const equipment = await getEquipmentById(equipmentId);

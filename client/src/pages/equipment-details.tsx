@@ -48,7 +48,7 @@ interface EquipmentDetailsProps {
 const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBookings }) => {
   const [_, params] = useRoute("/equipment/:id");
   const [, setLocation] = useLocation();
-  const equipmentId = params ? parseInt(params.id) : null;
+  const equipmentId = params ? params.id : null;
   const { data: equipment, isLoading, isError } = useEquipmentById(equipmentId);
   const { toast } = useToast();
   
@@ -83,7 +83,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   const finishUsingEquipmentMutation = useFinishUsingEquipment();
   
   // Обработчик для использования оборудования без бронирования
-  const handleUseEquipment = (id: number) => {
+  const handleUseEquipment = (id: string) => {
     if (isInUse || isEquipmentLoading) return;
     setIsEquipmentLoading(true);
     
@@ -99,7 +99,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   };
   
   // Обработчик для завершения использования оборудования
-  const handleFinishUsingEquipment = (id: number) => {
+  const handleFinishUsingEquipment = (id: string) => {
     if (!isInUse || isEquipmentLoading) return;
     setIsEquipmentLoading(true);
     

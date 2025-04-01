@@ -44,7 +44,7 @@ export function useFindEquipment(searchTerm: string, filters?: Record<string, st
   });
 }
 
-export function useAvailableTimeSlots(equipmentId: number | null, date: string | null) {
+export function useAvailableTimeSlots(equipmentId: string | null, date: string | null) {
   return useQuery<string[]>({
     queryKey: ["available-slots", equipmentId, date],
     queryFn: () => getAvailableTimeSlots(equipmentId!, date!),
@@ -61,7 +61,7 @@ export function useUseEquipment() {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: (equipmentId: number) => {
+    mutationFn: (equipmentId: string) => {
       return useEquipment(equipmentId);
     },
     onSuccess: () => {
@@ -89,7 +89,7 @@ export function useFinishUsingEquipment() {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: (equipmentId: number) => {
+    mutationFn: (equipmentId: string) => {
       return finishUsingEquipment(equipmentId);
     },
     onSuccess: () => {
@@ -123,7 +123,7 @@ export function useEquipmentFilters() {
 }
 
 // Хук для получения информации об оборудовании по ID
-export function useEquipmentById(equipmentId: number | null) {
+export function useEquipmentById(equipmentId: string | null) {
   return useQuery<Equipment>({
     queryKey: ["equipment", equipmentId],
     queryFn: () => getEquipmentById(equipmentId!),

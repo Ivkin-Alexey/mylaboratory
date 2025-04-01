@@ -14,7 +14,7 @@ import type { Equipment } from "@/lib/api";
 
 interface EquipmentCardProps {
   equipment: Equipment;
-  onBook: (equipmentId: number) => void;
+  onBook: (equipmentId: string) => void;
 }
 
 // Стилизованная карточка с фиксированной шириной

@@ -28,7 +28,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import type { Equipment } from "@/lib/api";
 
 interface EquipmentListProps {
-  onBookEquipment: (equipmentId: number) => void;
+  onBookEquipment: (equipmentId: string) => void;
 }
 
 const ITEMS_PER_PAGE = 38;
@@ -134,7 +134,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   };
   
   // Обработчик для кнопок "Использовать" и "Завершить"
-  const handleEquipmentAction = (equipmentId: number) => {
+  const handleEquipmentAction = (equipmentId: string) => {
     const equipment = displayData?.find(item => item.id === equipmentId);
     
     if (!equipment) return;
