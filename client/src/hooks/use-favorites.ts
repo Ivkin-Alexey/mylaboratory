@@ -52,17 +52,23 @@ export function useFavorites() {
   
   // Функция для переключения статуса избранного
   const toggleFavorite = useCallback((equipmentId: string) => {
+    console.log('toggleFavorite вызван для ID:', equipmentId);
     setFavoriteIds(prev => {
+      console.log('Текущий список избранного:', prev);
       if (prev.includes(equipmentId)) {
+        console.log('Удаляем из избранного', equipmentId);
         return prev.filter(id => id !== equipmentId); // Удаляем, если уже в избранном
       }
+      console.log('Добавляем в избранное', equipmentId);
       return [...prev, equipmentId]; // Иначе добавляем
     });
   }, []);
   
   // Функция для проверки, добавлено ли оборудование в избранное
   const isFavorite = useCallback((equipmentId: string) => {
-    return favoriteIds.includes(equipmentId);
+    const isInFavorites = favoriteIds.includes(equipmentId);
+    console.log(`isFavorite проверяет ID: ${equipmentId}, результат: ${isInFavorites}`);
+    return isInFavorites;
   }, [favoriteIds]);
   
   // Функция для фильтрации списка оборудования, оставляя только избранное

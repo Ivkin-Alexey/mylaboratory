@@ -62,6 +62,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   // Обработчик клика по кнопке избранного
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Предотвращаем всплытие события
+    console.log('Клик по кнопке избранного, ID:', equipment.id);
     toggleFavorite(equipment.id);
   };
   
