@@ -6,7 +6,10 @@ import {
   useFinishUsingEquipment,
   useEquipmentFilters
 } from "@/hooks/use-equipment";
+import { useFavorites } from "@/hooks/use-favorites";
 import EquipmentCard from "./equipment-card";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { 
   Typography, 
   Box, 
@@ -41,6 +44,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState<boolean>(false);
+  
+  // Используем хук избранного
+  const { favoriteIds, hasFavorites } = useFavorites();
 
   // Получаем фильтры с внешнего API
   const { data: externalFilters, isLoading: isLoadingFilters } = useEquipmentFilters();
@@ -81,14 +88,24 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     // Проверяем, есть ли активные фильтры или поисковый запрос
     const hasActiveFilters = Object.values(selectedFilters).some(values => values && values.length > 0);
     
+    // Сначала определяем базовый набор данных
+    let baseData: Equipment[] = [];
+    
     // Если активны фильтры или поиск - используем данные из поиска
     if (debouncedSearchTerm || hasActiveFilters) {
-      return searchResults || [];
+      baseData = searchResults || [];
+    } else {
+      // Иначе показываем все оборудование
+      baseData = allEquipment || [];
     }
     
-    // Иначе показываем все оборудование
-    return allEquipment || [];
-  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment, isLoadingAll, isLoadingSearch]);
+    // Применяем фильтр избранного, если он активен
+    if (showOnlyFavorites && baseData.length > 0) {
+      return baseData.filter(item => favoriteIds.includes(item.id));
+    }
+    
+    return baseData;
+  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment, isLoadingAll, isLoadingSearch, showOnlyFavorites, favoriteIds]);
 
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
@@ -110,10 +127,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     return result;
   }, [displayData, currentPage]);
 
-  // Reset pagination when filters change
+  // Reset pagination when filters change or режим избранного изменяется
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm, selectedFilters]);
+  }, [debouncedSearchTerm, selectedFilters, showOnlyFavorites]);
   
   // Проверяем текущий статус загрузки и делаем его максимально коротким
   const [isLoading, setIsLoading] = useState(true); // Начинаем с состояния загрузки
@@ -172,6 +189,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   // Обработчик сброса всех фильтров (без очистки поискового запроса)
   const handleClearAllFilters = () => {
     setSelectedFilters({});
+    // Сбрасываем также фильтр избранного, если он был активен
+    if (showOnlyFavorites) {
+      setShowOnlyFavorites(false);
+    }
     // Теперь поисковая фраза остается в инпуте
   };
   
@@ -425,9 +446,18 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         ))}
       </Box>
       
-      {/* Кнопка сброса всех фильтров */}
-      {hasActiveFilters && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+      {/* Кнопки фильтров и избранного */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          mb: 2,
+          gap: 2,
+          flexWrap: 'wrap'
+        }}
+      >
+        {/* Кнопка сброса всех фильтров */}
+        {hasActiveFilters && (
           <Button
             variant="outlined"
             color="primary"
@@ -447,8 +477,30 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           >
             Сбросить все фильтры
           </Button>
-        </Box>
-      )}
+        )}
+        
+        {/* Кнопка переключения режима "Только избранное" */}
+        {hasFavorites && (
+          <Button
+            variant={showOnlyFavorites ? "contained" : "outlined"}
+            color="error"
+            size="small"
+            startIcon={showOnlyFavorites ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            onClick={() => setShowOnlyFavorites(prev => !prev)}
+            sx={{
+              borderRadius: 4,
+              textTransform: 'none',
+              fontWeight: 'bold',
+              boxShadow: 'none',
+              '&:hover': {
+                boxShadow: 'none',
+              }
+            }}
+          >
+            {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
+          </Button>
+        )}
+      </Box>
 
       {/* Loading State */}
       {isLoading || isLoadingAll || isLoadingSearch ? (

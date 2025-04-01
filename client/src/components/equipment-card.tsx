@@ -7,10 +7,15 @@ import {
   Button,
   Chip,
   Box,
-  styled
+  styled,
+  IconButton,
+  Tooltip
 } from "@mui/material";
 import { useLocation } from "wouter";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import type { Equipment } from "@/lib/api";
+import { useFavorites } from '@/hooks/use-favorites';
 
 interface EquipmentCardProps {
   equipment: Equipment;
@@ -43,11 +48,21 @@ const ContentArea = styled(Box)(({ theme }) => ({
 const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   const [, setLocation] = useLocation();
   
+  // Используем хук для работы с избранным
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isEquipmentFavorite = isFavorite(equipment.id);
+  
   console.log(`Rendering equipment card ${equipment.id}: ${equipment.name}, status: ${equipment.status}`);
   
   // Переход на страницу деталей оборудования
   const handleCardClick = () => {
     setLocation(`/equipment/${equipment.id}`);
+  };
+  
+  // Обработчик клика по кнопке избранного
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Предотвращаем всплытие события
+    toggleFavorite(equipment.id);
   };
   
   // Определяем цвет и текст метки статуса
@@ -171,6 +186,27 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
 
   return (
     <StyledCard>
+      {/* Кнопка добавления в избранное */}
+      <Tooltip title={isEquipmentFavorite ? "Удалить из избранного" : "Добавить в избранное"}>
+        <IconButton 
+          sx={{
+            position: 'absolute',
+            top: 5,
+            right: 5,
+            bgcolor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 10,
+            '&:hover': {
+              bgcolor: 'rgba(255, 255, 255, 0.9)',
+            }
+          }}
+          onClick={handleFavoriteClick}
+          size="small"
+          color={isEquipmentFavorite ? "error" : "default"}
+        >
+          {isEquipmentFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        </IconButton>
+      </Tooltip>
+      
       <ContentArea 
         onClick={handleCardClick}
         sx={{ cursor: 'pointer' }}
