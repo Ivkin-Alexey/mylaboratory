@@ -10,7 +10,7 @@ import {
   getEquipmentById,
   ExternalFilter,
   Equipment
-} from "@/lib/api";
+} from "@/lib/optimized-api";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/constants";
 

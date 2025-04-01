@@ -52,8 +52,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const isEquipmentFavorite = isFavorite(equipment.id);
   
-  console.log(`Rendering equipment card ${equipment.id}: ${equipment.name}, status: ${equipment.status}`);
-  
   // Переход на страницу деталей оборудования
   const handleCardClick = () => {
     setLocation(`/equipment/${equipment.id}`);
@@ -62,7 +60,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   // Обработчик клика по кнопке избранного
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Предотвращаем всплытие события
-    console.log('Клик по кнопке избранного, ID:', equipment.id);
     toggleFavorite(equipment.id);
   };
   
@@ -205,7 +202,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          console.log('Button clicked, ID:', equipment.id);
           toggleFavorite(equipment.id);
         }}
       >

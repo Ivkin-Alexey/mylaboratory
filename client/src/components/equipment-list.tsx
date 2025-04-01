@@ -104,15 +104,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     if (showOnlyFavorites) {
       // Получаем актуальный список избранного напрямую из localStorage
       const currentFavorites = getFavoriteIdsFromStorage();
-      console.log('Текущий список избранного при фильтрации:', currentFavorites);
       
       if (baseData && baseData.length > 0 && currentFavorites.length > 0) {
         // Фильтруем базовые данные, оставляя только те, чьи ID есть в избранном
-        const filteredData = baseData.filter(item => currentFavorites.includes(item.id));
-        console.log('Отфильтрованные данные избранного:', filteredData.length);
-        return filteredData;
+        return baseData.filter(item => currentFavorites.includes(item.id));
       } else {
-        console.log('Нет избранных элементов или базовых данных');
         return [];
       }
     }
@@ -123,21 +119,13 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
   
-  // Для отладки
-  useEffect(() => {
-    console.log("Данные оборудования:", displayData);
-    console.log("Общее количество оборудования:", displayData?.length || 0);
-    console.log("Текущая страница:", currentPage);
-    console.log("Всего страниц:", totalPages);
-  }, [displayData, currentPage, totalPages]);
+  // Отключаем отладочные логи для увеличения производительности
   
   const paginatedData = useMemo(() => {
     if (!displayData || !Array.isArray(displayData)) return [];
     
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const result = displayData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    console.log("Данные на текущей странице:", result.length);
-    return result;
+    return displayData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [displayData, currentPage]);
 
   // Reset pagination when filters change or режим избранного изменяется
@@ -499,7 +487,6 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           size="small"
           startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
           onClick={() => {
-            console.log('Переключение фильтра избранного');
             setShowOnlyFavorites(prev => !prev);
           }}
           sx={{

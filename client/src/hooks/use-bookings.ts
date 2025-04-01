@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getUserBookings, createBooking, cancelBooking, InsertBooking } from "@/lib/api";
+import { getUserBookings, createBooking, cancelBooking, InsertBooking } from "@/lib/optimized-api";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 
