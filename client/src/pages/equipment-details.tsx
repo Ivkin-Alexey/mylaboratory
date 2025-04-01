@@ -6,7 +6,6 @@ import {
   Paper, 
   Button, 
   Chip, 
-  Grid, 
   Divider, 
   CircularProgress,
   Card,
@@ -256,13 +255,15 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         {/* Left column - Equipment Image */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '0 0 40%' } }}>
           <Card sx={{ mb: 3 }}>
-            <CardMedia
-              component="img"
-              height="300"
-              image={equipment.imageUrl || "https://via.placeholder.com/600x400?text=No+Image"}
-              alt={equipment.name}
-              sx={{ objectFit: 'cover' }}
-            />
+            <Box sx={{ p: '15px 15px 0 15px' }}>
+              <CardMedia
+                component="img"
+                height="280"
+                image={equipment.imageUrl || "https://via.placeholder.com/600x400?text=No+Image"}
+                alt={equipment.name}
+                sx={{ objectFit: 'contain' }}
+              />
+            </Box>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                 <Typography variant="h5" component="h1" fontWeight="bold">
@@ -455,40 +456,45 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
               Техническая информация
             </Typography>
             
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-              <Grid item xs={12} sm={4}>
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+              gap: 2,
+              mb: 2
+            }}>
+              <Box>
                 <Typography variant="body2" color="text.secondary">
                   Марка:
                 </Typography>
                 <Typography variant="body1">
                   {equipment.brand || "Не указано"}
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sm={4}>
+              </Box>
+              <Box>
                 <Typography variant="body2" color="text.secondary">
                   Модель:
                 </Typography>
                 <Typography variant="body1">
                   {equipment.model || "Не указано"}
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sm={4}>
+              </Box>
+              <Box>
                 <Typography variant="body2" color="text.secondary">
                   Серийный номер:
                 </Typography>
                 <Typography variant="body1">
                   {equipment.serialNumber || "Не указано"}
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sm={4}>
+              </Box>
+              <Box>
                 <Typography variant="body2" color="text.secondary">
                   Инвентарный номер:
                 </Typography>
                 <Typography variant="body1">
                   {equipment.inventoryNumber || "Не указано"}
                 </Typography>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
             
             {equipment.filesUrl && (
               <Box sx={{ mt: 3 }}>
@@ -509,11 +515,6 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             )}
             
             <Divider sx={{ my: 2 }} />
-            
-            <Typography variant="body2" sx={{ mt: 2 }}>
-              По любым вопросам, связанным с данным оборудованием, обращайтесь к руководителю подразделения: 
-              <Box component="span" sx={{ color: 'primary.main', ml: 0.5 }}>{equipment.department || "Ответственное подразделение"}</Box>
-            </Typography>
           </Paper>
         </Box>
       </Box>
