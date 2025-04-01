@@ -32,7 +32,135 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { Button } from "@mui/material";
-import type { Equipment } from "@/lib/optimized-api";
+import type { Equipment, ExternalFilter } from "@/lib/optimized-api";
+
+// Оптимизированный мемоизированный компонент селекта
+// Определим FilterSelectProps как интерфейс для пропсов компонента
+interface FilterSelectProps {
+  filter: ExternalFilter;
+  value: string[];
+  onChange: (event: SelectChangeEvent<string[]>) => void;
+}
+
+// Оптимизированный компонент селекта
+const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectProps) => {
+  const isActive = (value?.length || 0) > 0;
+  
+  // Компактная функция рендеринга значения
+  const renderValue = (selected: unknown) => {
+    const selectedArray = selected as string[];
+    if (selectedArray.length === 0) {
+      return `Все ${filter.label.toLowerCase()}`;
+    }
+    
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Typography 
+          component="span" 
+          sx={{ 
+            color: 'primary.main',
+            fontWeight: 'bold'
+          }}
+        >
+          {filter.label}:
+        </Typography>
+        {selectedArray.length > 2 ? (
+          <Box sx={{ 
+            display: 'inline-flex',
+            alignItems: 'center',
+            ml: 1,
+            border: '1px solid',
+            borderColor: 'primary.main',
+            borderRadius: '12px',
+            fontSize: '0.75rem',
+            fontWeight: 'bold',
+            px: 1,
+            py: 0.2,
+            color: 'primary.main',
+            bgcolor: 'rgba(63, 81, 181, 0.1)'
+          }}>
+            {selectedArray.length}
+          </Box>
+        ) : null}
+      </Box>
+    );
+  };
+  
+  // Базовые стили для селекта
+  const selectStyles = {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: isActive ? 'primary.main' : undefined,
+      borderWidth: isActive ? 2 : 1
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: isActive ? 'primary.main' : undefined,
+    },
+    bgcolor: isActive ? 'rgba(63, 81, 181, 0.05)' : undefined,
+    '& .MuiSelect-select': {
+      fontWeight: isActive ? 'bold' : 'normal',
+    }
+  };
+  
+  // Опции меню
+  const menuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: 300
+      }
+    },
+    transitionDuration: 0 as const, // Явно указываем тип
+    disablePortal: true,
+    disableScrollLock: true
+  };
+  
+  // Рендерим только первые 200 опций для предотвращения зависаний
+  const menuItems = useMemo(() => {
+    return filter.options.slice(0, 200).map((option) => {
+      const isChecked = (value || []).indexOf(option) > -1;
+      return (
+        <MenuItem 
+          key={option} 
+          value={option}
+          dense
+          sx={{
+            padding: '2px 8px',
+            height: '32px',
+          }}
+        >
+          <Checkbox 
+            checked={isChecked} 
+            size="small"
+            disableRipple
+            sx={{ padding: '2px' }}
+          />
+          <ListItemText 
+            primary={option}
+            primaryTypographyProps={{
+              style: { 
+                fontWeight: isChecked ? 'bold' : 'normal',
+                fontSize: '0.875rem',
+              }
+            }}
+          />
+        </MenuItem>
+      );
+    });
+  }, [filter.options, value]);
+  
+  return (
+    <MuiSelect
+      multiple
+      value={value || []}
+      label={filter.label}
+      onChange={onChange}
+      sx={selectStyles}
+      renderValue={renderValue}
+      MenuProps={menuProps}
+    >
+      {menuItems}
+    </MuiSelect>
+  );
+});
 
 interface EquipmentListProps {
   onBookEquipment: (equipmentId: string) => void;
@@ -336,113 +464,12 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
                 <ClearIcon sx={{ fontSize: 12 }} />
               </Box>
             )}
-            <MuiSelect
-              multiple
+            {/* Используем оптимизированный селект для улучшения производительности */}
+            <OptimizedFilterSelect
+              filter={filter}
               value={selectedFilters[filter.name] || []}
-              label={filter.label}
               onChange={(e) => handleFilterChange(filter.name, e)}
-              sx={{
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
-                  borderWidth: (selectedFilters[filter.name]?.length || 0) > 0 ? 2 : 1
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'primary.main',
-                },
-                bgcolor: (selectedFilters[filter.name]?.length || 0) > 0 ? 'rgba(63, 81, 181, 0.05)' : undefined,
-                '& .MuiSelect-select': {
-                  fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : 'normal',
-                }
-              }}
-              renderValue={(selected) => {
-                const selectedArray = selected as string[];
-                if (selectedArray.length === 0) {
-                  return `Все ${filter.label.toLowerCase()}`;
-                }
-                
-                // Если есть выбранные фильтры, отображаем с выделением
-                return (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography 
-                      component="span" 
-                      sx={{ 
-                        fontWeight: 'bold',
-                        color: 'primary.main',
-                        flexGrow: 1,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        mr: 1
-                      }}
-                    >
-                      {selectedArray.length > 1 
-                        ? `Выбрано: ${selectedArray.length}` 
-                        : selectedArray[0]}
-                    </Typography>
-                    {selectedArray.length > 1 && (
-                      <Box 
-                        sx={{ 
-                          bgcolor: 'primary.main', 
-                          color: 'white', 
-                          borderRadius: '50%',
-                          width: 22, 
-                          height: 22,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '0.75rem',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        {selectedArray.length}
-                      </Box>
-                    )}
-                  </Box>
-                );
-              }}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 300
-                  }
-                }
-              }}
-            >
-              {filter.options.map((option) => {
-                const isChecked = (selectedFilters[filter.name] || []).indexOf(option) > -1;
-                return (
-                  <MenuItem 
-                    key={option} 
-                    value={option}
-                    sx={{
-                      bgcolor: isChecked ? 'rgba(63, 81, 181, 0.1)' : undefined,
-                      '&:hover': {
-                        bgcolor: isChecked ? 'rgba(63, 81, 181, 0.15)' : 'rgba(0, 0, 0, 0.04)',
-                      }
-                    }}
-                  >
-                    <Checkbox 
-                      checked={isChecked} 
-                      sx={{
-                        color: isChecked ? 'primary.main' : undefined,
-                      }}
-                    />
-                    <ListItemText 
-                      primary={option}
-                      primaryTypographyProps={{
-                        sx: {
-                          fontWeight: isChecked ? 'bold' : 'normal',
-                          color: isChecked ? 'primary.main' : undefined,
-                        }
-                      }}
-                    />
-                  </MenuItem>
-                );
-              })}
-            </MuiSelect>
+            />
           </FormControl>
         ))}
       </Box>
