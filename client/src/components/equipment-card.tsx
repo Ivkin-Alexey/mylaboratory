@@ -188,25 +188,32 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   return (
     <StyledCard>
       {/* Кнопка добавления в избранное */}
-      <Tooltip title={isEquipmentFavorite ? "Удалить из избранного" : "Добавить в избранное"}>
-        <IconButton 
-          sx={{
-            position: 'absolute',
-            top: 5,
-            right: 5,
-            bgcolor: 'rgba(255, 255, 255, 0.8)',
-            zIndex: 10,
-            '&:hover': {
-              bgcolor: 'rgba(255, 255, 255, 0.9)',
-            }
-          }}
-          onClick={handleFavoriteClick}
-          size="small"
-          color={isEquipmentFavorite ? "error" : "default"}
-        >
-          {isEquipmentFavorite ? <StarIcon /> : <StarBorderIcon />}
-        </IconButton>
-      </Tooltip>
+      <Button
+        variant="text"
+        sx={{
+          position: 'absolute',
+          top: 5,
+          right: 5,
+          minWidth: 'auto',
+          padding: '5px',
+          bgcolor: 'rgba(255, 255, 255, 0.8)',
+          zIndex: 10,
+          '&:hover': {
+            bgcolor: 'rgba(255, 255, 255, 0.9)',
+          }
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          console.log('Button clicked, ID:', equipment.id);
+          toggleFavorite(equipment.id);
+        }}
+      >
+        {isEquipmentFavorite ? 
+          <StarIcon color="error" fontSize="small" /> : 
+          <StarBorderIcon fontSize="small" />
+        }
+      </Button>
       
       <ContentArea 
         onClick={handleCardClick}

@@ -5,76 +5,96 @@ import type { Equipment } from '@/lib/api';
 const FAVORITES_STORAGE_KEY = 'equipment-favorites';
 
 /**
+ * Получение списка избранных ID из локального хранилища
+ */
+const getFavoriteIdsFromStorage = (): string[] => {
+  try {
+    const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    return storedFavorites ? JSON.parse(storedFavorites) : [];
+  } catch (error) {
+    console.error('Ошибка при загрузке избранного из localStorage:', error);
+    return [];
+  }
+};
+
+/**
+ * Сохранение списка избранных ID в локальное хранилище
+ */
+const saveFavoriteIdsToStorage = (ids: string[]): void => {
+  try {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(ids));
+    console.log('Сохранено в localStorage:', ids);
+  } catch (error) {
+    console.error('Ошибка при сохранении избранного в localStorage:', error);
+  }
+};
+
+/**
  * Хук для работы с избранным оборудованием
  * Использует localStorage для хранения списка ID избранного оборудования
  */
 export function useFavorites() {
-  // Состояние для списка ID избранного оборудования
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  // Инициализация состояния из localStorage
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(getFavoriteIdsFromStorage());
   
-  // Загрузка избранного из localStorage при монтировании компонента
+  // Синхронизация состояния и localStorage
   useEffect(() => {
-    try {
-      const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
-      if (storedFavorites) {
-        setFavoriteIds(JSON.parse(storedFavorites));
-      }
-    } catch (error) {
-      console.error('Ошибка при загрузке избранного из localStorage:', error);
-      // В случае ошибки просто используем пустой массив
-      setFavoriteIds([]);
-    }
-  }, []);
-  
-  // Сохранение избранного в localStorage при изменении
-  useEffect(() => {
-    try {
-      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoriteIds));
-    } catch (error) {
-      console.error('Ошибка при сохранении избранного в localStorage:', error);
-    }
+    saveFavoriteIdsToStorage(favoriteIds);
   }, [favoriteIds]);
   
-  // Функция для добавления оборудования в избранное
+  // Добавление в избранное
   const addToFavorites = useCallback((equipmentId: string) => {
+    console.log('addToFavorites вызван:', equipmentId);
+    
     setFavoriteIds(prev => {
-      if (prev.includes(equipmentId)) {
-        return prev; // Если уже в избранном, ничего не делаем
-      }
-      return [...prev, equipmentId]; // Добавляем ID в массив
+      if (prev.includes(equipmentId)) return prev;
+      return [...prev, equipmentId];
     });
   }, []);
   
-  // Функция для удаления оборудования из избранного
+  // Удаление из избранного
   const removeFromFavorites = useCallback((equipmentId: string) => {
+    console.log('removeFromFavorites вызван:', equipmentId);
+    
     setFavoriteIds(prev => prev.filter(id => id !== equipmentId));
   }, []);
   
-  // Функция для переключения статуса избранного
+  // Переключение состояния (добавить/удалить)
   const toggleFavorite = useCallback((equipmentId: string) => {
     console.log('toggleFavorite вызван для ID:', equipmentId);
-    setFavoriteIds(prev => {
-      console.log('Текущий список избранного:', prev);
-      if (prev.includes(equipmentId)) {
-        console.log('Удаляем из избранного', equipmentId);
-        return prev.filter(id => id !== equipmentId); // Удаляем, если уже в избранном
-      }
-      console.log('Добавляем в избранное', equipmentId);
-      return [...prev, equipmentId]; // Иначе добавляем
-    });
+    
+    // Получаем текущее состояние напрямую из localStorage
+    const currentFavorites = getFavoriteIdsFromStorage();
+    console.log('Текущий список избранного (из localStorage):', currentFavorites);
+    
+    let newFavorites: string[];
+    if (currentFavorites.includes(equipmentId)) {
+      console.log('Удаляем из избранного:', equipmentId);
+      newFavorites = currentFavorites.filter(id => id !== equipmentId);
+    } else {
+      console.log('Добавляем в избранное:', equipmentId);
+      newFavorites = [...currentFavorites, equipmentId];
+    }
+    
+    // Сохраняем изменения в localStorage и обновляем состояние
+    saveFavoriteIdsToStorage(newFavorites);
+    setFavoriteIds(newFavorites);
   }, []);
   
-  // Функция для проверки, добавлено ли оборудование в избранное
+  // Проверка, находится ли ID в избранном
   const isFavorite = useCallback((equipmentId: string) => {
-    const isInFavorites = favoriteIds.includes(equipmentId);
-    console.log(`isFavorite проверяет ID: ${equipmentId}, результат: ${isInFavorites}`);
-    return isInFavorites;
-  }, [favoriteIds]);
+    // Получаем актуальное состояние из localStorage
+    const currentFavorites = getFavoriteIdsFromStorage();
+    const result = currentFavorites.includes(equipmentId);
+    console.log(`isFavorite проверяет ID: ${equipmentId}, результат: ${result}`);
+    return result;
+  }, []);
   
-  // Функция для фильтрации списка оборудования, оставляя только избранное
+  // Фильтрация списка, оставляя только избранное
   const filterFavorites = useCallback((equipmentList: Equipment[]) => {
-    return equipmentList.filter(equipment => favoriteIds.includes(equipment.id));
-  }, [favoriteIds]);
+    const currentFavorites = getFavoriteIdsFromStorage();
+    return equipmentList.filter(equipment => currentFavorites.includes(equipment.id));
+  }, []);
   
   return {
     favoriteIds,
