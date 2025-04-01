@@ -121,24 +121,26 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
         <MenuItem 
           key={option} 
           value={option}
-          dense
           sx={{
-            padding: '2px 8px',
-            height: '32px',
+            bgcolor: isChecked ? 'rgba(63, 81, 181, 0.1)' : undefined,
+            '&:hover': {
+              bgcolor: isChecked ? 'rgba(63, 81, 181, 0.15)' : 'rgba(0, 0, 0, 0.04)',
+            }
           }}
         >
           <Checkbox 
             checked={isChecked} 
-            size="small"
             disableRipple
-            sx={{ padding: '2px' }}
+            sx={{
+              color: isChecked ? 'primary.main' : undefined,
+            }}
           />
           <ListItemText 
             primary={option}
             primaryTypographyProps={{
-              style: { 
+              sx: {
                 fontWeight: isChecked ? 'bold' : 'normal',
-                fontSize: '0.875rem',
+                color: isChecked ? 'primary.main' : undefined,
               }
             }}
           />
