@@ -25,6 +25,9 @@ import {
   ListItemText
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import { Button } from "@mui/material";
 import type { Equipment } from "@/lib/api";
 
 interface EquipmentListProps {
@@ -143,6 +146,25 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     }));
   };
   
+  // Обработчик сброса конкретного фильтра
+  const handleClearFilter = (filterName: string) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterName]: []
+    }));
+  };
+  
+  // Обработчик сброса всех фильтров
+  const handleClearAllFilters = () => {
+    setSelectedFilters({});
+    setSearchTerm("");
+  };
+  
+  // Проверяем, есть ли активные фильтры
+  const hasActiveFilters = useMemo(() => {
+    return Object.values(selectedFilters).some(values => values && values.length > 0) || !!searchTerm;
+  }, [selectedFilters, searchTerm]);
+  
   // Обработчик для кнопок "Использовать" и "Завершить"
   const handleEquipmentAction = (equipmentId: string) => {
     const equipment = displayData?.find(item => item.id === equipmentId);
@@ -176,7 +198,21 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           size="small"
           sx={{ 
-            width: { xs: '80%', md: '33.333%' }
+            width: { xs: '80%', md: '33.333%' },
+            '& .MuiOutlinedInput-root': {
+              borderColor: searchTerm ? 'primary.main' : undefined,
+              bgcolor: searchTerm ? 'rgba(63, 81, 181, 0.05)' : undefined,
+              '& fieldset': {
+                borderColor: searchTerm ? 'primary.main' : undefined,
+                borderWidth: searchTerm ? 2 : 1
+              },
+              '&:hover fieldset': {
+                borderColor: searchTerm ? 'primary.main' : undefined,
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'primary.main',
+              }
+            }
           }}
           InputProps={{
             startAdornment: (
@@ -184,6 +220,22 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
                 <SearchIcon fontSize="small" />
               </InputAdornment>
             ),
+            endAdornment: searchTerm ? (
+              <InputAdornment position="end">
+                <Box 
+                  sx={{ 
+                    cursor: 'pointer',
+                    display: 'flex',
+                    '&:hover': {
+                      color: 'primary.main',
+                    }
+                  }}
+                  onClick={() => setSearchTerm('')}
+                >
+                  <ClearIcon fontSize="small" />
+                </Box>
+              </InputAdornment>
+            ) : null,
           }}
         />
       </Box>
@@ -204,22 +256,115 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
             key={filter.name}
             sx={{ 
               width: { xs: '100%', sm: 170 },
-              flexShrink: 0
+              flexShrink: 0,
+              position: 'relative'
             }} 
             size="small"
           >
-            <InputLabel>{filter.label}</InputLabel>
+            <InputLabel
+              sx={{
+                color: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
+                fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : undefined
+              }}
+            >
+              {filter.label}
+            </InputLabel>
+            {/* Кнопка сброса фильтра */}
+            {(selectedFilters[filter.name]?.length || 0) > 0 && (
+              <Box 
+                sx={{ 
+                  position: 'absolute', 
+                  right: -8, 
+                  top: -8, 
+                  zIndex: 1, 
+                  cursor: 'pointer',
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: 18,
+                  height: 18,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 1,
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  }
+                }} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClearFilter(filter.name);
+                }}
+              >
+                <ClearIcon sx={{ fontSize: 12 }} />
+              </Box>
+            )}
             <MuiSelect
               multiple
               value={selectedFilters[filter.name] || []}
               label={filter.label}
               onChange={(e) => handleFilterChange(filter.name, e)}
+              sx={{
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
+                  borderWidth: (selectedFilters[filter.name]?.length || 0) > 0 ? 2 : 1
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'primary.main',
+                },
+                bgcolor: (selectedFilters[filter.name]?.length || 0) > 0 ? 'rgba(63, 81, 181, 0.05)' : undefined,
+                '& .MuiSelect-select': {
+                  fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : 'normal',
+                }
+              }}
               renderValue={(selected) => {
                 const selectedArray = selected as string[];
                 if (selectedArray.length === 0) {
                   return `Все ${filter.label.toLowerCase()}`;
                 }
-                return selectedArray.join(', ');
+                
+                // Если есть выбранные фильтры, отображаем с выделением
+                return (
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography 
+                      component="span" 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        color: 'primary.main',
+                        flexGrow: 1,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        mr: 1
+                      }}
+                    >
+                      {selectedArray.length > 1 
+                        ? `Выбрано: ${selectedArray.length}` 
+                        : selectedArray[0]}
+                    </Typography>
+                    {selectedArray.length > 1 && (
+                      <Box 
+                        sx={{ 
+                          bgcolor: 'primary.main', 
+                          color: 'white', 
+                          borderRadius: '50%',
+                          width: 22, 
+                          height: 22,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {selectedArray.length}
+                      </Box>
+                    )}
+                  </Box>
+                );
               }}
               MenuProps={{
                 PaperProps: {
@@ -229,16 +374,66 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
                 }
               }}
             >
-              {filter.options.map((option) => (
-                <MenuItem key={option} value={option}>
-                  <Checkbox checked={(selectedFilters[filter.name] || []).indexOf(option) > -1} />
-                  <ListItemText primary={option} />
-                </MenuItem>
-              ))}
+              {filter.options.map((option) => {
+                const isChecked = (selectedFilters[filter.name] || []).indexOf(option) > -1;
+                return (
+                  <MenuItem 
+                    key={option} 
+                    value={option}
+                    sx={{
+                      bgcolor: isChecked ? 'rgba(63, 81, 181, 0.1)' : undefined,
+                      '&:hover': {
+                        bgcolor: isChecked ? 'rgba(63, 81, 181, 0.15)' : 'rgba(0, 0, 0, 0.04)',
+                      }
+                    }}
+                  >
+                    <Checkbox 
+                      checked={isChecked} 
+                      sx={{
+                        color: isChecked ? 'primary.main' : undefined,
+                      }}
+                    />
+                    <ListItemText 
+                      primary={option}
+                      primaryTypographyProps={{
+                        sx: {
+                          fontWeight: isChecked ? 'bold' : 'normal',
+                          color: isChecked ? 'primary.main' : undefined,
+                        }
+                      }}
+                    />
+                  </MenuItem>
+                );
+              })}
             </MuiSelect>
           </FormControl>
         ))}
       </Box>
+      
+      {/* Кнопка сброса всех фильтров */}
+      {hasActiveFilters && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            size="small"
+            startIcon={<FilterAltOffIcon />}
+            onClick={handleClearAllFilters}
+            sx={{
+              borderRadius: 4,
+              textTransform: 'none',
+              fontWeight: 'bold',
+              boxShadow: 'none',
+              '&:hover': {
+                boxShadow: 'none',
+                bgcolor: 'rgba(63, 81, 181, 0.1)',
+              }
+            }}
+          >
+            Сбросить все фильтры
+          </Button>
+        </Box>
+      )}
 
       {/* Loading State */}
       {isLoading ? (
