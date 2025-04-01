@@ -1,16 +1,16 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import NotFound from "@/pages/not-found";
-import Equipment from "@/pages/equipment";
-import MyBookings from "@/pages/my-bookings";
-import EquipmentDetails from "@/pages/equipment-details";
-import AddEquipment from "@/pages/add-equipment";
-import AppHeader from "@/components/app-header";
+import NotFound from "./pages/not-found";
+import Equipment from "./pages/equipment";
+import MyBookings from "./pages/my-bookings";
+import EquipmentDetails from "./pages/equipment-details";
+import AddEquipment from "./pages/add-equipment";
+import AppHeader from "./components/app-header";
 import React, { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Container, Alert, Snackbar } from '@mui/material';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "./hooks/use-toast";
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 
