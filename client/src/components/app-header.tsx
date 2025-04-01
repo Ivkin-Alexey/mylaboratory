@@ -13,7 +13,7 @@ import {
 import SettingsIcon from "@mui/icons-material/Settings";
 import ScienceIcon from "@mui/icons-material/Science";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
-import { useLocation } from "wouter";
+
 
 interface AppHeaderProps {
   activeTab: "equipment" | "myBookings";
@@ -22,13 +22,9 @@ interface AppHeaderProps {
 
 const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
   const theme = useTheme();
-  const [, setLocation] = useLocation();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: "equipment" | "myBookings") => {
     setActiveTab(newValue);
-    
-    // Всегда перенаправляем на главную страницу при переключении вкладок
-    setLocation("/");
   };
 
   return (
@@ -43,10 +39,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
               flexGrow: 1, 
               cursor: 'pointer' 
             }}
-            onClick={() => {
-              setActiveTab("equipment");
-              setLocation("/");
-            }}
+            onClick={() => setActiveTab("equipment")}
           >
             Бронирование Лабораторного Оборудования
           </Typography>

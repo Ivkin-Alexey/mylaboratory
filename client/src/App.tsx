@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import NotFound from "./pages/not-found";
@@ -107,10 +107,21 @@ function MuiToaster() {
 function Router() {
   // This state tracks which tab is currently active
   const [activeTab, setActiveTab] = useState<"equipment" | "myBookings">("equipment");
+  const [, setLocation] = useLocation();
+  
+  // Обработчик изменения вкладки с перенаправлением на главную
+  const handleTabChange = (tab: "equipment" | "myBookings") => {
+    setActiveTab(tab);
+    // Перенаправляем пользователя на главную страницу
+    setLocation("/");
+  };
 
   return (
     <div>
-      <AppHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+      <AppHeader 
+        activeTab={activeTab} 
+        setActiveTab={handleTabChange} 
+      />
       
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Switch>
@@ -118,13 +129,13 @@ function Router() {
             <AddEquipment />
           </Route>
           <Route path="/equipment/:id">
-            <EquipmentDetails onNavigateToBookings={() => setActiveTab("myBookings")} />
+            <EquipmentDetails onNavigateToBookings={() => handleTabChange("myBookings")} />
           </Route>
           <Route path="/">
             {activeTab === "equipment" ? (
-              <Equipment onNavigateToBookings={() => setActiveTab("myBookings")} />
+              <Equipment onNavigateToBookings={() => handleTabChange("myBookings")} />
             ) : (
-              <MyBookings onNavigateToEquipment={() => setActiveTab("equipment")} />
+              <MyBookings onNavigateToEquipment={() => handleTabChange("equipment")} />
             )}
           </Route>
           <Route component={NotFound} />
