@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useCallback } from "react";
 import {
   Card,
   CardMedia,
@@ -41,68 +41,72 @@ const ContentArea = styled(Box)({
   flexDirection: 'column'
 });
 
-// Мемоизированный чип статуса для предотвращения перерисовок
+// Константные стили вынесены за пределы компонента для предотвращения пересоздания
+const statusChipStyle = {
+  position: 'absolute' as const, 
+  top: 12, 
+  left: '50%',
+  transform: 'translateX(-50%)',
+  fontWeight: 'medium',
+  zIndex: 1,
+  px: 2,
+  py: 0.8
+};
+
+// Предопределенная карта конфигураций для разных статусов
+const statusConfigs = {
+  available: null,
+  booked: { label: "Забронировано", color: "error" as const },
+  maintenance: { label: "На обслуживании", color: "warning" as const },
+  in_use: { label: "В работе", color: "primary" as const },
+  repair: { label: "В ремонте", color: "error" as const },
+};
+
+// Оптимизированный мемоизированный чип статуса
 const StatusChip = memo(({ status }: { status: string }) => {
-  // Стиль для всех статусных чипов
-  const chipStyle = {
-    position: 'absolute' as const, 
-    top: 12, 
-    left: '50%',
-    transform: 'translateX(-50%)',
-    fontWeight: 'medium',
-    zIndex: 1,
-    px: 2,
-    py: 0.8
-  };
-  
-  switch (status) {
-    // Для статуса "available" не показываем бейдж
-    case "available":
-      return null;
-    case "booked":
-      return (
-        <Chip 
-          label="Забронировано" 
-          color="error" 
-          size="small"
-          sx={chipStyle}
-        />
-      );
-    case "maintenance":
-      return (
-        <Chip 
-          label="На обслуживании" 
-          color="warning" 
-          size="small"
-          sx={chipStyle}
-        />
-      );
-    case "in_use":
-      return (
-        <Chip 
-          label="В работе" 
-          color="primary" 
-          size="small"
-          sx={chipStyle}
-        />
-      );
-    default:
-      return null;
+  // Если статус available или неизвестный, не показываем чип
+  if (status === 'available' || !statusConfigs[status as keyof typeof statusConfigs]) {
+    return null;
   }
+  
+  // Получаем предопределенную конфигурацию
+  const config = statusConfigs[status as keyof typeof statusConfigs];
+  
+  // Если нет конфигурации, не рендерим ничего
+  if (!config) return null;
+  
+  // Возвращаем чип с предопределенной конфигурацией
+  return (
+    <Chip 
+      label={config.label}
+      color={config.color}
+      size="small"
+      sx={statusChipStyle}
+    />
+  );
 });
 
 // Основной компонент карточки
-const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
+const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
   const [, setLocation] = useLocation();
   
   // Используем хук для работы с избранным
   const { isFavorite, toggleFavorite } = useFavorites();
-  const isEquipmentFavorite = isFavorite(equipment.id);
   
-  // Переход на страницу деталей оборудования
-  const handleCardClick = () => {
+  // Мемоизация проверки избранного для предотвращения лишних перерисовок
+  const isEquipmentFavorite = useMemo(() => isFavorite(equipment.id), [isFavorite, equipment.id]);
+  
+  // Переход на страницу деталей оборудования - мемоизируем функцию
+  const handleCardClick = useCallback(() => {
     setLocation(`/equipment/${equipment.id}`);
-  };
+  }, [setLocation, equipment.id]);
+  
+  // Мемоизируем функцию обработки клика по кнопке избранного
+  const handleFavoriteClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleFavorite(equipment.id);
+  }, [toggleFavorite, equipment.id]);
   
   // Мемоизируем конфигурацию кнопки для предотвращения перерисовок
   const buttonConfig = useMemo(() => {
@@ -162,71 +166,71 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
     };
   }, [equipment.usageType, equipment.status, equipment.id, onBook]);
 
+  // Мемоизируем кнопку избранного для предотвращения ререндеров
+  const favoriteButton = useMemo(() => (
+    <Button
+      variant="text"
+      sx={{
+        position: 'absolute',
+        top: 5,
+        right: 5,
+        minWidth: 'auto',
+        padding: '5px',
+        bgcolor: 'rgba(255, 255, 255, 0.8)',
+        zIndex: 10,
+        '&:hover': {
+          bgcolor: 'rgba(255, 255, 255, 0.9)',
+        }
+      }}
+      onClick={handleFavoriteClick}
+    >
+      {isEquipmentFavorite ? 
+        <StarIcon color="error" fontSize="small" /> : 
+        <StarBorderIcon fontSize="small" />
+      }
+    </Button>
+  ), [isEquipmentFavorite, handleFavoriteClick]);
+
   return (
     <StyledCard>
-      {/* Кнопка добавления в избранное */}
-      <Button
-        variant="text"
-        sx={{
-          position: 'absolute',
-          top: 5,
-          right: 5,
-          minWidth: 'auto',
-          padding: '5px',
-          bgcolor: 'rgba(255, 255, 255, 0.8)',
-          zIndex: 10,
-          '&:hover': {
-            bgcolor: 'rgba(255, 255, 255, 0.9)',
-          }
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          toggleFavorite(equipment.id);
-        }}
-      >
-        {isEquipmentFavorite ? 
-          <StarIcon color="error" fontSize="small" /> : 
-          <StarBorderIcon fontSize="small" />
-        }
-      </Button>
+      {favoriteButton}
       
       <ContentArea 
         onClick={handleCardClick}
         sx={{ cursor: 'pointer' }}
       >
-          <Box sx={{ height: '170px', overflow: 'hidden', p: '10px 10px 0 10px' }}>
-            <CardMedia
-              component="img"
-              sx={{ 
-                height: '150px', 
-                objectFit: 'contain',
-                maxHeight: '150px'
-              }}
-              image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
-              alt={equipment.name}
-            />
-          </Box>
-          <StatusChip status={equipment.status} />
-        
-          <CardContent sx={{ pb: 0 }}>
-            <Typography 
-              variant="h6" 
-              component="h3" 
-              gutterBottom
-              sx={{ fontSize: '1rem' }}
-            >
-              {equipment.name}
-            </Typography>
-            
-            <Typography 
-              variant="body2" 
-              color="text.secondary" 
-              sx={{ mb: 2, fontSize: '0.875rem' }}
-            >
-              {equipment.description}
-            </Typography>
-          </CardContent>
+        <Box sx={{ height: '170px', overflow: 'hidden', p: '10px 10px 0 10px' }}>
+          <CardMedia
+            component="img"
+            sx={{ 
+              height: '150px', 
+              objectFit: 'contain',
+              maxHeight: '150px'
+            }}
+            image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
+            alt={equipment.name}
+          />
+        </Box>
+        <StatusChip status={equipment.status} />
+      
+        <CardContent sx={{ pb: 0 }}>
+          <Typography 
+            variant="h6" 
+            component="h3" 
+            gutterBottom
+            sx={{ fontSize: '1rem' }}
+          >
+            {equipment.name}
+          </Typography>
+          
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            sx={{ mb: 2, fontSize: '0.875rem' }}
+          >
+            {equipment.description}
+          </Typography>
+        </CardContent>
       </ContentArea>
       
       <Box sx={{ p: 2, mt: 'auto' }}>
@@ -246,4 +250,5 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   );
 };
 
+// Оборачиваем в memo для предотвращения лишних рендеров
 export default memo(EquipmentCard);

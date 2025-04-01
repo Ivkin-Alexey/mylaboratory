@@ -14,48 +14,65 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/constants";
 
+// Оптимизированный хук для получения списка оборудования
 export function useEquipmentList() {
   return useQuery<Equipment[]>({
     queryKey: ["equipment-list"],
     queryFn: getEquipmentList,
     refetchOnWindowFocus: false, 
-    staleTime: 60000,
+    staleTime: 300000, // Увеличиваем время кэширования до 5 минут для стабильности данных
+    gcTime: 600000, // Кеш сохраняется 10 минут (gcTime вместо cacheTime в TanStack Query v5)
+    retryOnMount: false, // Не повторяем запрос при монтировании
+    retry: 1, // Максимум 1 повторная попытка при ошибке
   });
 }
 
+// Оптимизированный хук для поиска оборудования
 export function useSearchEquipment(searchTerm: string) {
   return useQuery<Equipment[]>({
     queryKey: ["equipment-search", searchTerm],
     queryFn: () => searchEquipment(searchTerm),
     enabled: !!searchTerm,
     refetchOnWindowFocus: false,
+    staleTime: 60000, // Кеш актуален 1 минуту
+    retryOnMount: false,
+    retry: 1,
+    gcTime: 120000, // В v5 используется gcTime вместо cacheTime
   });
 }
 
+// Оптимизированный хук для поиска оборудования с фильтрами
 export function useFindEquipment(searchTerm: string, filters?: Record<string, string[]>) {
+  // Создаем стабильный хэш-ключ для фильтров, чтобы избежать ненужных перезапросов
+  const filtersKey = JSON.stringify(filters || {});
+  
   return useQuery<Equipment[]>({
-    queryKey: ["equipment-find", searchTerm, filters],
+    queryKey: ["equipment-find", searchTerm, filtersKey],
     queryFn: () => searchEquipment(searchTerm, filters),
     enabled: true, // Всегда активно, но с разными параметрами
     refetchOnWindowFocus: false,
-    retry: false, // Отключаем повторы при ошибке
-    staleTime: 30000, // Кеширование данных на 30 секунд
+    retry: 1, // Максимум 1 повторная попытка при ошибке
+    staleTime: 60000, // Кеширование данных на 1 минуту
+    gcTime: 300000, // В v5 используется gcTime вместо cacheTime
     retryOnMount: false, // Не пытаемся повторить при монтировании
   });
 }
 
+// Оптимизированный хук для получения доступных слотов времени
 export function useAvailableTimeSlots(equipmentId: string | null, date: string | null) {
   return useQuery<string[]>({
     queryKey: ["available-slots", equipmentId, date],
     queryFn: () => getAvailableTimeSlots(equipmentId!, date!),
     enabled: !!equipmentId && !!date,
     refetchOnWindowFocus: false,
-    staleTime: 30000,
-    gcTime: 60000,
+    staleTime: 60000, // Увеличиваем время актуальности данных до 1 минуты
+    gcTime: 120000, // В v5 используется gcTime вместо cacheTime
+    retry: 1, // Ограничиваем повторные запросы
+    retryOnMount: false,
   });
 }
 
-// Мутация для отметки оборудования как используемого
+// Оптимизированная мутация для отметки оборудования как используемого
 export function useUseEquipment() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -64,13 +81,20 @@ export function useUseEquipment() {
     mutationFn: (equipmentId: string) => {
       return useEquipment(equipmentId);
     },
-    onSuccess: () => {
+    onSuccess: (updatedEquipment, equipmentId) => {
       toast({
         title: "Статус обновлен",
         description: "Оборудование отмечено как используемое",
       });
-      // После успешного изменения статуса инвалидируем все запросы к оборудованию
-      queryClient.invalidateQueries({ queryKey: ["equipment-list"] });
+      
+      // Точечное обновление кэша вместо инвалидации всех запросов
+      // Обновляем все места, где может быть это оборудование
+      queryClient.setQueryData(["equipment", equipmentId], updatedEquipment);
+      
+      // Обновляем кэшированные списки, содержащие это оборудование
+      ["equipment-list", "equipment-find", "equipment-search"].forEach(key => {
+        updateEquipmentInQueryCache(queryClient, key, equipmentId, updatedEquipment);
+      });
     },
     onError: (error) => {
       toast({
@@ -78,12 +102,11 @@ export function useUseEquipment() {
         description: "Не удалось обновить статус оборудования",
         variant: "destructive",
       });
-      console.error("Ошибка при использовании оборудования:", error);
     }
   });
 }
 
-// Мутация для завершения использования оборудования
+// Оптимизированная мутация для завершения использования оборудования
 export function useFinishUsingEquipment() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -92,13 +115,20 @@ export function useFinishUsingEquipment() {
     mutationFn: (equipmentId: string) => {
       return finishUsingEquipment(equipmentId);
     },
-    onSuccess: () => {
+    onSuccess: (updatedEquipment, equipmentId) => {
       toast({
         title: "Статус обновлен",
         description: "Оборудование снова доступно",
       });
-      // После успешного изменения статуса инвалидируем все запросы к оборудованию
-      queryClient.invalidateQueries({ queryKey: ["equipment-list"] });
+      
+      // Точечное обновление кэша вместо инвалидации всех запросов
+      // Обновляем все места, где может быть это оборудование
+      queryClient.setQueryData(["equipment", equipmentId], updatedEquipment);
+      
+      // Обновляем кэшированные списки, содержащие это оборудование
+      ["equipment-list", "equipment-find", "equipment-search"].forEach(key => {
+        updateEquipmentInQueryCache(queryClient, key, equipmentId, updatedEquipment);
+      });
     },
     onError: (error) => {
       toast({
@@ -106,7 +136,26 @@ export function useFinishUsingEquipment() {
         description: "Не удалось завершить использование оборудования",
         variant: "destructive",
       });
-      console.error("Ошибка при завершении использования:", error);
+    }
+  });
+}
+
+// Вспомогательная функция для обновления оборудования в кэше запросов
+function updateEquipmentInQueryCache(
+  queryClient: ReturnType<typeof useQueryClient>,
+  queryKey: string,
+  equipmentId: string,
+  updatedEquipment: Equipment
+) {
+  // Получаем все ключи запросов, начинающиеся с данного ключа
+  queryClient.getQueryCache().findAll({ queryKey: [queryKey] }).forEach(query => {
+    const data = query.state.data as Equipment[] | undefined;
+    if (data && Array.isArray(data)) {
+      // Обновляем данные в кэше, заменяя элемент с нужным ID
+      const updatedData = data.map(item => 
+        item.id === equipmentId ? updatedEquipment : item
+      );
+      queryClient.setQueryData(query.queryKey, updatedData);
     }
   });
 }

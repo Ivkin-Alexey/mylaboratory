@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Equipment } from '@/lib/optimized-api';
 
 // Ключ для хранения избранного в localStorage
@@ -31,57 +31,81 @@ const saveFavoriteIdsToStorage = (ids: string[]): void => {
 /**
  * Хук для работы с избранным оборудованием
  * Использует localStorage для хранения списка ID избранного оборудования
+ * Оптимизирован для предотвращения лишних рендеров
  */
 export function useFavorites() {
-  // Инициализация состояния из localStorage
-  const [favoriteIds, setFavoriteIds] = useState<string[]>(getFavoriteIdsFromStorage());
+  // Создаем ref для кэша, который не вызывает ререндер при изменении
+  const favoritesCache = useRef<Set<string>>(new Set(getFavoriteIdsFromStorage()));
   
-  // Синхронизация состояния и localStorage
+  // Инициализируем состояние только один раз, дальше используем ref для перерисовки
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => Array.from(favoritesCache.current));
+  
+  // Обновление кэша без вызова перерисовки
+  const updateCache = useCallback((newIds: string[]) => {
+    // Обновляем кэш
+    favoritesCache.current = new Set(newIds);
+    // Сохраняем в localStorage
+    saveFavoriteIdsToStorage(newIds);
+    // Обновляем состояние компонента (вызывает ререндер)
+    setFavoriteIds(newIds);
+  }, []);
+  
+  // Синхронизируем состояние с другими вкладками через событие storage
   useEffect(() => {
-    saveFavoriteIdsToStorage(favoriteIds);
-  }, [favoriteIds]);
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === FAVORITES_STORAGE_KEY) {
+        const newFavorites = e.newValue ? JSON.parse(e.newValue) : [];
+        updateCache(newFavorites);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [updateCache]);
   
-  // Добавление в избранное
+  // Добавление в избранное с оптимизацией
   const addToFavorites = useCallback((equipmentId: string) => {
-    setFavoriteIds(prev => {
-      if (prev.includes(equipmentId)) return prev;
-      return [...prev, equipmentId];
-    });
-  }, []);
-  
-  // Удаление из избранного
-  const removeFromFavorites = useCallback((equipmentId: string) => {
-    setFavoriteIds(prev => prev.filter(id => id !== equipmentId));
-  }, []);
-  
-  // Переключение состояния (добавить/удалить)
-  const toggleFavorite = useCallback((equipmentId: string) => {
-    // Получаем текущее состояние напрямую из localStorage
-    const currentFavorites = getFavoriteIdsFromStorage();
-    
-    let newFavorites: string[];
-    if (currentFavorites.includes(equipmentId)) {
-      newFavorites = currentFavorites.filter(id => id !== equipmentId);
-    } else {
-      newFavorites = [...currentFavorites, equipmentId];
+    if (!favoritesCache.current.has(equipmentId)) {
+      const newFavorites = [...Array.from(favoritesCache.current), equipmentId];
+      updateCache(newFavorites);
     }
-    
-    // Сохраняем изменения в localStorage и обновляем состояние
-    saveFavoriteIdsToStorage(newFavorites);
-    setFavoriteIds(newFavorites);
-  }, []);
+  }, [updateCache]);
   
-  // Проверка, находится ли ID в избранном
+  // Удаление из избранного с оптимизацией
+  const removeFromFavorites = useCallback((equipmentId: string) => {
+    if (favoritesCache.current.has(equipmentId)) {
+      const newFavorites = Array.from(favoritesCache.current).filter(id => id !== equipmentId);
+      updateCache(newFavorites);
+    }
+  }, [updateCache]);
+  
+  // Оптимизированное переключение состояния
+  const toggleFavorite = useCallback((equipmentId: string) => {
+    if (favoritesCache.current.has(equipmentId)) {
+      const newFavorites = Array.from(favoritesCache.current).filter(id => id !== equipmentId);
+      updateCache(newFavorites);
+    } else {
+      const newFavorites = [...Array.from(favoritesCache.current), equipmentId];
+      updateCache(newFavorites);
+    }
+  }, [updateCache]);
+  
+  // Быстрая проверка наличия в избранном с использованием Set для O(1) сложности
   const isFavorite = useCallback((equipmentId: string) => {
-    // Используем текущее состояние из хука вместо чтения localStorage каждый раз
-    return favoriteIds.includes(equipmentId);
-  }, [favoriteIds]);
+    return favoritesCache.current.has(equipmentId);
+  }, []); // Удаляем зависимость от favoriteIds для предотвращения ререндеров
   
-  // Фильтрация списка, оставляя только избранное
+  // Мемоизированная фильтрация списка
   const filterFavorites = useCallback((equipmentList: Equipment[]) => {
-    // Используем текущее значение из хука вместо чтения localStorage
-    return equipmentList.filter(equipment => favoriteIds.includes(equipment.id));
-  }, [favoriteIds]);
+    const favorites = favoritesCache.current;
+    return equipmentList.filter(equipment => favorites.has(equipment.id));
+  }, []); // Удаляем зависимость от favoriteIds для предотвращения ререндеров
+  
+  // Мемоизированное свойство наличия избранного
+  const hasFavorites = useMemo(() => 
+    favoritesCache.current.size > 0, 
+    [favoriteIds] // Обновляем только при изменении состояния
+  );
   
   return {
     favoriteIds,
@@ -90,6 +114,6 @@ export function useFavorites() {
     toggleFavorite,
     isFavorite,
     filterFavorites,
-    hasFavorites: favoriteIds.length > 0
+    hasFavorites
   };
 }
