@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import {
   Card,
   CardMedia,
@@ -7,14 +7,12 @@ import {
   Button,
   Chip,
   Box,
-  styled,
-  IconButton,
-  Tooltip
+  styled
 } from "@mui/material";
 import { useLocation } from "wouter";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import type { Equipment } from "@/lib/api";
+import type { Equipment } from "@/lib/optimized-api";
 import { useFavorites } from '@/hooks/use-favorites';
 
 interface EquipmentCardProps {
@@ -22,8 +20,8 @@ interface EquipmentCardProps {
   onBook: (equipmentId: string) => void;
 }
 
-// Стилизованная карточка с фиксированной шириной
-const StyledCard = styled(Card)(({ theme }) => ({
+// Стилизованная карточка с фиксированной шириной и отключенными анимациями
+const StyledCard = styled(Card)({
   position: 'relative',
   height: '100%',
   display: 'flex',
@@ -32,19 +30,68 @@ const StyledCard = styled(Card)(({ theme }) => ({
   width: '100%',
   margin: '0 auto',
   backgroundColor: '#ffffff',
-  transition: 'box-shadow 0.3s ease-in-out',
-  '&:hover': {
-    boxShadow: theme.shadows[4]
-  }
-}));
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
+  transition: 'none', // Отключаем все анимации для повышения производительности
+});
 
 // Стилизованная область контента с авто-растягиванием
-const ContentArea = styled(Box)(({ theme }) => ({
+const ContentArea = styled(Box)({
   flex: '1 1 auto',
   display: 'flex',
   flexDirection: 'column'
-}));
+});
 
+// Мемоизированный чип статуса для предотвращения перерисовок
+const StatusChip = memo(({ status }: { status: string }) => {
+  // Стиль для всех статусных чипов
+  const chipStyle = {
+    position: 'absolute' as const, 
+    top: 12, 
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontWeight: 'medium',
+    zIndex: 1,
+    px: 2,
+    py: 0.8
+  };
+  
+  switch (status) {
+    // Для статуса "available" не показываем бейдж
+    case "available":
+      return null;
+    case "booked":
+      return (
+        <Chip 
+          label="Забронировано" 
+          color="error" 
+          size="small"
+          sx={chipStyle}
+        />
+      );
+    case "maintenance":
+      return (
+        <Chip 
+          label="На обслуживании" 
+          color="warning" 
+          size="small"
+          sx={chipStyle}
+        />
+      );
+    case "in_use":
+      return (
+        <Chip 
+          label="В работе" 
+          color="primary" 
+          size="small"
+          sx={chipStyle}
+        />
+      );
+    default:
+      return null;
+  }
+});
+
+// Основной компонент карточки
 const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   const [, setLocation] = useLocation();
   
@@ -57,64 +104,14 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
     setLocation(`/equipment/${equipment.id}`);
   };
   
-  // Обработчик клика по кнопке избранного
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Предотвращаем всплытие события
-    toggleFavorite(equipment.id);
-  };
-  
-  // Определяем цвет и текст метки статуса
-  const getStatusChip = () => {
-    // Стиль для всех статусных чипов
-    const chipStyle = {
-      position: 'absolute', 
-      top: 12, 
-      left: '50%',
-      transform: 'translateX(-50%)',
-      fontWeight: 'medium',
-      zIndex: 1,
-      px: 2,
-      py: 0.8
+  // Мемоизируем конфигурацию кнопки для предотвращения перерисовок
+  const buttonConfig = useMemo(() => {
+    // Функция обработки клика кнопки
+    const handleButtonClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onBook(equipment.id);
     };
     
-    switch (equipment.status) {
-      // Для статуса "available" не показываем бейдж
-      case "available":
-        return null;
-      case "booked":
-        return (
-          <Chip 
-            label="Забронировано" 
-            color="error" 
-            size="small"
-            sx={chipStyle}
-          />
-        );
-      case "maintenance":
-        return (
-          <Chip 
-            label="На обслуживании" 
-            color="warning" 
-            size="small"
-            sx={chipStyle}
-          />
-        );
-      case "in_use":
-        return (
-          <Chip 
-            label="В работе" 
-            color="primary" 
-            size="small"
-            sx={chipStyle}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Получаем информацию о типе кнопки и её поведении в зависимости от типа использования
-  const getButtonConfig = () => {
     // Определяем конфигурацию кнопки в зависимости от типа оборудования и его статуса
     if (equipment.usageType === 'immediate_use') {
       // Для оборудования мгновенного использования
@@ -124,10 +121,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           color: "warning" as const,
           disabled: false,
           label: "Завершить",
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation();
-            onBook(equipment.id);
-          }
+          onClick: handleButtonClick
         };
       } else if (equipment.status === 'available') {
         return {
@@ -135,10 +129,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
           color: "success" as const,
           disabled: false,
           label: "Использовать",
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation();
-            onBook(equipment.id);
-          }
+          onClick: handleButtonClick
         };
       }
     } else if (equipment.usageType === 'booking_required') {
@@ -148,10 +139,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
         color: "primary" as const,
         disabled: equipment.status !== 'available',
         label: "Забронировать",
-        onClick: (e: React.MouseEvent) => {
-          e.stopPropagation();
-          onBook(equipment.id);
-        }
+        onClick: handleButtonClick
       };
     } else if (equipment.usageType === 'long_term') {
       // Для оборудования длительного использования
@@ -160,10 +148,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
         color: "primary" as const,
         disabled: equipment.status !== 'available',
         label: "Забронировать",
-        onClick: (e: React.MouseEvent) => {
-          e.stopPropagation();
-          onBook(equipment.id);
-        }
+        onClick: handleButtonClick
       };
     }
     
@@ -173,14 +158,9 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
       color: "primary" as const,
       disabled: equipment.status !== 'available',
       label: "Забронировать",
-      onClick: (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onBook(equipment.id);
-      }
+      onClick: handleButtonClick
     };
-  };
-  
-  const buttonConfig = getButtonConfig();
+  }, [equipment.usageType, equipment.status, equipment.id, onBook]);
 
   return (
     <StyledCard>
@@ -227,7 +207,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
               alt={equipment.name}
             />
           </Box>
-          {getStatusChip()}
+          <StatusChip status={equipment.status} />
         
           <CardContent sx={{ pb: 0 }}>
             <Typography 
@@ -266,4 +246,4 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onBook }) => {
   );
 };
 
-export default EquipmentCard;
+export default memo(EquipmentCard);

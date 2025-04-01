@@ -14,7 +14,7 @@ import { useToast } from "./hooks/use-toast";
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 
-// Создаем тему MUI
+// Создаем оптимизированную тему MUI без анимаций и теней
 const theme = createTheme({
   palette: {
     primary: {
@@ -43,10 +43,77 @@ const theme = createTheme({
           boxShadow: 'none',
           '&:hover': {
             boxShadow: 'none',
+            backgroundColor: 'rgba(63, 81, 181, 0.08)',
+            transition: 'none',
           },
+          transition: 'none',
         },
       },
+      defaultProps: {
+        disableRipple: true,
+        disableElevation: true,
+      }
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none',
+          transition: 'none',
+        },
+      },
+      defaultProps: {
+        elevation: 0,
+      }
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
+          transition: 'none',
+        },
+      }
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
+        },
+      },
+      defaultProps: {
+        disablePortal: true,
+      }
+    },
+    MuiMenuItem: {
+      defaultProps: {
+        disableRipple: true,
+      }
+    },
+    MuiCheckbox: {
+      defaultProps: {
+        disableRipple: true,
+      }
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          transition: 'none',
+        },
+        indicator: {
+          transition: 'none',
+        }
+      }
+    },
+    MuiCircularProgress: {
+      styleOverrides: {
+        root: {
+          animationDuration: '0.8s',
+        }
+      }
+    },
+  },
+  transitions: {
+    // Отключаем все анимации для повышения производительности
+    create: () => 'none',
   },
 });
 

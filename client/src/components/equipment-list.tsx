@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { 
   useEquipmentList, 
   useFindEquipment,
@@ -32,7 +32,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { Button } from "@mui/material";
-import type { Equipment } from "@/lib/api";
+import type { Equipment } from "@/lib/optimized-api";
 
 interface EquipmentListProps {
   onBookEquipment: (equipmentId: string) => void;
@@ -202,8 +202,8 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     return Object.values(selectedFilters).some(values => values && values.length > 0);
   }, [selectedFilters]);
   
-  // Обработчик для кнопок "Использовать" и "Завершить"
-  const handleEquipmentAction = (equipmentId: string) => {
+  // Обработчик для кнопок "Использовать" и "Завершить" - мемоизирован для предотвращения ререндеров
+  const handleEquipmentAction = useCallback((equipmentId: string) => {
     const equipment = displayData?.find(item => item.id === equipmentId);
     
     if (!equipment) return;
@@ -218,7 +218,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
       // В остальных случаях используем обычный обработчик для бронирования
       onBookEquipment(equipmentId);
     }
-  };
+  }, [displayData, finishUsingEquipmentMutation, useEquipmentMutation, onBookEquipment]);
 
   return (
     <Box mb={4} sx={{ backgroundColor: '#ffffff' }}>
@@ -560,4 +560,5 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
   );
 };
 
-export default EquipmentList;
+// Оборачиваем компонент в memo для оптимизации ререндеров
+export default memo(EquipmentList);
