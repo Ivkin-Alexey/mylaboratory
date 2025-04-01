@@ -154,16 +154,16 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
     }));
   };
   
-  // Обработчик сброса всех фильтров
+  // Обработчик сброса всех фильтров (без очистки поискового запроса)
   const handleClearAllFilters = () => {
     setSelectedFilters({});
-    setSearchTerm("");
+    // Теперь поисковая фраза остается в инпуте
   };
   
-  // Проверяем, есть ли активные фильтры
+  // Проверяем, есть ли активные фильтры (только фильтры, без учета поискового запроса)
   const hasActiveFilters = useMemo(() => {
-    return Object.values(selectedFilters).some(values => values && values.length > 0) || !!searchTerm;
-  }, [selectedFilters, searchTerm]);
+    return Object.values(selectedFilters).some(values => values && values.length > 0);
+  }, [selectedFilters]);
   
   // Обработчик для кнопок "Использовать" и "Завершить"
   const handleEquipmentAction = (equipmentId: string) => {
