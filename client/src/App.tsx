@@ -196,6 +196,9 @@ function Router() {
           <Route path="/equipment/add">
             <AddEquipment />
           </Route>
+          <Route path="/equipment/favorites">
+            <Equipment onNavigateToBookings={() => handleTabChange("myBookings")} showFavorites={true} />
+          </Route>
           <Route path="/equipment/:id">
             <EquipmentDetails onNavigateToBookings={() => handleTabChange("myBookings")} />
           </Route>

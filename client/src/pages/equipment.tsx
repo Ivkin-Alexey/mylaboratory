@@ -11,9 +11,10 @@ import type { Equipment, Booking } from "@/lib/api";
 
 interface EquipmentPageProps {
   onNavigateToBookings?: () => void;
+  showFavorites?: boolean;
 }
 
-const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) => {
+const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings, showFavorites = false }) => {
   const [, navigate] = useLocation();
   const { data: equipmentList } = useEquipmentList();
   const isMobile = useIsMobile();
@@ -88,7 +89,7 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
         )}
       </Box>
       
-      <EquipmentList onBookEquipment={handleBookEquipment} />
+      <EquipmentList onBookEquipment={handleBookEquipment} initialShowFavorites={showFavorites} />
       
       <BookingModal
         isOpen={isBookingModalOpen}

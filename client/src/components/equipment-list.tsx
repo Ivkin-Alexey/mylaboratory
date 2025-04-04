@@ -166,16 +166,17 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
 
 interface EquipmentListProps {
   onBookEquipment: (equipmentId: string) => void;
+  initialShowFavorites?: boolean;
 }
 
 const ITEMS_PER_PAGE = 38;
 
-const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
+const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment, initialShowFavorites = false }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState<boolean>(false);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState<boolean>(initialShowFavorites);
   
   // Используем хук избранного
   const { favoriteIds, hasFavorites } = useFavorites();

@@ -131,9 +131,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             <ListItemButton 
               sx={{ pl: 4 }}
               onClick={() => {
-                // Тут можно добавить логику для отображения только избранного
-                handleNavigation("equipment");
-                // И установить showOnlyFavorites = true
+                setLocation("/equipment/favorites");
+                setDrawerOpen(false);
               }}
             >
               <ListItemIcon>
@@ -265,33 +264,42 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
         
         {/* Вкладки, видимые только на десктопе */}
         {!isMobile && (
-          <Tabs 
-            value={activeTab}
-            onChange={handleTabChange}
-            textColor="inherit"
-            indicatorColor="secondary"
-            sx={{ 
-              bgcolor: theme.palette.primary.main,
-              '& .MuiTab-root': { 
-                minWidth: 'auto',
-                py: 1.5,
-                px: 2
-              }
-            }}
-          >
-            <Tab 
-              value="equipment" 
-              label="Оборудование" 
-              icon={<ScienceIcon />} 
-              iconPosition="start"
-            />
-            <Tab 
-              value="myBookings" 
-              label="Мои Бронирования" 
-              icon={<BookmarksIcon />} 
-              iconPosition="start"
-            />
-          </Tabs>
+          <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: theme.palette.primary.main }}>
+            <Tabs 
+              value={activeTab}
+              onChange={handleTabChange}
+              textColor="inherit"
+              indicatorColor="secondary"
+              sx={{ 
+                '& .MuiTab-root': { 
+                  minWidth: 'auto',
+                  py: 1.5,
+                  px: 2
+                }
+              }}
+            >
+              <Tab 
+                value="equipment" 
+                label="Оборудование" 
+                icon={<ScienceIcon />} 
+                iconPosition="start"
+              />
+              <Tab 
+                value="myBookings" 
+                label="Мои Бронирования" 
+                icon={<BookmarksIcon />} 
+                iconPosition="start"
+              />
+            </Tabs>
+            <Button
+              color="inherit"
+              startIcon={<StarIcon color="error" />}
+              onClick={() => setLocation("/equipment/favorites")}
+              sx={{ ml: 2 }}
+            >
+              Избранное
+            </Button>
+          </Box>
         )}
       </AppBar>
       
