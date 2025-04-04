@@ -460,11 +460,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
           display: 'flex', 
           flexWrap: 'wrap',
           justifyContent: 'center',
-          gap: { xs: 0, sm: 2 },
+          gap: { xs: '2vw', sm: 2 },  // Добавляем отступы между элементами
           mb: 4,
-          px: { xs: 0, sm: 4 },
+          px: { xs: '2vw', sm: 4 },   // Добавляем небольшие боковые отступы на мобильных устройствах
           mx: { xs: 'auto', sm: 0 },
-          maxWidth: { xs: '92vw', sm: 'none' }
+          maxWidth: { xs: '94vw', sm: 'none' }
         }}>
           
           {/* Динамические фильтры из API */}
@@ -472,10 +472,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
             <FormControl 
               key={filter.name}
               sx={{ 
-                width: { xs: '44vw', sm: 170 },
+                width: { xs: '43vw', sm: 170 },  // Немного уменьшаем ширину для отступов
                 flexShrink: 0,
                 position: 'relative',
-                mx: { xs: 0, sm: 0 }
+                m: { xs: '1vw 0', sm: 0 }  // Добавляем вертикальные отступы на мобильном
               }} 
               size="small"
             >
