@@ -472,7 +472,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
             <FormControl 
               key={filter.name}
               sx={{ 
-                width: { xs: '43vw', sm: 170 },  // Немного уменьшаем ширину для отступов
+                width: { xs: '44vw', sm: 170 },  // Возвращаем ширину на 44vw как запрошено
                 flexShrink: 0,
                 position: 'relative',
                 m: { xs: '1vw 0', sm: 0 }  // Добавляем вертикальные отступы на мобильном
