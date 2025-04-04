@@ -181,12 +181,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
           <ListItemText primary="Контакты" />
         </ListItemButton>
         
-        <ListItemButton>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Настройки" />
-        </ListItemButton>
+
       </List>
     </Box>
   );
