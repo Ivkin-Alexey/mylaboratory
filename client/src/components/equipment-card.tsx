@@ -27,14 +27,14 @@ const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   width: '15vw',
-  minWidth: '120px',
+  minWidth: '250px',
   margin: '0 auto',
   backgroundColor: '#ffffff',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
   transition: 'none', // Отключаем все анимации для повышения производительности
   [theme.breakpoints.down(900)]: {
     width: '42vw',
-    minWidth: '250px',
+    minWidth: '120px',
   }
 }));
 
