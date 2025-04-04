@@ -180,12 +180,27 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         zIndex: 10,
         '&:hover': {
           bgcolor: 'rgba(255, 255, 255, 0.9)',
+        },
+        '&:active': {
+          transform: 'scale(0.92)',
+          transition: 'transform 0.1s', // Только для активного состояния добавляем анимацию
         }
       }}
       onClick={handleFavoriteClick}
     >
       {isEquipmentFavorite ? 
-        <StarIcon color="error" fontSize="small" /> : 
+        <StarIcon 
+          color="error" 
+          fontSize="small" 
+          sx={{
+            animation: isEquipmentFavorite ? 'starPulse 0.3s ease-in-out' : 'none',
+            '@keyframes starPulse': {
+              '0%': { transform: 'scale(0.8)' },
+              '50%': { transform: 'scale(1.2)' },
+              '100%': { transform: 'scale(1)' },
+            }
+          }} 
+        /> : 
         <StarBorderIcon fontSize="small" />
       }
     </Button>

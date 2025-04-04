@@ -79,8 +79,19 @@ export function useFavorites() {
     }
   }, [updateCache]);
   
+  // Добавляем обработчик последних изменений для отображения анимации
+  const [lastToggled, setLastToggled] = useState<string | null>(null);
+  
   // Оптимизированное переключение состояния
   const toggleFavorite = useCallback((equipmentId: string) => {
+    // Запоминаем ID оборудования, чтобы можно было анимировать именно его
+    setLastToggled(equipmentId);
+    
+    // Сбрасываем этот ID через короткое время (для временной анимации)
+    setTimeout(() => {
+      setLastToggled(null);
+    }, 300);
+    
     if (favoritesCache.current.has(equipmentId)) {
       const newFavorites = Array.from(favoritesCache.current).filter(id => id !== equipmentId);
       updateCache(newFavorites);
@@ -114,6 +125,7 @@ export function useFavorites() {
     toggleFavorite,
     isFavorite,
     filterFavorites,
-    hasFavorites
+    hasFavorites,
+    lastToggled  // Возвращаем новый параметр
   };
 }

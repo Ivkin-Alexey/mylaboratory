@@ -562,27 +562,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
             </Button>
           )}
           
-          {/* Кнопка переключения режима "Только избранное" */}
-          <Button
-            variant={showOnlyFavorites ? "contained" : "outlined"}
-            color="error"
-            size="small"
-            startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
-            onClick={() => {
-              setShowOnlyFavorites(prev => !prev);
-            }}
-            sx={{
-              borderRadius: 4,
-              textTransform: 'none',
-              fontWeight: 'bold',
-              boxShadow: 'none',
-              '&:hover': {
-                boxShadow: 'none',
-              }
-            }}
-          >
-            {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
-          </Button>
+
         </Box>
       )}
 
