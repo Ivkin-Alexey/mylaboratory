@@ -4,21 +4,16 @@ import {
   Container, 
   Typography, 
   Paper, 
-  Card, 
-  CardContent, 
-  Avatar,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
-  Stack
+  Divider
 } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PersonIcon from '@mui/icons-material/Person';
 
 const Contacts = () => {
   return (
@@ -103,106 +98,81 @@ const Contacts = () => {
           <Paper 
             elevation={3} 
             sx={{ 
-              p: 0, 
+              p: 3, 
               height: '100%', 
               borderRadius: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
               overflow: 'hidden'
             }}
           >
-            {/* Можно вставить карту с местоположением */}
-            <Box
-              component="iframe"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1998.6035766107097!2d30.24372067711598!3d59.929533066522076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4696310b22b218d5%3A0xc0a7d245d6c57671!2z0KHQsNC90LrRgi3Qn9C10YLQtdGA0LHRg9GA0LPRgdC60LjQuSDQs9C-0YDQvdGL0Lkg0YPQvdC40LLQtdGA0YHQuNGC0LXRgg!5e0!3m2!1sru!2sru!4v1709221370529!5m2!1sru!2sru"
-              width="100%"
-              height="100%"
-              sx={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Карта расположения"
-            />
+            <Box 
+              sx={{ 
+                width: '100%', 
+                height: '300px',
+                bgcolor: '#eef5fd',
+                borderRadius: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'relative'
+              }}
+            >
+              {/* Имитация карты Яндекса */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: 'url("https://avatars.mds.yandex.net/get-bunker/118781/01ffb5e5ef0e5a2da50e7dcce4d6b1cecd66b3c1/orig")',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  opacity: 0.8
+                }}
+              />
+              
+              {/* Маркер на карте */}
+              <Box 
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  bgcolor: 'primary.main',
+                  width: 20,
+                  height: 20,
+                  borderRadius: '50%',
+                  border: '3px solid white',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+                  zIndex: 2
+                }}
+              />
+              
+              {/* Заголовок */}
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  position: 'absolute',
+                  top: 10,
+                  left: 10,
+                  bgcolor: 'rgba(255,255,255,0.8)',
+                  p: 1,
+                  borderRadius: 1,
+                  zIndex: 1
+                }}
+              >
+                Санкт-Петербург, 21 линия В.О., д. 2
+              </Typography>
+            </Box>
+            
+            <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
+              Координаты: 59.930161, 30.268519
+            </Typography>
           </Paper>
         </Box>
-      </Box>
-        
-      {/* Ключевые контактные лица */}
-      <Box sx={{ width: '100%', mt: 4 }}>
-        <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 'bold' }}>
-          Контактные лица
-        </Typography>
-        
-        <Stack 
-          direction={{ xs: 'column', sm: 'row' }} 
-          spacing={3} 
-          sx={{ 
-            flexWrap: 'wrap',
-            '& > *': { 
-              flexBasis: { xs: '100%', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)' },
-              minWidth: { xs: '100%', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)' }
-            }
-          }}
-        >
-          {[
-            {
-              name: 'Иванов Иван Иванович',
-              position: 'Директор центра',
-              phone: '+7 (812) 328-83-45',
-              email: 'ivanov@spmi.ru',
-              photo: null
-            },
-            {
-              name: 'Петрова Елена Сергеевна',
-              position: 'Администратор',
-              phone: '+7 (812) 328-84-56',
-              email: 'petrova@spmi.ru',
-              photo: null
-            },
-            {
-              name: 'Сидоров Алексей Павлович',
-              position: 'Технический специалист',
-              phone: '+7 (812) 328-85-67',
-              email: 'sidorov@spmi.ru',
-              photo: null
-            }
-          ].map((person, index) => (
-            <Card key={index} sx={{ height: '100%', borderRadius: 2 }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ mr: 2, bgcolor: 'primary.main', width: 56, height: 56 }}>
-                    {person.photo ? (
-                      <img src={person.photo} alt={person.name} width="100%" height="100%" />
-                    ) : (
-                      <PersonIcon fontSize="large" />
-                    )}
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold' }}>
-                      {person.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {person.position}
-                    </Typography>
-                  </Box>
-                </Box>
-                
-                <List dense disablePadding>
-                  <ListItem disablePadding sx={{ pb: 1 }}>
-                    <ListItemIcon sx={{ minWidth: 30 }}>
-                      <PhoneIcon fontSize="small" color="primary" />
-                    </ListItemIcon>
-                    <ListItemText primary={person.phone} />
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemIcon sx={{ minWidth: 30 }}>
-                      <EmailIcon fontSize="small" color="primary" />
-                    </ListItemIcon>
-                    <ListItemText primary={person.email} />
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          ))}
-        </Stack>
       </Box>
       
       {/* Форма для обратной связи или дополнительная информация */}
