@@ -217,20 +217,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             />
           )}
           
-          <Typography 
-            variant="h6" 
-            component="div" 
-            sx={{ 
-              flexGrow: 1, 
-              cursor: 'pointer',
-              fontSize: { xs: '1.5rem', sm: '1.1rem' },
-              fontWeight: 'bold',
-              color: '#1976d2'
-            }}
-            onClick={() => setActiveTab("equipment")}
-          >
-            {isMobile ? "Единый каталог" : "Единый каталог учебного и научного оборудования"}
-          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
           
           {/* Элементы, видимые только на десктопе */}
           {!isMobile && (
