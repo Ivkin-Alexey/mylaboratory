@@ -75,7 +75,7 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings, sho
     <>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" component="h1">
-          {showFavorites ? "Избранное оборудование" : "Доступное оборудование"}
+          {showFavorites ? "Избранное оборудование" : "Единый каталог учебного и научного оборудования"}
         </Typography>
         {!isMobile && (
           <Button 
