@@ -557,11 +557,13 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
                 sm: 'repeat(2, 1fr)',
                 md: 'repeat(4, 1fr)'
               },
-              gap: 2
+              gap: 2,
+              width: '100%',
+              overflowX: 'hidden'
             }}
           >
             {paginatedData?.map((item: Equipment) => (
-              <Box key={item.id}>
+              <Box key={item.id} sx={{ maxWidth: '100%', display: 'flex', justifyContent: 'center' }}>
                 <EquipmentCard 
                   equipment={item} 
                   onBook={handleEquipmentAction} 
