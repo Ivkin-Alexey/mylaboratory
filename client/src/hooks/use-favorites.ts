@@ -92,19 +92,46 @@ export function useFavorites() {
       setLastToggled(null);
     }, 300);
     
-    if (favoritesCache.current.has(equipmentId)) {
-      const newFavorites = Array.from(favoritesCache.current).filter(id => id !== equipmentId);
-      updateCache(newFavorites);
+    console.log('toggleFavorite вызван для:', equipmentId);
+    console.log('Текущее состояние кэша:', Array.from(favoritesCache.current));
+    
+    const wasFavorite = favoritesCache.current.has(equipmentId);
+    console.log('Было ли в избранном:', wasFavorite);
+    
+    let newFavorites;
+    if (wasFavorite) {
+      console.log('Удаляем из избранного:', equipmentId);
+      newFavorites = Array.from(favoritesCache.current).filter(id => id !== equipmentId);
     } else {
-      const newFavorites = [...Array.from(favoritesCache.current), equipmentId];
-      updateCache(newFavorites);
+      console.log('Добавляем в избранное:', equipmentId);
+      newFavorites = [...Array.from(favoritesCache.current), equipmentId];
     }
-  }, [updateCache]);
+    
+    console.log('Новый список избранного:', newFavorites);
+    
+    // Сначала обновляем ref, чтобы isFavorite работал правильно
+    favoritesCache.current = new Set(newFavorites);
+    
+    // Затем обновляем localstorage
+    try {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(newFavorites));
+      console.log('Избранное сохранено в localStorage');
+    } catch (error) {
+      console.error('Ошибка при сохранении избранного в localStorage:', error);
+    }
+    
+    // Наконец, обновляем состояние компонента (вызываем ререндер)
+    setFavoriteIds(newFavorites);
+    console.log('Состояние favoriteIds обновлено');
+    
+  }, []);
   
   // Быстрая проверка наличия в избранном с использованием Set для O(1) сложности
   const isFavorite = useCallback((equipmentId: string) => {
-    return favoritesCache.current.has(equipmentId);
-  }, []); // Удаляем зависимость от favoriteIds для предотвращения ререндеров
+    const result = favoritesCache.current.has(equipmentId);
+    console.log(`isFavorite проверка для ${equipmentId}: ${result}, кэш:`, Array.from(favoritesCache.current));
+    return result;
+  }, [favoriteIds]); // Добавляем зависимость от favoriteIds для обновления при изменениях
   
   // Мемоизированная фильтрация списка
   const filterFavorites = useCallback((equipmentList: Equipment[]) => {

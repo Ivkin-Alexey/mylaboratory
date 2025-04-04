@@ -94,7 +94,11 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   
   // Мемоизация проверки избранного для предотвращения лишних перерисовок
-  const isEquipmentFavorite = useMemo(() => isFavorite(equipment.id), [isFavorite, equipment.id]);
+  // Явно проверяем избранное для каждой карточки без мемоизации, чтобы обеспечить актуальность
+  const isEquipmentFavorite = isFavorite(equipment.id);
+  
+  // Для отладки
+  console.log(`Проверка избранного для ${equipment.id}: ${isEquipmentFavorite}`);
   
   // Переход на страницу деталей оборудования - мемоизируем функцию
   const handleCardClick = useCallback(() => {
@@ -166,49 +170,54 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
     };
   }, [equipment.usageType, equipment.status, equipment.id, onBook]);
 
-  // Мемоизируем кнопку избранного для предотвращения ререндеров
-  const favoriteButton = useMemo(() => (
-    <Button
-      variant="text"
-      sx={{
-        position: 'absolute',
-        top: 5,
-        right: 5,
-        minWidth: 'auto',
-        padding: '5px',
-        bgcolor: 'rgba(255, 255, 255, 0.8)',
-        zIndex: 10,
-        '&:hover': {
-          bgcolor: 'rgba(255, 255, 255, 0.9)',
-        },
-        '&:active': {
-          transform: 'scale(0.92)',
-          transition: 'transform 0.1s', // Только для активного состояния добавляем анимацию
+  // Вместо мемоизации используем обычную функцию рендеринга кнопки,
+  // чтобы она гарантированно обновлялась при изменении isEquipmentFavorite
+  const renderFavoriteButton = () => {
+    console.log(`Рендеринг кнопки для ${equipment.id}, избранное: ${isEquipmentFavorite}`);
+    
+    return (
+      <Button
+        variant="text"
+        sx={{
+          position: 'absolute',
+          top: 5,
+          right: 5,
+          minWidth: 'auto',
+          padding: '5px',
+          bgcolor: 'rgba(255, 255, 255, 0.8)',
+          zIndex: 10,
+          '&:hover': {
+            bgcolor: 'rgba(255, 255, 255, 0.9)',
+          },
+          '&:active': {
+            transform: 'scale(0.92)',
+            transition: 'transform 0.1s',
+          }
+        }}
+        onClick={handleFavoriteClick}
+      >
+        {isEquipmentFavorite ? 
+          <StarIcon 
+            fontSize="small" 
+            sx={{
+              color: '#1976d2', // Синий цвет (primary color)
+              animation: 'starPulse 0.3s ease-in-out',
+              '@keyframes starPulse': {
+                '0%': { transform: 'scale(0.8)' },
+                '50%': { transform: 'scale(1.2)' },
+                '100%': { transform: 'scale(1)' },
+              }
+            }} 
+          /> : 
+          <StarBorderIcon fontSize="small" />
         }
-      }}
-      onClick={handleFavoriteClick}
-    >
-      {isEquipmentFavorite ? 
-        <StarIcon 
-          color="error" 
-          fontSize="small" 
-          sx={{
-            animation: isEquipmentFavorite ? 'starPulse 0.3s ease-in-out' : 'none',
-            '@keyframes starPulse': {
-              '0%': { transform: 'scale(0.8)' },
-              '50%': { transform: 'scale(1.2)' },
-              '100%': { transform: 'scale(1)' },
-            }
-          }} 
-        /> : 
-        <StarBorderIcon fontSize="small" />
-      }
-    </Button>
-  ), [isEquipmentFavorite, handleFavoriteClick]);
+      </Button>
+    );
+  };
 
   return (
     <StyledCard>
-      {favoriteButton}
+      {renderFavoriteButton()}
       
       <ContentArea 
         onClick={handleCardClick}
@@ -280,5 +289,5 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
   );
 };
 
-// Оборачиваем в memo для предотвращения лишних рендеров
-export default memo(EquipmentCard);
+// Убираем memo для решения проблемы с обновлением состояния избранного
+export default EquipmentCard;
