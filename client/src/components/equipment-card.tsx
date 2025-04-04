@@ -241,7 +241,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         </Box>
         <StatusChip status={equipment.status} />
       
-        <CardContent sx={{ pb: 0, px: { xs: 1, sm: 2 }, pt: { xs: 0.8, sm: 1.5 } }}>
+        <CardContent sx={{ pb: 0, px: { xs: 1, sm: 2 }, pt: { xs: 0.5, sm: 1 } }}>
           <Typography 
             variant="h6" 
             component="h3" 

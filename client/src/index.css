@@ -18,3 +18,8 @@
     font-family: Roboto, Helvetica, Arial, sans-serif;
   }
 }
+
+/* Размер шрифта для элементов раскрывающихся списков */
+.MuiMenuItem-root {
+  font-size: 0.8rem !important;
+}
