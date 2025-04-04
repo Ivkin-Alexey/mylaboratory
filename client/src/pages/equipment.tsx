@@ -6,7 +6,8 @@ import EquipmentList from "@/components/equipment-list";
 import BookingModal from "@/components/booking-modal";
 import ConfirmationModal from "@/components/confirmation-modal";
 import { useEquipmentList } from "@/hooks/use-equipment";
-import type { Equipment, Booking } from "@shared/schema";
+import { useIsMobile } from "@/hooks/use-mobile";
+import type { Equipment, Booking } from "@/lib/api";
 
 interface EquipmentPageProps {
   onNavigateToBookings?: () => void;
@@ -15,8 +16,9 @@ interface EquipmentPageProps {
 const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) => {
   const [, navigate] = useLocation();
   const { data: equipmentList } = useEquipmentList();
+  const isMobile = useIsMobile();
   
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState<number | null>(null);
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState<{
@@ -33,7 +35,7 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
     : null;
   
   // Handle opening the booking modal
-  const handleBookEquipment = (equipmentId: number) => {
+  const handleBookEquipment = (equipmentId: string) => {
     setSelectedEquipmentId(equipmentId);
     setIsBookingModalOpen(true);
   };
@@ -74,14 +76,16 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings }) =
         <Typography variant="h5" component="h1">
           Доступное оборудование
         </Typography>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<AddIcon />}
-          onClick={handleAddEquipment}
-        >
-          Добавить оборудование
-        </Button>
+        {!isMobile && (
+          <Button 
+            variant="contained" 
+            color="primary" 
+            startIcon={<AddIcon />}
+            onClick={handleAddEquipment}
+          >
+            Добавить оборудование
+          </Button>
+        )}
       </Box>
       
       <EquipmentList onBookEquipment={handleBookEquipment} />

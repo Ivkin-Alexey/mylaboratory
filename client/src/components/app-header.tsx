@@ -135,7 +135,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
         
         <ListItem 
           onClick={() => {
-            setLocation("/add-equipment");
+            setLocation("/equipment/add");
             setDrawerOpen(false);
           }}
           sx={{ cursor: 'pointer' }}
