@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -9,12 +9,21 @@ import {
   Tabs,
   Tab,
   useTheme,
-  Button
+  Button,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useMediaQuery
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ScienceIcon from "@mui/icons-material/Science";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import ContactsIcon from "@mui/icons-material/Contacts";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useLocation } from "wouter";
 
 
@@ -26,85 +35,214 @@ interface AppHeaderProps {
 const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
   const theme = useTheme();
   const [, setLocation] = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  
+  // Используем медиа-запрос для определения, является ли экран мобильным
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: "equipment" | "myBookings") => {
     setActiveTab(newValue);
+    if (isMobile) {
+      setDrawerOpen(false);
+    }
   };
 
   const handleContactsClick = () => {
     setLocation("/contacts");
+    if (isMobile) {
+      setDrawerOpen(false);
+    }
   };
+
+  const handleMenuOpen = () => {
+    setDrawerOpen(true);
+  };
+  
+  const handleMenuClose = () => {
+    setDrawerOpen(false);
+  };
+  
+  const handleNavigation = (tab: "equipment" | "myBookings" | "contacts") => {
+    if (tab === "contacts") {
+      handleContactsClick();
+    } else {
+      setActiveTab(tab);
+    }
+    setDrawerOpen(false);
+  };
+
+  // Содержимое боковой панели для мобильных устройств
+  const drawerContent = (
+    <Box sx={{ width: 250 }} onClick={handleMenuClose}>
+      <List>
+        <ListItem sx={{ py: 2, bgcolor: 'primary.dark' }}>
+          <ListItemIcon sx={{ color: 'white' }}>
+            <AccountCircleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Иван Петров" sx={{ color: 'white' }} />
+        </ListItem>
+      </List>
+      
+      <Divider />
+      
+      <List>
+        <ListItem 
+          button 
+          onClick={() => handleNavigation("equipment")}
+          selected={activeTab === "equipment"}
+        >
+          <ListItemIcon>
+            <ScienceIcon color={activeTab === "equipment" ? "primary" : "inherit"} />
+          </ListItemIcon>
+          <ListItemText primary="Оборудование" />
+        </ListItem>
+        
+        <ListItem 
+          button 
+          onClick={() => handleNavigation("myBookings")}
+          selected={activeTab === "myBookings"}
+        >
+          <ListItemIcon>
+            <BookmarksIcon color={activeTab === "myBookings" ? "primary" : "inherit"} />
+          </ListItemIcon>
+          <ListItemText primary="Мои Бронирования" />
+        </ListItem>
+        
+        <ListItem 
+          button 
+          onClick={() => handleNavigation("contacts")}
+        >
+          <ListItemIcon>
+            <ContactsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Контакты" />
+        </ListItem>
+      </List>
+      
+      <Divider />
+      
+      <List>
+        <ListItem button>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Настройки" />
+        </ListItem>
+      </List>
+    </Box>
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="primary" elevation={1}>
         <Toolbar>
-          <ScienceIcon sx={{ mr: 2 }} />
+          {isMobile ? (
+            <IconButton 
+              edge="start" 
+              color="inherit" 
+              aria-label="menu" 
+              sx={{ mr: 2 }}
+              onClick={handleMenuOpen}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <ScienceIcon sx={{ mr: 2 }} />
+          )}
+          
           <Typography 
             variant="h6" 
             component="div" 
             sx={{ 
               flexGrow: 1, 
-              cursor: 'pointer' 
+              cursor: 'pointer',
+              fontSize: { xs: '1rem', sm: '1.25rem' }
             }}
             onClick={() => setActiveTab("equipment")}
           >
-            Бронирование Лабораторного Оборудования
+            {isMobile ? "Бронирование" : "Бронирование Лабораторного Оборудования"}
           </Typography>
           
-          <Button 
-            color="inherit" 
-            startIcon={<ContactsIcon />}
-            onClick={handleContactsClick}
-            sx={{ mr: 2 }}
-          >
-            Контакты
-          </Button>
+          {/* Элементы, видимые только на десктопе */}
+          {!isMobile && (
+            <>
+              <Button 
+                color="inherit" 
+                startIcon={<ContactsIcon />}
+                onClick={handleContactsClick}
+                sx={{ mr: 2 }}
+              >
+                Контакты
+              </Button>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2" sx={{ mr: 2 }}>
+                  Иван Петров
+                </Typography>
+                <IconButton color="inherit" size="small">
+                  <SettingsIcon />
+                </IconButton>
+                <Avatar 
+                  sx={{ ml: 2, width: 32, height: 32 }}
+                  alt="Иван Петров"
+                >
+                  ИП
+                </Avatar>
+              </Box>
+            </>
+          )}
           
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body2" sx={{ mr: 2 }}>
-              Иван Петров
-            </Typography>
-            <IconButton color="inherit" size="small">
-              <SettingsIcon />
-            </IconButton>
+          {/* Аватар для мобильных устройств */}
+          {isMobile && (
             <Avatar 
-              sx={{ ml: 2, width: 32, height: 32 }}
+              sx={{ width: 32, height: 32 }}
               alt="Иван Петров"
             >
               ИП
             </Avatar>
-          </Box>
+          )}
         </Toolbar>
         
-        <Tabs 
-          value={activeTab}
-          onChange={handleTabChange}
-          textColor="inherit"
-          indicatorColor="secondary"
-          sx={{ 
-            bgcolor: theme.palette.primary.main,
-            '& .MuiTab-root': { 
-              minWidth: 'auto',
-              py: 1.5,
-              px: 2
-            }
-          }}
-        >
-          <Tab 
-            value="equipment" 
-            label="Оборудование" 
-            icon={<ScienceIcon />} 
-            iconPosition="start"
-          />
-          <Tab 
-            value="myBookings" 
-            label="Мои Бронирования" 
-            icon={<BookmarksIcon />} 
-            iconPosition="start"
-          />
-        </Tabs>
+        {/* Вкладки, видимые только на десктопе */}
+        {!isMobile && (
+          <Tabs 
+            value={activeTab}
+            onChange={handleTabChange}
+            textColor="inherit"
+            indicatorColor="secondary"
+            sx={{ 
+              bgcolor: theme.palette.primary.main,
+              '& .MuiTab-root': { 
+                minWidth: 'auto',
+                py: 1.5,
+                px: 2
+              }
+            }}
+          >
+            <Tab 
+              value="equipment" 
+              label="Оборудование" 
+              icon={<ScienceIcon />} 
+              iconPosition="start"
+            />
+            <Tab 
+              value="myBookings" 
+              label="Мои Бронирования" 
+              icon={<BookmarksIcon />} 
+              iconPosition="start"
+            />
+          </Tabs>
+        )}
       </AppBar>
+      
+      {/* Боковая панель для мобильных устройств */}
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={handleMenuClose}
+      >
+        {drawerContent}
+      </Drawer>
     </Box>
   );
 };
