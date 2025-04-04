@@ -223,7 +223,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             sx={{ 
               flexGrow: 1, 
               cursor: 'pointer',
-              fontSize: { xs: '1rem', sm: '1.1rem' },
+              fontSize: { xs: '1.5rem', sm: '1.1rem' },
               fontWeight: 'bold',
               color: '#1976d2'
             }}
