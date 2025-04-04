@@ -403,7 +403,8 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
           display: 'flex', 
           justifyContent: 'center', 
           width: '100%',
-          mb: 3
+          mb: 3,
+          px: 0  // Убираем боковые отступы 
         }}>
           <TextField
             placeholder="Поиск оборудования..."
@@ -462,9 +463,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
           justifyContent: 'center',
           gap: { xs: '2vw', sm: 2 },  // Добавляем отступы между элементами
           mb: 4,
-          px: { xs: '2vw', sm: 4 },   // Добавляем небольшие боковые отступы на мобильных устройствах
-          mx: { xs: 'auto', sm: 0 },
-          maxWidth: { xs: '94vw', sm: 'none' }
+          px: { xs: 0, sm: 0 },       // Убираем боковые отступы
+          mx: { xs: 0, sm: 0 },       // Убираем внешние отступы
+          width: '100%',              // Используем 100% ширины
+          maxWidth: '100%'            // Максимальная ширина тоже 100%
         }}>
           
           {/* Динамические фильтры из API */}
@@ -536,7 +538,9 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
             justifyContent: 'center', 
             mb: 2,
             gap: 2,
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            px: 0,  // Убираем боковые отступы
+            width: '100%'  // Используем полную ширину
           }}
         >
           {/* Кнопка сброса всех фильтров */}
