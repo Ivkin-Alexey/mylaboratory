@@ -8,11 +8,14 @@ import {
   Avatar,
   Tabs,
   Tab,
-  useTheme
+  useTheme,
+  Button
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ScienceIcon from "@mui/icons-material/Science";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
+import ContactsIcon from "@mui/icons-material/Contacts";
+import { useLocation } from "wouter";
 
 
 interface AppHeaderProps {
@@ -22,9 +25,14 @@ interface AppHeaderProps {
 
 const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
   const theme = useTheme();
+  const [, setLocation] = useLocation();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: "equipment" | "myBookings") => {
     setActiveTab(newValue);
+  };
+
+  const handleContactsClick = () => {
+    setLocation("/contacts");
   };
 
   return (
@@ -43,6 +51,15 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
           >
             Бронирование Лабораторного Оборудования
           </Typography>
+          
+          <Button 
+            color="inherit" 
+            startIcon={<ContactsIcon />}
+            onClick={handleContactsClick}
+            sx={{ mr: 2 }}
+          >
+            Контакты
+          </Button>
           
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="body2" sx={{ mr: 2 }}>

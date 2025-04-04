@@ -6,6 +6,7 @@ import Equipment from "./pages/equipment";
 import MyBookings from "./pages/my-bookings";
 import EquipmentDetails from "./pages/equipment-details";
 import AddEquipment from "./pages/add-equipment";
+import Contacts from "./pages/contacts";
 import AppHeader from "./components/app-header";
 import React, { useState, useEffect } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -197,6 +198,9 @@ function Router() {
           </Route>
           <Route path="/equipment/:id">
             <EquipmentDetails onNavigateToBookings={() => handleTabChange("myBookings")} />
+          </Route>
+          <Route path="/contacts">
+            <Contacts />
           </Route>
           <Route path="/">
             {activeTab === "equipment" ? (
