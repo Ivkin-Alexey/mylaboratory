@@ -199,13 +199,17 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         onClick={handleCardClick}
         sx={{ cursor: 'pointer' }}
       >
-        <Box sx={{ height: '170px', overflow: 'hidden', p: { xs: '8px 8px 0 8px', sm: '10px 10px 0 10px' } }}>
+        <Box sx={{ 
+          height: { xs: '140px', sm: '170px' }, 
+          overflow: 'hidden', 
+          p: { xs: '8px 8px 0 8px', sm: '10px 10px 0 10px' } 
+        }}>
           <CardMedia
             component="img"
             sx={{ 
-              height: '150px', 
+              height: { xs: '120px', sm: '150px' }, 
               objectFit: 'contain',
-              maxHeight: '150px'
+              maxHeight: { xs: '120px', sm: '150px' }
             }}
             image={equipment.imageUrl || "https://via.placeholder.com/400x250?text=No+Image"}
             alt={equipment.name}
@@ -213,27 +217,33 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         </Box>
         <StatusChip status={equipment.status} />
       
-        <CardContent sx={{ pb: 0, px: { xs: 1.5, sm: 2 } }}>
+        <CardContent sx={{ pb: 0, px: { xs: 1, sm: 2 }, pt: { xs: 0.8, sm: 1.5 } }}>
           <Typography 
             variant="h6" 
             component="h3" 
             gutterBottom
-            sx={{ fontSize: '1rem' }}
+            sx={{ 
+              fontSize: { xs: '0.8rem', sm: '1rem' },
+              mb: { xs: 0.5, sm: 1 }
+            }}
           >
             {equipment.name}
           </Typography>
           
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
-            sx={{ mb: 2, fontSize: '0.875rem' }}
-          >
-            {equipment.description}
-          </Typography>
+          {/* Описание отображается только на устройствах больше xs */}
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              sx={{ mb: 2, fontSize: '0.875rem' }}
+            >
+              {equipment.description}
+            </Typography>
+          </Box>
         </CardContent>
       </ContentArea>
       
-      <Box sx={{ p: { xs: 1.5, sm: 2 }, mt: 'auto' }}>
+      <Box sx={{ p: { xs: 1, sm: 2 }, mt: 'auto' }}>
         {buttonConfig && (
           <Button 
             variant={buttonConfig.variant}
@@ -241,6 +251,11 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
             disabled={buttonConfig.disabled}
             onClick={buttonConfig.onClick}
             fullWidth
+            size="small"
+            sx={{ 
+              py: { xs: 0.5, sm: 'inherit' },
+              fontSize: { xs: '0.75rem', sm: 'inherit' }
+            }}
           >
             {buttonConfig.label}
           </Button>
