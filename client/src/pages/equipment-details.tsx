@@ -225,9 +225,9 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
       {/* Breadcrumbs navigation */}
-      <Box sx={{ py: 2, display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ py: { xs: 1, sm: 2 }, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
         <IconButton 
           color="primary" 
           sx={{ mr: 1 }}
@@ -235,7 +235,19 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         >
           <ArrowBackIcon />
         </IconButton>
-        <Breadcrumbs aria-label="breadcrumb">
+        <Breadcrumbs 
+          aria-label="breadcrumb" 
+          sx={{ 
+            '& .MuiBreadcrumbs-ol': { 
+              flexWrap: 'wrap' 
+            },
+            '& .MuiBreadcrumbs-li': { 
+              whiteSpace: 'normal',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }
+          }}
+        >
           <Link 
             color="inherit" 
             href="#" 
@@ -247,7 +259,17 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
           >
             Оборудование
           </Link>
-          <Typography color="text.primary">{equipment.name}</Typography>
+          <Typography 
+            color="text.primary"
+            sx={{ 
+              maxWidth: { xs: '190px', sm: '300px', md: 'none' },
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}
+          >
+            {equipment.name}
+          </Typography>
         </Breadcrumbs>
       </Box>
 
@@ -255,23 +277,28 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         {/* Left column - Equipment Image */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '0 0 40%' } }}>
           <Card sx={{ mb: 3 }}>
-            <Box sx={{ p: '15px 15px 0 15px' }}>
+            <Box sx={{ p: { xs: '10px 10px 0 10px', sm: '15px 15px 0 15px' } }}>
               <CardMedia
                 component="img"
-                height="280"
+                height={200}
                 image={equipment.imageUrl || "https://via.placeholder.com/600x400?text=No+Image"}
                 alt={equipment.name}
-                sx={{ objectFit: 'contain' }}
+                sx={{ 
+                  objectFit: 'contain',
+                  height: { xs: 200, sm: 280 }
+                }}
               />
             </Box>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                <Typography variant="h5" component="h1" fontWeight="bold">
+            <CardContent sx={{ px: { xs: 2, sm: 3 } }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 1, gap: 1 }}>
+                <Typography variant="h5" component="h1" fontWeight="bold" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
                   {equipment.name}
                 </Typography>
-                {getStatusChip(equipment.status)}
+                <Box sx={{ mt: { xs: 1, sm: 0 } }}>
+                  {getStatusChip(equipment.status)}
+                </Box>
               </Box>
-              <Typography variant="body1" color="text.secondary" paragraph>
+              <Typography variant="body1" color="text.secondary" paragraph sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                 {equipment.description}
               </Typography>
             </CardContent>
@@ -280,11 +307,21 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
 
         {/* Right column - Details and Booking */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '0 0 60%' } }}>
-          <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
+          <Paper elevation={1} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
               Детали оборудования
             </Typography>
-            <List dense>
+            <List dense sx={{ 
+              '& .MuiListItemIcon-root': { 
+                minWidth: { xs: 36, sm: 44 } 
+              },
+              '& .MuiListItemText-primary': {
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              },
+              '& .MuiListItemText-secondary': {
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }
+            }}>
               <ListItem>
                 <ListItemIcon>
                   <CategoryIcon color="primary" />
@@ -463,46 +500,46 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             </Box>
           </Paper>
 
-          <Paper elevation={1} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+          <Paper elevation={1} sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
               Техническая информация
             </Typography>
             
             <Box sx={{ 
               display: 'grid', 
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-              gap: 2,
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+              gap: { xs: 1, sm: 2 },
               mb: 2
             }}>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                   Марка:
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   {equipment.brand || "Не указано"}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                   Модель:
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   {equipment.model || "Не указано"}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                   Серийный номер:
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   {equipment.serialNumber || "Не указано"}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                   Инвентарный номер:
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   {equipment.inventoryNumber || "Не указано"}
                 </Typography>
               </Box>
@@ -510,7 +547,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             
             {equipment.filesUrl && (
               <Box sx={{ mt: 3 }}>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
+                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                   Документация по оборудованию:
                 </Typography>
                 <Button 
@@ -520,6 +557,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
                   href={equipment.filesUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
                 >
                   Открыть документацию
                 </Button>
@@ -552,9 +590,11 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Запрос на длительное использование</DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ mb: 3 }}>
+        <DialogTitle sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, pt: { xs: 2, sm: 3 } }}>
+          Запрос на длительное использование
+        </DialogTitle>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+          <DialogContentText sx={{ mb: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
             Заполните форму для запроса оборудования "{equipment?.name}" на длительный срок. После отправки запроса с вами свяжется администратор.
           </DialogContentText>
           
@@ -569,7 +609,15 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             variant="outlined"
             value={longTermPeriod}
             onChange={(e) => setLongTermPeriod(e.target.value)}
-            sx={{ mb: 3 }}
+            sx={{ 
+              mb: 2,
+              '& .MuiInputLabel-root': {
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              },
+              '& .MuiInputBase-input': {
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }
+            }}
           />
           
           <TextField
@@ -583,12 +631,21 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             variant="outlined"
             value={longTermPurpose}
             onChange={(e) => setLongTermPurpose(e.target.value)}
+            sx={{ 
+              '& .MuiInputLabel-root': {
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              },
+              '& .MuiInputBase-input': {
+                fontSize: { xs: '0.875rem', sm: '1rem' }
+              }
+            }}
           />
         </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
+        <DialogActions sx={{ p: { xs: 2, sm: 3 }, flexWrap: 'wrap', gap: 1 }}>
           <Button 
             onClick={() => setIsLongTermModalOpen(false)}
             variant="outlined"
+            sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
           >
             Отмена
           </Button>
@@ -597,6 +654,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             variant="contained" 
             color="secondary"
             disabled={!longTermPeriod.trim() || !longTermPurpose.trim()}
+            sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
           >
             Отправить запрос
           </Button>

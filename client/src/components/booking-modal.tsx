@@ -137,32 +137,44 @@ const BookingModal: React.FC<BookingModalProps> = ({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>
+      <DialogTitle sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, pt: { xs: 2, sm: 3 } }}>
         Бронирование оборудования
       </DialogTitle>
       
-      <DialogContent>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
         <form onSubmit={handleSubmit}>
           <Box sx={{ pt: 1 }}>
-            <Paper sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+            <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 3, bgcolor: 'background.default' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar
                   src={equipment.imageUrl || "https://via.placeholder.com/150?text=No+Image"}
                   alt={equipment.name}
-                  sx={{ width: 56, height: 56 }}
+                  sx={{ width: { xs: 48, sm: 56 }, height: { xs: 48, sm: 56 } }}
                 />
-                <Box sx={{ ml: 2 }}>
-                  <Typography variant="subtitle1" fontWeight="medium">
+                <Box sx={{ ml: 2, overflow: 'hidden' }}>
+                  <Typography variant="subtitle1" fontWeight="medium" sx={{ 
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                    maxWidth: { xs: '190px', sm: '300px' },
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
                     {equipment.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ 
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    maxWidth: { xs: '190px', sm: '300px' },
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
                     {equipment.location}
                   </Typography>
                 </Box>
               </Box>
             </Paper>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 fullWidth
                 id="booking-date" 
@@ -180,9 +192,30 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 inputProps={{ min: minDate }}
                 required
                 InputLabelProps={{ shrink: true }}
+                sx={{ 
+                  '& .MuiInputLabel-root': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  },
+                  '& .MuiInputBase-input': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    height: { xs: '1.3em', sm: '1.4em' }
+                  }
+                }}
               />
               
-              <FormControl fullWidth disabled={!date || isLoadingSlots}>
+              <FormControl fullWidth disabled={!date || isLoadingSlots} sx={{
+                '& .MuiInputLabel-root': {
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                },
+                '& .MuiSelect-select': {
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  padding: { xs: '0.5rem 0.75rem', sm: '0.75rem 1rem' }
+                },
+                '& .MuiFormHelperText-root': {
+                  fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                  margin: { xs: '0.2rem 0 0', sm: '0.3rem 0 0' }
+                }
+              }}>
                 <InputLabel id="time-slot-label">Временной интервал</InputLabel>
                 <Select
                   labelId="time-slot-label"
@@ -192,7 +225,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   label="Временной интервал"
                 >
                   {isLoadingSlots ? (
-                    <MenuItem value="" disabled>
+                    <MenuItem value="" disabled sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <CircularProgress size={20} sx={{ mr: 1 }} />
                         Загрузка доступных интервалов...
@@ -200,12 +233,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     </MenuItem>
                   ) : availableSlots && Array.isArray(availableSlots) && availableSlots.length > 0 ? (
                     availableSlots.map((slot: string) => (
-                      <MenuItem key={slot} value={slot}>
+                      <MenuItem key={slot} value={slot} sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                         {slot.replace('-', ' - ').replace(':', ':').replace(':', ':')}
                       </MenuItem>
                     ))
                   ) : (
-                    <MenuItem value="" disabled>
+                    <MenuItem value="" disabled sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                       Нет доступных интервалов на эту дату
                     </MenuItem>
                   )}
@@ -223,6 +256,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 required
                 multiline
                 rows={3}
+                sx={{ 
+                  '& .MuiInputLabel-root': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  },
+                  '& .MuiInputBase-input': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  }
+                }}
               />
               
               <TextField
@@ -234,16 +275,25 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 onChange={(e) => setAdditionalRequirements(e.target.value)}
                 multiline
                 rows={2}
+                sx={{ 
+                  '& .MuiInputLabel-root': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  },
+                  '& .MuiInputBase-input': {
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  }
+                }}
               />
             </Box>
           </Box>
         </form>
       </DialogContent>
       
-      <DialogActions sx={{ px: 3, pb: 3 }}>
+      <DialogActions sx={{ p: { xs: 2, sm: 3 }, flexWrap: 'wrap', gap: 1 }}>
         <Button 
           variant="outlined" 
           onClick={onClose}
+          sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
         >
           Отмена
         </Button>
@@ -252,6 +302,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
           onClick={handleSubmit}
           disabled={!isFormValid || isPending}
           color="primary"
+          sx={{ 
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            whiteSpace: { xs: 'nowrap', sm: 'normal' }
+          }}
         >
           {isPending ? "Обработка..." : "Подтвердить бронирование"}
         </Button>

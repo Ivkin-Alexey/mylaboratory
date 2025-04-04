@@ -54,10 +54,10 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle align="center">
+      <DialogTitle align="center" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, pt: { xs: 2, sm: 3 } }}>
         Отмена бронирования
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Box sx={{ 
             display: 'flex', 
@@ -66,74 +66,89 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
             bgcolor: 'error.light', 
             color: 'error.main', 
             borderRadius: '50%', 
-            width: 64, 
-            height: 64, 
+            width: { xs: 56, sm: 64 }, 
+            height: { xs: 56, sm: 64 }, 
             mb: 2 
           }}>
-            <WarningIcon fontSize="large" />
+            <WarningIcon sx={{ fontSize: { xs: '2rem', sm: '2.5rem' } }} />
           </Box>
           
-          <DialogContentText align="center" sx={{ mb: 3 }}>
+          <DialogContentText align="center" sx={{ mb: 3, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
             Вы уверены, что хотите отменить бронирование <b>{booking.equipment.name}</b> на <b>{booking.date}</b>? Это действие нельзя отменить.
           </DialogContentText>
           
           <Paper 
             variant="outlined" 
             sx={{ 
-              p: 2, 
+              p: { xs: 1.5, sm: 2 }, 
               width: '100%', 
               bgcolor: 'action.hover',
               mb: 2  
             }}
           >
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            <Typography 
+              variant="subtitle2" 
+              sx={{ mb: 1, fontSize: { xs: '0.85rem', sm: '0.9rem' } }}
+            >
               Детали бронирования:
             </Typography>
             
-            <List dense disablePadding>
+            <List dense disablePadding sx={{ 
+              '& .MuiListItem-root': { py: { xs: 0.5, sm: 0.75 } }
+            }}>
               <ListItem>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                <ListItemIcon sx={{ minWidth: { xs: 24, sm: 28 } }}>
+                  <FiberManualRecordIcon sx={{ fontSize: { xs: 6, sm: 8 } }} />
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       Номер бронирования: <span style={{ color: 'text.secondary' }}>BK-{booking.id}</span>
                     </Typography>
                   }
                 />
               </ListItem>
               <ListItem>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                <ListItemIcon sx={{ minWidth: { xs: 24, sm: 28 } }}>
+                  <FiberManualRecordIcon sx={{ fontSize: { xs: 6, sm: 8 } }} />
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ 
+                      fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                      '& span': {
+                        display: 'inline-block',
+                        maxWidth: { xs: '190px', sm: '300px' },
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        verticalAlign: 'bottom'
+                      }
+                    }}>
                       Оборудование: <span style={{ color: 'text.secondary' }}>{booking.equipment.name}</span>
                     </Typography>
                   }
                 />
               </ListItem>
               <ListItem>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                <ListItemIcon sx={{ minWidth: { xs: 24, sm: 28 } }}>
+                  <FiberManualRecordIcon sx={{ fontSize: { xs: 6, sm: 8 } }} />
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       Дата: <span style={{ color: 'text.secondary' }}>{booking.date}</span>
                     </Typography>
                   }
                 />
               </ListItem>
               <ListItem>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <FiberManualRecordIcon sx={{ fontSize: 8 }} />
+                <ListItemIcon sx={{ minWidth: { xs: 24, sm: 28 } }}>
+                  <FiberManualRecordIcon sx={{ fontSize: { xs: 6, sm: 8 } }} />
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       Время: <span style={{ color: 'text.secondary' }}>{formatTimeSlot(booking.timeSlot)}</span>
                     </Typography>
                   }
@@ -144,12 +159,21 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
         </Box>
       </DialogContent>
       
-      <DialogActions sx={{ px: 3, pb: 3, justifyContent: 'center' }}>
+      <DialogActions sx={{ 
+        p: { xs: 2, sm: 3 }, 
+        pb: { xs: 2.5, sm: 3 }, 
+        justifyContent: 'center', 
+        flexDirection: { xs: 'column', sm: 'row' }, 
+        gap: { xs: 1, sm: 2 }
+      }}>
         <Button
           variant="outlined"
           onClick={onClose}
           disabled={isPending}
-          sx={{ minWidth: 120 }}
+          sx={{ 
+            minWidth: { xs: '100%', sm: 120 },
+            fontSize: { xs: '0.75rem', sm: '0.875rem' }
+          }}
         >
           Сохранить бронирование
         </Button>
@@ -158,7 +182,10 @@ const CancelBookingModal: React.FC<CancelBookingModalProps> = ({
           color="error"
           onClick={handleCancel}
           disabled={isPending}
-          sx={{ minWidth: 120 }}
+          sx={{ 
+            minWidth: { xs: '100%', sm: 120 },
+            fontSize: { xs: '0.75rem', sm: '0.875rem' }
+          }}
         >
           {isPending ? "Отмена..." : "Отменить бронирование"}
         </Button>
