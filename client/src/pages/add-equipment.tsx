@@ -82,9 +82,9 @@ const ImageUploadArea = memo(({
         sx={{ 
           border: '2px dashed #ccc', 
           borderRadius: 2, 
-          p: 3, 
+          p: { xs: 1.5, md: 3 }, 
           textAlign: 'center',
-          mb: 2,
+          mb: { xs: 1, md: 2 },
           cursor: 'pointer',
           '&:hover': {
             borderColor: 'primary.main',
@@ -102,15 +102,27 @@ const ImageUploadArea = memo(({
           style={{ display: 'none' }}
           onChange={handleImageUpload}
         />
-        <CloudUploadIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
-        <Typography variant="body1" gutterBottom>
+        <CloudUploadIcon sx={{ fontSize: { xs: 32, md: 48 }, color: 'text.secondary', mb: { xs: 0.5, md: 1 } }} />
+        <Typography 
+          variant="body2" 
+          gutterBottom 
+          sx={{ fontSize: { xs: '0.8rem', md: '1rem' }, fontWeight: 'medium' }}
+        >
           Нажмите для загрузки изображения
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography 
+          variant="body2" 
+          color="text.secondary"
+          sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
+        >
           или перетащите файл в эту область
         </Typography>
         {errors.imageFile && (
-          <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+          <Typography 
+            color="error" 
+            variant="body2" 
+            sx={{ mt: 1, fontSize: { xs: '0.7rem', md: '0.75rem' } }}
+          >
             {errors.imageFile}
           </Typography>
         )}
@@ -119,27 +131,34 @@ const ImageUploadArea = memo(({
   }
 
   return (
-    <Card sx={{ mb: 2, position: 'relative', maxWidth: 400, mx: 'auto' }}>
+    <Card sx={{ 
+      mb: { xs: 1, md: 2 }, 
+      position: 'relative', 
+      maxWidth: { xs: '100%', md: 400 },
+      mx: 'auto' 
+    }}>
       <CardMedia
         component="img"
-        height="250"
+        sx={{ height: { xs: 180, md: 250 } }}
         image={previewUrl}
         alt="Предпросмотр загруженного изображения"
       />
       <IconButton
         color="error"
+        size="small"
         sx={{
           position: 'absolute',
-          top: 8,
-          right: 8,
+          top: 4,
+          right: 4,
           backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          padding: { xs: 0.5, md: 1 },
           '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
           }
         }}
         onClick={handleRemoveImage}
       >
-        <DeleteIcon />
+        <DeleteIcon sx={{ fontSize: { xs: 16, md: 20 } }} />
       </IconButton>
     </Card>
   );
@@ -360,12 +379,14 @@ const AddEquipment = () => {
       value={formData.category}
       onChange={handleChange}
       required
+      size="small"
+      sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
     >
-      <MenuItem value={EquipmentCategory.SCIENTIFIC}>Научное оборудование</MenuItem>
-      <MenuItem value={EquipmentCategory.LABORATORY}>Лабораторное оборудование</MenuItem>
-      <MenuItem value={EquipmentCategory.MEASUREMENT}>Измерительное оборудование</MenuItem>
-      <MenuItem value={EquipmentCategory.MEDICAL}>Медицинское оборудование</MenuItem>
-      <MenuItem value={EquipmentCategory.OTHER}>Прочее</MenuItem>
+      <MenuItem value={EquipmentCategory.SCIENTIFIC} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Научное оборудование</MenuItem>
+      <MenuItem value={EquipmentCategory.LABORATORY} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Лабораторное оборудование</MenuItem>
+      <MenuItem value={EquipmentCategory.MEASUREMENT} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Измерительное оборудование</MenuItem>
+      <MenuItem value={EquipmentCategory.MEDICAL} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Медицинское оборудование</MenuItem>
+      <MenuItem value={EquipmentCategory.OTHER} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Прочее</MenuItem>
     </TextField>
   ));
   
@@ -379,28 +400,39 @@ const AddEquipment = () => {
       value={formData.status}
       onChange={handleChange}
       required
+      size="small"
+      sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
     >
-      <MenuItem value={EquipmentStatus.AVAILABLE}>Доступно</MenuItem>
-      <MenuItem value={EquipmentStatus.MAINTENANCE}>На обслуживании</MenuItem>
-      <MenuItem value={EquipmentStatus.BOOKED}>Забронировано</MenuItem>
+      <MenuItem value={EquipmentStatus.AVAILABLE} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Доступно</MenuItem>
+      <MenuItem value={EquipmentStatus.MAINTENANCE} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>На обслуживании</MenuItem>
+      <MenuItem value={EquipmentStatus.BOOKED} sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}>Забронировано</MenuItem>
     </TextField>
   ));
   
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
       <Suspense fallback={
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
           <CircularProgress />
         </Box>
       }>
-        <Box sx={{ py: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
+        <Box sx={{ py: { xs: 2, md: 4 } }}>
+          <Typography 
+            variant="h5" 
+            component="h1" 
+            gutterBottom 
+            sx={{ 
+              fontSize: { xs: '1.25rem', md: '1.5rem' },
+              fontWeight: 'bold',
+              mb: { xs: 1, md: 2 }
+            }}
+          >
             Добавление нового оборудования
           </Typography>
           
-          <Paper elevation={2} sx={{ p: 3, mt: 3 }}>
+          <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mt: { xs: 1, md: 3 } }}>
             <form onSubmit={handleSubmit}>
-              <Stack spacing={3}>
+              <Stack spacing={{ xs: 2, md: 3 }}>
                 <TextField
                   fullWidth
                   label="Название оборудования"
@@ -410,6 +442,8 @@ const AddEquipment = () => {
                   error={!!errors.name}
                   helperText={errors.name}
                   required
+                  size="small"
+                  sx={{ '& .MuiFormHelperText-root': { fontSize: { xs: '0.7rem', md: '0.75rem' } } }}
                 />
                 
                 <TextField
@@ -421,12 +455,16 @@ const AddEquipment = () => {
                   error={!!errors.description}
                   helperText={errors.description}
                   multiline
-                  rows={4}
+                  rows={3}
                   required
+                  size="small"
+                  sx={{ '& .MuiFormHelperText-root': { fontSize: { xs: '0.7rem', md: '0.75rem' } } }}
                 />
                 
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <CategorySelect />
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 1, md: 2 }}>
+                  <Box sx={{ width: '100%' }}>
+                    <CategorySelect />
+                  </Box>
                   
                   <TextField
                     fullWidth
@@ -438,11 +476,15 @@ const AddEquipment = () => {
                     helperText={errors.location}
                     required
                     placeholder="Например, Лаборатория 101"
+                    size="small"
+                    sx={{ '& .MuiFormHelperText-root': { fontSize: { xs: '0.7rem', md: '0.75rem' } } }}
                   />
                 </Stack>
                 
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <StatusSelect />
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 1, md: 2 }}>
+                  <Box sx={{ width: '100%' }}>
+                    <StatusSelect />
+                  </Box>
                   
                   <TextField
                     fullWidth
@@ -453,17 +495,30 @@ const AddEquipment = () => {
                     error={!!errors.imageUrl}
                     helperText={errors.imageUrl || 'Оставьте пустым для изображения по умолчанию'}
                     placeholder="https://example.com/image.jpg"
+                    size="small"
+                    sx={{ '& .MuiFormHelperText-root': { fontSize: { xs: '0.7rem', md: '0.75rem' } } }}
                   />
                 </Stack>
                 
-                <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: { xs: 1, md: 2 } }} />
                 
-                <Typography variant="h6" gutterBottom>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    fontSize: { xs: '0.9rem', md: '1rem' },
+                    fontWeight: 'medium',
+                    mt: { xs: 0, md: 1 }
+                  }}
+                >
                   Загрузка изображения
                 </Typography>
                 
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                <Box sx={{ mb: { xs: 0, md: 2 } }}>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary" 
+                    sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
+                  >
                     Вы можете загрузить изображение с устройства или указать ссылку на изображение в поле выше
                   </Typography>
                 </Box>
@@ -476,11 +531,23 @@ const AddEquipment = () => {
                   handleRemoveImage={handleRemoveImage}
                 />
                 
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                <Box sx={{ 
+                  mt: { xs: 1, md: 2 }, 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  gap: { xs: 1, md: 2 }
+                }}>
                   <Button 
                     variant="outlined" 
                     color="secondary" 
                     onClick={() => setLocation('/')}
+                    size="small"
+                    sx={{ 
+                      py: { xs: 0.5, md: 1 },
+                      fontSize: { xs: '0.75rem', md: '0.875rem' },
+                      boxShadow: 'none',
+                      '&:hover': { boxShadow: 'none' }
+                    }}
                   >
                     Отмена
                   </Button>
@@ -490,6 +557,13 @@ const AddEquipment = () => {
                     variant="contained" 
                     color="primary"
                     disabled={createEquipmentMutation.isPending}
+                    size="small"
+                    sx={{ 
+                      py: { xs: 0.5, md: 1 }, 
+                      fontSize: { xs: '0.75rem', md: '0.875rem' },
+                      boxShadow: 'none',
+                      '&:hover': { boxShadow: 'none' }
+                    }}
                   >
                     {createEquipmentMutation.isPending ? 'Добавление...' : 'Добавить оборудование'}
                   </Button>
