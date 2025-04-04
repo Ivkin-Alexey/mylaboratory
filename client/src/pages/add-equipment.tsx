@@ -422,7 +422,7 @@ const AddEquipment = () => {
             component="h1" 
             gutterBottom 
             sx={{ 
-              fontSize: { xs: '1.25rem', md: '1.5rem' },
+              fontSize: '1rem',
               fontWeight: 'bold',
               mb: { xs: 1, md: 2 }
             }}

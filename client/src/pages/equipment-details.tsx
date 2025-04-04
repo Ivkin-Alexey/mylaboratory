@@ -204,7 +204,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
     return (
       <Container maxWidth="lg">
         <Box sx={{ py: 8, textAlign: 'center' }}>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{ fontSize: '1rem' }}>
             Оборудование не найдено
           </Typography>
           <Typography variant="body1" color="text.secondary" paragraph>
@@ -291,7 +291,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
             </Box>
             <CardContent sx={{ px: { xs: 2, sm: 3 } }}>
               <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 1, gap: 1 }}>
-                <Typography variant="h5" component="h1" fontWeight="bold" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
+                <Typography variant="h5" component="h1" fontWeight="bold" sx={{ fontSize: '1rem' }}>
                   {equipment.name}
                 </Typography>
                 <Box sx={{ mt: { xs: 1, sm: 0 } }}>
@@ -308,7 +308,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         {/* Right column - Details and Booking */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '0 0 60%' } }}>
           <Paper elevation={1} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
+            <Typography variant="h6" gutterBottom sx={{ fontSize: '1rem' }}>
               Детали оборудования
             </Typography>
             <List dense sx={{ 
@@ -501,7 +501,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
           </Paper>
 
           <Paper elevation={1} sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
+            <Typography variant="h6" gutterBottom sx={{ fontSize: '1rem' }}>
               Техническая информация
             </Typography>
             

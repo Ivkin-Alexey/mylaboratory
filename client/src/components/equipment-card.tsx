@@ -247,7 +247,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
             component="h3" 
             gutterBottom
             sx={{ 
-              fontSize: { xs: '0.8rem', sm: '1rem' },
+              fontSize: '1rem',
               mb: { xs: 0.5, sm: 1 }
             }}
           >

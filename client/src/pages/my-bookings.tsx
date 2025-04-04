@@ -46,7 +46,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
   };
   
   // Handle rebooking
-  const handleRebook = (equipmentId: number) => {
+  const handleRebook = (equipmentId: string) => {
     console.log("Rebooking equipment:", equipmentId);
     if (onNavigateToEquipment) {
       onNavigateToEquipment();
@@ -82,7 +82,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
   return (
     <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" color="text.primary">
+        <Typography variant="h4" fontWeight="bold" color="text.primary" sx={{ fontSize: '1rem' }}>
           Мои бронирования
         </Typography>
         <FormControl size="small" sx={{ minWidth: 180 }}>
@@ -110,7 +110,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
         <Card elevation={1} sx={{ textAlign: 'center', py: 4, mb: 4 }}>
           <CardContent>
             <ErrorOutlineIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-            <Typography variant="h6" color="text.primary" gutterBottom>
+            <Typography variant="h6" color="text.primary" gutterBottom sx={{ fontSize: '1rem' }}>
               Бронирования не найдены
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
