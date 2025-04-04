@@ -185,7 +185,7 @@ function Router() {
   };
 
   return (
-    <div>
+    <div id="Единый каталог учебного и научного оборудования">
       <AppHeader 
         activeTab={activeTab} 
         setActiveTab={handleTabChange} 
