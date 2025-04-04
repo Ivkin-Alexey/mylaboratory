@@ -399,3 +399,36 @@ export const finishUsingEquipment = async (equipmentId: string): Promise<Equipme
     throw error;
   }
 };
+
+/**
+ * Получение оборудования по списку ID - специально для избранного
+ * @param equipmentIds массив ID оборудования
+ * @returns массив оборудования
+ */
+export const getEquipmentByIds = async (equipmentIds: string[]): Promise<Equipment[]> => {
+  try {
+    if (!equipmentIds || equipmentIds.length === 0) {
+      return [];
+    }
+    
+    // Объединяем ID через запятую и кодируем для URL
+    const idsParam = encodeURIComponent(equipmentIds.join(','));
+    const url = `${EXTERNAL_API_BASE_URL}/equipments?equipmentIds=${idsParam}`;
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      return [];
+    }
+    
+    const data = await response.json();
+    
+    if (data && Array.isArray(data)) {
+      return data.map(mapExternalEquipmentToLocal);
+    }
+    
+    return [];
+  } catch (error) {
+    return [];
+  }
+};

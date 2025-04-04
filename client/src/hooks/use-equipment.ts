@@ -8,6 +8,7 @@ import {
   finishUsingEquipment,
   getEquipmentFilters,
   getEquipmentById,
+  getEquipmentByIds,
   ExternalFilter,
   Equipment
 } from "@/lib/optimized-api";
@@ -180,5 +181,18 @@ export function useEquipmentById(equipmentId: string | null) {
     refetchOnWindowFocus: false,
     staleTime: 60000, // Кэшируем данные на 1 минуту
     gcTime: 300000, // Данные хранятся в кэше 5 минут после использования
+  });
+}
+
+// Хук для получения списка избранного оборудования по ID
+export function useFavoriteEquipment(favoriteIds: string[]) {
+  return useQuery<Equipment[]>({
+    queryKey: ["favorite-equipment", favoriteIds.join(',')],
+    queryFn: () => getEquipmentByIds(favoriteIds),
+    enabled: favoriteIds.length > 0, // Запрос выполняется только если есть ID в избранном
+    refetchOnWindowFocus: false,
+    staleTime: 60000, // Кэшируем данные на 1 минуту
+    gcTime: 300000, // Данные хранятся в кэше 5 минут после использования
+    retry: 1, // Минимум повторных запросов
   });
 }

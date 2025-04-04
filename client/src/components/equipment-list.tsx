@@ -4,7 +4,8 @@ import {
   useFindEquipment,
   useUseEquipment,
   useFinishUsingEquipment,
-  useEquipmentFilters
+  useEquipmentFilters,
+  useFavoriteEquipment
 } from "@/hooks/use-equipment";
 import { useFavorites } from "@/hooks/use-favorites";
 import { getFavoriteIdsFromStorage } from "@/hooks/use-favorites";
@@ -189,6 +190,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
   // Получаем фильтры с внешнего API
   const { data: externalFilters, isLoading: isLoadingFilters } = useEquipmentFilters();
   
+  // Загружаем избранное оборудование напрямую по API (только если нужно)
+  const { data: favoriteEquipment, isLoading: isLoadingFavorites } = useFavoriteEquipment(
+    showOnlyFavorites ? favoriteIds : []
+  );
+  
   // Fetch equipment data
   const { data: allEquipment, isLoading: isLoadingAll } = useEquipmentList();
   // Используем новый API метод поиска с параметром q и фильтрами
@@ -218,8 +224,13 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
   // Determine which data to display
   const displayData = useMemo(() => {
     // Если данные еще загружаются, вернем null, чтобы показать состояние загрузки
-    if (isLoadingAll || isLoadingSearch) {
+    if ((isLoadingAll || isLoadingSearch) && (!showOnlyFavorites || isLoadingFavorites)) {
       return null;
+    }
+    
+    // Если режим "Только избранное" активен - используем данные из прямого API-запроса избранного
+    if (showOnlyFavorites) {
+      return favoriteEquipment || [];
     }
     
     // Проверяем, есть ли активные фильтры или поисковый запрос
@@ -236,21 +247,18 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
       baseData = allEquipment || [];
     }
     
-    // Применяем фильтр избранного, если он активен
-    if (showOnlyFavorites) {
-      // Получаем актуальный список избранного напрямую из localStorage
-      const currentFavorites = getFavoriteIdsFromStorage();
-      
-      if (baseData && baseData.length > 0 && currentFavorites.length > 0) {
-        // Фильтруем базовые данные, оставляя только те, чьи ID есть в избранном
-        return baseData.filter(item => currentFavorites.includes(item.id));
-      } else {
-        return [];
-      }
-    }
-    
     return baseData;
-  }, [debouncedSearchTerm, selectedFilters, searchResults, allEquipment, isLoadingAll, isLoadingSearch, showOnlyFavorites]);
+  }, [
+    debouncedSearchTerm, 
+    selectedFilters, 
+    searchResults, 
+    allEquipment, 
+    isLoadingAll, 
+    isLoadingSearch, 
+    showOnlyFavorites, 
+    favoriteEquipment, 
+    isLoadingFavorites
+  ]);
 
   // Calculate pagination
   const totalPages = Math.ceil((displayData && Array.isArray(displayData) ? displayData.length : 0) / ITEMS_PER_PAGE);
@@ -275,7 +283,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
   
   // Отслеживаем реальное состояние загрузки
   useEffect(() => {
-    const loadingState = isLoadingAll || isLoadingSearch || isLoadingFilters;
+    // Определяем состояние загрузки в зависимости от активного режима
+    const loadingState = showOnlyFavorites 
+      ? isLoadingFavorites || isLoadingFilters 
+      : isLoadingAll || isLoadingSearch || isLoadingFilters;
     
     if (loadingState) {
       setIsLoading(true);
@@ -297,7 +308,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
       
       return () => clearTimeout(noDataTimer);
     }
-  }, [isLoadingAll, isLoadingSearch, isLoadingFilters]);
+  }, [isLoadingAll, isLoadingSearch, isLoadingFilters, isLoadingFavorites, showOnlyFavorites]);
   
   // Базовая проверка на ошибки 
   const hasError = !displayData || !Array.isArray(displayData);
@@ -548,7 +559,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
       )}
 
       {/* Loading State */}
-      {isLoading || isLoadingAll || isLoadingSearch ? (
+      {isLoading || isLoadingAll || isLoadingSearch || isLoadingFavorites ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
           <CircularProgress />
         </Box>
