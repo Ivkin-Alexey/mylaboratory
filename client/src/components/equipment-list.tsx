@@ -412,9 +412,9 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         display: 'flex', 
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: { xs: 1, sm: 2 },
+        gap: { xs: 0.5, sm: 2 },
         mb: 4,
-        px: { xs: 1, sm: 4 }
+        px: { xs: 0.5, sm: 4 }
       }}>
         
         {/* Динамические фильтры из API */}
@@ -422,9 +422,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           <FormControl 
             key={filter.name}
             sx={{ 
-              width: { xs: '44vw', sm: 170 },
+              width: { xs: '40vw', sm: 170 },
               flexShrink: 0,
-              position: 'relative'
+              position: 'relative',
+              mx: { xs: 0.5, sm: 0 }
             }} 
             size="small"
           >
