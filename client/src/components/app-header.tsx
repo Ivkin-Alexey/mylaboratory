@@ -193,7 +193,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" color="primary" elevation={1}>
+      <AppBar position="static" elevation={0} sx={{ 
+        bgcolor: '#fff', 
+        color: '#333',
+        borderBottom: '1px solid #e0e0e0'
+      }}>
         <Toolbar>
           {isMobile ? (
             <IconButton 
@@ -206,7 +210,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
               <MenuIcon />
             </IconButton>
           ) : (
-            <ScienceIcon sx={{ mr: 2 }} />
+            <img 
+              src="https://spmi.ru/sites/default/files/logo_18.svg" 
+              alt="Логотип университета"
+              style={{ height: '40px', marginRight: '16px' }}
+            />
           )}
           
           <Typography 
@@ -215,7 +223,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             sx={{ 
               flexGrow: 1, 
               cursor: 'pointer',
-              fontSize: { xs: '1rem', sm: '1.25rem' }
+              fontSize: { xs: '0.9rem', sm: '1.1rem' },
+              fontWeight: 'bold',
+              color: '#1976d2'
             }}
             onClick={() => setActiveTab("equipment")}
           >
@@ -226,23 +236,32 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
           {!isMobile && (
             <>
               <Button 
-                color="inherit" 
+                sx={{ 
+                  color: '#1976d2', 
+                  mr: 1, 
+                  textTransform: 'none',
+                  fontWeight: 'normal'
+                }}
                 startIcon={<ContactsIcon />}
                 onClick={handleContactsClick}
-                sx={{ mr: 2 }}
               >
                 Контакты
               </Button>
               
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2" sx={{ mr: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+                <Typography variant="body2" sx={{ mr: 2, color: '#666' }}>
                   Иван Петров
                 </Typography>
-                <IconButton color="inherit" size="small">
+                <IconButton size="small" sx={{ color: '#1976d2' }}>
                   <SettingsIcon />
                 </IconButton>
                 <Avatar 
-                  sx={{ ml: 2, width: 32, height: 32 }}
+                  sx={{ 
+                    ml: 2, 
+                    width: 32, 
+                    height: 32,
+                    bgcolor: '#1976d2'
+                  }}
                   alt="Иван Петров"
                 >
                   ИП
@@ -254,7 +273,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
           {/* Аватар для мобильных устройств */}
           {isMobile && (
             <Avatar 
-              sx={{ width: 32, height: 32 }}
+              sx={{ 
+                width: 32, 
+                height: 32,
+                bgcolor: '#1976d2'
+              }}
               alt="Иван Петров"
             >
               ИП
@@ -264,17 +287,26 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
         
         {/* Вкладки, видимые только на десктопе */}
         {!isMobile && (
-          <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: theme.palette.primary.main }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            bgcolor: '#f5f5f5',
+            borderTop: '1px solid #e0e0e0',
+            padding: '0 16px'
+          }}>
             <Tabs 
               value={activeTab}
               onChange={handleTabChange}
-              textColor="inherit"
-              indicatorColor="secondary"
+              textColor="primary"
+              indicatorColor="primary"
               sx={{ 
                 '& .MuiTab-root': { 
                   minWidth: 'auto',
                   py: 1.5,
-                  px: 2
+                  px: 2,
+                  textTransform: 'none',
+                  fontWeight: 'normal',
+                  fontSize: '0.95rem'
                 }
               }}
             >
@@ -292,10 +324,14 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
               />
             </Tabs>
             <Button
-              color="inherit"
-              startIcon={<StarIcon color="error" />}
+              sx={{ 
+                color: '#1976d2', 
+                ml: 2,
+                textTransform: 'none',
+                fontWeight: 'normal'
+              }}
+              startIcon={<StarIcon style={{ color: '#f44336' }} />}
               onClick={() => setLocation("/equipment/favorites")}
-              sx={{ ml: 2 }}
             >
               Избранное
             </Button>
