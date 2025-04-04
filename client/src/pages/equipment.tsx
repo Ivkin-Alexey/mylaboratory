@@ -75,7 +75,7 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings, sho
     <>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" component="h1">
-          Доступное оборудование
+          {showFavorites ? "Избранное оборудование" : "Доступное оборудование"}
         </Typography>
         {!isMobile && (
           <Button 
@@ -89,7 +89,11 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings, sho
         )}
       </Box>
       
-      <EquipmentList onBookEquipment={handleBookEquipment} initialShowFavorites={showFavorites} />
+      <EquipmentList 
+        onBookEquipment={handleBookEquipment} 
+        initialShowFavorites={showFavorites} 
+        hideFilters={showFavorites} 
+      />
       
       <BookingModal
         isOpen={isBookingModalOpen}

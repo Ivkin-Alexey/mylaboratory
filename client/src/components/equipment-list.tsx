@@ -167,11 +167,16 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
 interface EquipmentListProps {
   onBookEquipment: (equipmentId: string) => void;
   initialShowFavorites?: boolean;
+  hideFilters?: boolean;
 }
 
 const ITEMS_PER_PAGE = 38;
 
-const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment, initialShowFavorites = false }) => {
+const EquipmentList: React.FC<EquipmentListProps> = ({ 
+  onBookEquipment, 
+  initialShowFavorites = false, 
+  hideFilters = false 
+}) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
@@ -353,151 +358,180 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment, initialS
 
   return (
     <Box mb={4} sx={{ backgroundColor: '#ffffff' }}>
-      {/* Поисковая строка */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        width: '100%',
-        mb: 3
-      }}>
-        <TextField
-          placeholder="Поиск оборудования..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          size="small"
-          sx={{ 
-            width: { xs: '89vw', md: '33.333%' },
-            '& .MuiOutlinedInput-root': {
-              borderColor: searchTerm ? 'primary.main' : undefined,
-              bgcolor: searchTerm ? 'rgba(63, 81, 181, 0.05)' : undefined,
-              '& fieldset': {
-                borderColor: searchTerm ? 'primary.main' : undefined,
-                borderWidth: searchTerm ? 2 : 1
-              },
-              '&:hover fieldset': {
-                borderColor: searchTerm ? 'primary.main' : undefined,
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'primary.main',
-              }
-            }
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon fontSize="small" />
-              </InputAdornment>
-            ),
-            endAdornment: searchTerm ? (
-              <InputAdornment position="end">
-                <Box 
-                  sx={{ 
-                    cursor: 'pointer',
-                    display: 'flex',
-                    '&:hover': {
-                      color: 'primary.main',
-                    }
-                  }}
-                  onClick={() => setSearchTerm('')}
-                >
-                  <ClearIcon fontSize="small" />
-                </Box>
-              </InputAdornment>
-            ) : null,
-          }}
-        />
-      </Box>
-      
-      {/* Фильтры в строку - динамические из внешнего API */}
-      <Box sx={{ 
-        display: 'flex', 
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: { xs: 0, sm: 2 },
-        mb: 4,
-        px: { xs: 0, sm: 4 },
-        mx: { xs: 'auto', sm: 0 },
-        maxWidth: { xs: '92vw', sm: 'none' }
-      }}>
-        
-        {/* Динамические фильтры из API */}
-        {externalFilters && externalFilters.map((filter) => (
-          <FormControl 
-            key={filter.name}
-            sx={{ 
-              width: { xs: '44vw', sm: 170 },
-              flexShrink: 0,
-              position: 'relative',
-              mx: { xs: 0, sm: 0 }
-            }} 
-            size="small"
-          >
-            <InputLabel
-              sx={{
-                color: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
-                fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : undefined
-              }}
-            >
-              {filter.label}
-            </InputLabel>
-            {/* Кнопка сброса фильтра */}
-            {(selectedFilters[filter.name]?.length || 0) > 0 && (
-              <Box 
-                sx={{ 
-                  position: 'absolute', 
-                  right: -8, 
-                  top: -8, 
-                  zIndex: 1, 
-                  cursor: 'pointer',
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: 18,
-                  height: 18,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: 1,
-                  '&:hover': {
-                    bgcolor: 'primary.dark',
-                  }
-                }} 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleClearFilter(filter.name);
-                }}
-              >
-                <ClearIcon sx={{ fontSize: 12 }} />
-              </Box>
-            )}
-            {/* Используем оптимизированный селект для улучшения производительности */}
-            <OptimizedFilterSelect
-              filter={filter}
-              value={selectedFilters[filter.name] || []}
-              onChange={(e) => handleFilterChange(filter.name, e)}
-            />
-          </FormControl>
-        ))}
-      </Box>
-      
-      {/* Кнопки фильтров и избранного */}
-      <Box 
-        sx={{ 
+      {/* Поисковая строка - отображается только если hideFilters=false */}
+      {!hideFilters && (
+        <Box sx={{ 
           display: 'flex', 
           justifyContent: 'center', 
-          mb: 2,
-          gap: 2,
-          flexWrap: 'wrap'
-        }}
-      >
-        {/* Кнопка сброса всех фильтров */}
-        {hasActiveFilters && (
-          <Button
-            variant="outlined"
-            color="primary"
+          width: '100%',
+          mb: 3
+        }}>
+          <TextField
+            placeholder="Поиск оборудования..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             size="small"
-            startIcon={<FilterAltOffIcon />}
-            onClick={handleClearAllFilters}
+            sx={{ 
+              width: { xs: '89vw', md: '33.333%' },
+              '& .MuiOutlinedInput-root': {
+                borderColor: searchTerm ? 'primary.main' : undefined,
+                bgcolor: searchTerm ? 'rgba(63, 81, 181, 0.05)' : undefined,
+                '& fieldset': {
+                  borderColor: searchTerm ? 'primary.main' : undefined,
+                  borderWidth: searchTerm ? 2 : 1
+                },
+                '&:hover fieldset': {
+                  borderColor: searchTerm ? 'primary.main' : undefined,
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: 'primary.main',
+                }
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+              endAdornment: searchTerm ? (
+                <InputAdornment position="end">
+                  <Box 
+                    sx={{ 
+                      cursor: 'pointer',
+                      display: 'flex',
+                      '&:hover': {
+                        color: 'primary.main',
+                      }
+                    }}
+                    onClick={() => setSearchTerm('')}
+                  >
+                    <ClearIcon fontSize="small" />
+                  </Box>
+                </InputAdornment>
+              ) : null,
+            }}
+          />
+        </Box>
+      )}
+      
+      {/* Фильтры в строку - динамические из внешнего API - отображаются только если hideFilters=false */}
+      {!hideFilters && (
+        <Box sx={{ 
+          display: 'flex', 
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: { xs: 0, sm: 2 },
+          mb: 4,
+          px: { xs: 0, sm: 4 },
+          mx: { xs: 'auto', sm: 0 },
+          maxWidth: { xs: '92vw', sm: 'none' }
+        }}>
+          
+          {/* Динамические фильтры из API */}
+          {externalFilters && externalFilters.map((filter) => (
+            <FormControl 
+              key={filter.name}
+              sx={{ 
+                width: { xs: '44vw', sm: 170 },
+                flexShrink: 0,
+                position: 'relative',
+                mx: { xs: 0, sm: 0 }
+              }} 
+              size="small"
+            >
+              <InputLabel
+                sx={{
+                  color: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
+                  fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : undefined
+                }}
+              >
+                {filter.label}
+              </InputLabel>
+              {/* Кнопка сброса фильтра */}
+              {(selectedFilters[filter.name]?.length || 0) > 0 && (
+                <Box 
+                  sx={{ 
+                    position: 'absolute', 
+                    right: -8, 
+                    top: -8, 
+                    zIndex: 1, 
+                    cursor: 'pointer',
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 18,
+                    height: 18,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: 1,
+                    '&:hover': {
+                      bgcolor: 'primary.dark',
+                    }
+                  }} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClearFilter(filter.name);
+                  }}
+                >
+                  <ClearIcon sx={{ fontSize: 12 }} />
+                </Box>
+              )}
+              {/* Используем оптимизированный селект для улучшения производительности */}
+              <OptimizedFilterSelect
+                filter={filter}
+                value={selectedFilters[filter.name] || []}
+                onChange={(e) => handleFilterChange(filter.name, e)}
+              />
+            </FormControl>
+          ))}
+        </Box>
+      )}
+      
+      {/* Кнопки фильтров и избранного - отображаются только если hideFilters=false */}
+      {!hideFilters && (
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mb: 2,
+            gap: 2,
+            flexWrap: 'wrap'
+          }}
+        >
+          {/* Кнопка сброса всех фильтров */}
+          {hasActiveFilters && (
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              startIcon={<FilterAltOffIcon />}
+              onClick={handleClearAllFilters}
+              sx={{
+                borderRadius: 4,
+                textTransform: 'none',
+                fontWeight: 'bold',
+                boxShadow: 'none',
+                '&:hover': {
+                  boxShadow: 'none',
+                  bgcolor: 'rgba(63, 81, 181, 0.1)',
+                }
+              }}
+            >
+              Сбросить все фильтры
+            </Button>
+          )}
+          
+          {/* Кнопка переключения режима "Только избранное" */}
+          <Button
+            variant={showOnlyFavorites ? "contained" : "outlined"}
+            color="error"
+            size="small"
+            startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
+            onClick={() => {
+              setShowOnlyFavorites(prev => !prev);
+            }}
             sx={{
               borderRadius: 4,
               textTransform: 'none',
@@ -505,36 +539,13 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment, initialS
               boxShadow: 'none',
               '&:hover': {
                 boxShadow: 'none',
-                bgcolor: 'rgba(63, 81, 181, 0.1)',
               }
             }}
           >
-            Сбросить все фильтры
+            {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
           </Button>
-        )}
-        
-        {/* Кнопка переключения режима "Только избранное" */}
-        <Button
-          variant={showOnlyFavorites ? "contained" : "outlined"}
-          color="error"
-          size="small"
-          startIcon={showOnlyFavorites ? <StarIcon /> : <StarBorderIcon />}
-          onClick={() => {
-            setShowOnlyFavorites(prev => !prev);
-          }}
-          sx={{
-            borderRadius: 4,
-            textTransform: 'none',
-            fontWeight: 'bold',
-            boxShadow: 'none',
-            '&:hover': {
-              boxShadow: 'none',
-            }
-          }}
-        >
-          {showOnlyFavorites ? "Все оборудование" : "Только избранное"}
-        </Button>
-      </Box>
+        </Box>
+      )}
 
       {/* Loading State */}
       {isLoading || isLoadingAll || isLoadingSearch ? (
