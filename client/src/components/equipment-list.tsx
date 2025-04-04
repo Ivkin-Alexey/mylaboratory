@@ -365,7 +365,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           size="small"
           sx={{ 
-            width: { xs: '80%', md: '33.333%' },
+            width: { xs: '89vw', md: '33.333%' },
             '& .MuiOutlinedInput-root': {
               borderColor: searchTerm ? 'primary.main' : undefined,
               bgcolor: searchTerm ? 'rgba(63, 81, 181, 0.05)' : undefined,
@@ -412,9 +412,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         display: 'flex', 
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: { xs: 0.5, sm: 2 },
+        gap: { xs: 0, sm: 2 },
         mb: 4,
-        px: { xs: 0.5, sm: 4 }
+        px: { xs: 0, sm: 4 },
+        mx: { xs: 'auto', sm: 0 },
+        maxWidth: { xs: '92vw', sm: 'none' }
       }}>
         
         {/* Динамические фильтры из API */}
@@ -422,10 +424,10 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
           <FormControl 
             key={filter.name}
             sx={{ 
-              width: { xs: '40vw', sm: 170 },
+              width: { xs: '44vw', sm: 170 },
               flexShrink: 0,
               position: 'relative',
-              mx: { xs: 0.5, sm: 0 }
+              mx: { xs: 0, sm: 0 }
             }} 
             size="small"
           >
