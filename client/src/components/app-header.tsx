@@ -16,7 +16,9 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  useMediaQuery
+  useMediaQuery,
+  Collapse,
+  ListItemButton
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ScienceIcon from "@mui/icons-material/Science";
@@ -25,6 +27,10 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import StarIcon from '@mui/icons-material/Star';
+import SearchIcon from '@mui/icons-material/Search';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useLocation } from "wouter";
 
 
@@ -37,6 +43,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
   const theme = useTheme();
   const [, setLocation] = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [equipmentMenuOpen, setEquipmentMenuOpen] = useState(false);
   
   // Используем медиа-запрос для определения, является ли экран мобильным
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
