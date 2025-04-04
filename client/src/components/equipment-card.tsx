@@ -199,7 +199,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         onClick={handleCardClick}
         sx={{ cursor: 'pointer' }}
       >
-        <Box sx={{ height: '170px', overflow: 'hidden', p: '10px 10px 0 10px' }}>
+        <Box sx={{ height: '170px', overflow: 'hidden', p: { xs: '8px 8px 0 8px', sm: '10px 10px 0 10px' } }}>
           <CardMedia
             component="img"
             sx={{ 
@@ -213,7 +213,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         </Box>
         <StatusChip status={equipment.status} />
       
-        <CardContent sx={{ pb: 0 }}>
+        <CardContent sx={{ pb: 0, px: { xs: 1.5, sm: 2 } }}>
           <Typography 
             variant="h6" 
             component="h3" 
@@ -233,7 +233,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         </CardContent>
       </ContentArea>
       
-      <Box sx={{ p: 2, mt: 'auto' }}>
+      <Box sx={{ p: { xs: 1.5, sm: 2 }, mt: 'auto' }}>
         {buttonConfig && (
           <Button 
             variant={buttonConfig.variant}

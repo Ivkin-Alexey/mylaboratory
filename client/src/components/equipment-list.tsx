@@ -553,11 +553,11 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
             sx={{ 
               display: 'grid',
               gridTemplateColumns: {
-                xs: 'repeat(auto-fit, minmax(250px, 1fr))',
+                xs: 'repeat(2, 1fr)',
                 sm: 'repeat(auto-fit, minmax(250px, 1fr))',
                 md: 'repeat(auto-fit, minmax(250px, 1fr))'
               },
-              gap: 2,
+              gap: { xs: 1, sm: 2 },
               width: '100%',
             }}
           >
