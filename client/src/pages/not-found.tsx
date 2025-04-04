@@ -30,7 +30,7 @@ export default function NotFound() {
             <ErrorOutlineIcon 
               sx={{ fontSize: 64, color: "error.main", mb: 2 }} 
             />
-            <Typography variant="h4" component="h1" gutterBottom sx={{ fontSize: '1rem' }}>
+            <Typography variant="h4" component="h1" gutterBottom sx={{ fontSize: '1rem', textAlign: 'center' }}>
               404 Страница не найдена
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>

@@ -22,7 +22,7 @@ const Contacts = () => {
         component="h1"
         align="center"
         gutterBottom
-        sx={{ fontWeight: 'bold', mb: 4, fontSize: '1rem' }}
+        sx={{ fontWeight: 'bold', mb: 4, fontSize: '1rem', textAlign: 'center' }}
       >
         Контактная информация
       </Typography>
@@ -127,7 +127,7 @@ const Contacts = () => {
             color: 'white'
           }}
         >
-          <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+          <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem', textAlign: 'center' }}>
             Нужна помощь?
           </Typography>
           <Typography variant="body1">

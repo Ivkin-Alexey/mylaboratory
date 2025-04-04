@@ -462,7 +462,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
           flexWrap: 'wrap',
           justifyContent: 'center',
           gap: { xs: '2vw', sm: 2 },  // Добавляем отступы между элементами
-          mb: 4,
+          mb: 2,
           px: { xs: 0, sm: 0 },       // Убираем боковые отступы
           mx: { xs: 0, sm: 0 },       // Убираем внешние отступы
           width: '100%',              // Используем 100% ширины
@@ -477,7 +477,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
                 width: { xs: '44vw', sm: 170 },  // Возвращаем ширину на 44vw как запрошено
                 flexShrink: 0,
                 position: 'relative',
-                m: { xs: '1vw 0', sm: 0 }  // Добавляем вертикальные отступы на мобильном
+                m: { xs: '0.5vw 0', sm: 0 }  // Уменьшаем вертикальные отступы на мобильном
               }} 
               size="small"
             >

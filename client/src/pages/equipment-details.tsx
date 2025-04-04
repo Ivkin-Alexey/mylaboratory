@@ -308,7 +308,7 @@ const EquipmentDetails: React.FC<EquipmentDetailsProps> = ({ onNavigateToBooking
         {/* Right column - Details and Booking */}
         <Box sx={{ flex: { xs: '1 1 100%', md: '0 0 60%' } }}>
           <Paper elevation={1} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontSize: '1rem' }}>
+            <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: '0.8rem', sm: '1rem' } }}>
               Детали оборудования
             </Typography>
             <List dense sx={{ 

@@ -82,7 +82,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
   return (
     <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" color="text.primary" sx={{ fontSize: '1rem' }}>
+        <Typography variant="h4" fontWeight="bold" color="text.primary" sx={{ fontSize: '1rem', textAlign: 'center', width: '100%' }}>
           Мои бронирования
         </Typography>
         <FormControl size="small" sx={{ minWidth: 180 }}>

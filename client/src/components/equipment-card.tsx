@@ -247,7 +247,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
             component="h3" 
             gutterBottom
             sx={{ 
-              fontSize: '1rem',
+              fontSize: { xs: '0.8rem', sm: '1rem' },
               mb: { xs: 0.5, sm: 1 }
             }}
           >
@@ -267,7 +267,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         </CardContent>
       </ContentArea>
       
-      <Box sx={{ p: { xs: 1, sm: 2 }, mt: 'auto' }}>
+      <Box sx={{ p: { xs: 1, sm: 2 }, mt: 'auto', display: 'none' }}>
         {buttonConfig && (
           <Button 
             variant={buttonConfig.variant}
