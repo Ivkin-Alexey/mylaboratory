@@ -7,8 +7,7 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
-  Divider
+  ListItemText
 } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
@@ -39,12 +38,6 @@ const Contacts = () => {
               borderRadius: 2
             }}
           >
-            <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              Центр коллективного пользования
-            </Typography>
-            
-            <Divider sx={{ my: 2 }} />
-            
             <List>
               <ListItem>
                 <ListItemIcon>
