@@ -26,16 +26,12 @@ const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  width: '15vw',
-  minWidth: '250px',
+  width: '100%',
+  maxWidth: '100%',
   margin: '0 auto',
   backgroundColor: '#ffffff',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
   transition: 'none', // Отключаем все анимации для повышения производительности
-  [theme.breakpoints.down(900)]: {
-    width: '42vw',
-    minWidth: '120px',
-  }
 }));
 
 // Стилизованная область контента с авто-растягиванием

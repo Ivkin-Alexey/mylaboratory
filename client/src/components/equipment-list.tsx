@@ -553,21 +553,22 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
             sx={{ 
               display: 'grid',
               gridTemplateColumns: {
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-                md: 'repeat(4, 1fr)'
+                xs: 'repeat(auto-fit, minmax(250px, 1fr))',
+                sm: 'repeat(auto-fit, minmax(250px, 1fr))',
+                md: 'repeat(auto-fit, minmax(250px, 1fr))'
               },
               gap: 2,
               width: '100%',
-              overflowX: 'hidden'
             }}
           >
             {paginatedData?.map((item: Equipment) => (
-              <Box key={item.id} sx={{ maxWidth: '100%', display: 'flex', justifyContent: 'center' }}>
-                <EquipmentCard 
-                  equipment={item} 
-                  onBook={handleEquipmentAction} 
-                />
+              <Box key={item.id} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ width: '100%', maxWidth: { xs: '42vw', md: '15vw' }, minWidth: { xs: '120px', md: '250px' } }}>
+                  <EquipmentCard 
+                    equipment={item} 
+                    onBook={handleEquipmentAction} 
+                  />
+                </Box>
               </Box>
             ))}
           </Box>
