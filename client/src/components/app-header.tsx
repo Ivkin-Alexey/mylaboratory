@@ -79,9 +79,15 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
     setDrawerOpen(false);
   };
 
+  // Обработчик для переключения состояния меню оборудования
+  const handleToggleEquipmentMenu = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Предотвращаем закрытие всего drawer
+    setEquipmentMenuOpen(!equipmentMenuOpen);
+  };
+
   // Содержимое боковой панели для мобильных устройств
   const drawerContent = (
-    <Box sx={{ width: 250 }} onClick={handleMenuClose}>
+    <Box sx={{ width: 250 }}>
       <List>
         <ListItem sx={{ py: 2, bgcolor: 'primary.dark' }}>
           <ListItemIcon sx={{ color: 'white' }}>
@@ -93,76 +99,95 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
       
       <Divider />
       
+      {/* Группа Оборудование - с выпадающим меню */}
       <List>
-        <ListItem 
-          onClick={() => handleNavigation("equipment")}
-          sx={{ 
-            cursor: 'pointer',
-            bgcolor: activeTab === "equipment" ? 'rgba(25, 118, 210, 0.08)' : 'transparent'
-          }}
-        >
+        <ListItemButton onClick={handleToggleEquipmentMenu}>
           <ListItemIcon>
-            <ScienceIcon color={activeTab === "equipment" ? "primary" : "inherit"} />
+            <ScienceIcon color="primary" />
           </ListItemIcon>
           <ListItemText 
             primary="Оборудование" 
             primaryTypographyProps={{
-              color: activeTab === "equipment" ? 'primary' : 'inherit'
+              color: 'primary',
+              fontWeight: 'bold'
             }}
           />
-        </ListItem>
+          {equipmentMenuOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
         
-        <ListItem 
-          onClick={() => handleNavigation("myBookings")}
-          sx={{ 
-            cursor: 'pointer',
-            bgcolor: activeTab === "myBookings" ? 'rgba(25, 118, 210, 0.08)' : 'transparent'
-          }}
-        >
-          <ListItemIcon>
-            <BookmarksIcon color={activeTab === "myBookings" ? "primary" : "inherit"} />
-          </ListItemIcon>
-          <ListItemText 
-            primary="Мои Бронирования" 
-            primaryTypographyProps={{
-              color: activeTab === "myBookings" ? 'primary' : 'inherit'
-            }}
-          />
-        </ListItem>
-        
-        <ListItem 
+        <Collapse in={equipmentMenuOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton 
+              sx={{ pl: 4 }}
+              onClick={() => handleNavigation("equipment")}
+              selected={activeTab === "equipment"}
+            >
+              <ListItemIcon>
+                <SearchIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Поиск" />
+            </ListItemButton>
+            
+            <ListItemButton 
+              sx={{ pl: 4 }}
+              onClick={() => {
+                // Тут можно добавить логику для отображения только избранного
+                handleNavigation("equipment");
+                // И установить showOnlyFavorites = true
+              }}
+            >
+              <ListItemIcon>
+                <StarIcon fontSize="small" color="error" />
+              </ListItemIcon>
+              <ListItemText primary="Избранное" />
+            </ListItemButton>
+            
+            <ListItemButton 
+              sx={{ pl: 4 }}
+              onClick={() => handleNavigation("myBookings")}
+              selected={activeTab === "myBookings"}
+            >
+              <ListItemIcon>
+                <BookmarksIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Мои бронирования" />
+            </ListItemButton>
+            
+            <ListItemButton 
+              sx={{ pl: 4 }}
+              onClick={() => {
+                setLocation("/equipment/add");
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <AddCircleOutlineIcon fontSize="small" color="success" />
+              </ListItemIcon>
+              <ListItemText primary="Добавить" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      </List>
+      
+      <Divider />
+      
+      {/* Группа Сервис */}
+      <List>
+        <ListItemButton 
           onClick={() => handleNavigation("contacts")}
-          sx={{ cursor: 'pointer' }}
         >
           <ListItemIcon>
             <ContactsIcon />
           </ListItemIcon>
           <ListItemText primary="Контакты" />
-        </ListItem>
+        </ListItemButton>
         
-        <ListItem 
-          onClick={() => {
-            setLocation("/equipment/add");
-            setDrawerOpen(false);
-          }}
-          sx={{ cursor: 'pointer' }}
-        >
-          <ListItemIcon>
-            <AddCircleOutlineIcon color="success" />
-          </ListItemIcon>
-          <ListItemText primary="Добавить оборудование" />
-        </ListItem>
-      </List>
-      
-      <Divider />
-      
-      <List>
-        <ListItem sx={{ cursor: 'pointer' }}>
+        <ListItemButton>
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
           <ListItemText primary="Настройки" />
-        </ListItem>
+        </ListItemButton>
       </List>
     </Box>
   );

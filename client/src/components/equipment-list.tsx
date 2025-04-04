@@ -412,9 +412,9 @@ const EquipmentList: React.FC<EquipmentListProps> = ({ onBookEquipment }) => {
         display: 'flex', 
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 2,
+        gap: { xs: 1, sm: 2 },
         mb: 4,
-        px: { xs: 2, sm: 4 }
+        px: { xs: 1, sm: 4 }
       }}>
         
         {/* Динамические фильтры из API */}
