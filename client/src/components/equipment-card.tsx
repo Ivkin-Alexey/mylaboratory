@@ -21,7 +21,7 @@ interface EquipmentCardProps {
 }
 
 // Стилизованная карточка с фиксированной шириной и отключенными анимациями
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
   height: '100%',
   display: 'flex',
@@ -31,7 +31,10 @@ const StyledCard = styled(Card)({
   backgroundColor: '#ffffff',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
   transition: 'none', // Отключаем все анимации для повышения производительности
-});
+  [theme.breakpoints.down(900)]: {
+    width: '42vw',
+  }
+}));
 
 // Стилизованная область контента с авто-растягиванием
 const ContentArea = styled(Box)({
