@@ -93,84 +93,32 @@ const Contacts = () => {
           </Paper>
         </Box>
         
-        {/* Карта или дополнительная информация */}
+        {/* Карта Яндекс */}
         <Box sx={{ flex: 1 }}>
           <Paper 
             elevation={3} 
             sx={{ 
-              p: 3, 
+              p: 0, 
               height: '100%', 
               borderRadius: 2,
+              overflow: 'hidden',
               display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden'
+              flexDirection: 'column'
             }}
           >
-            <Box 
-              sx={{ 
-                width: '100%', 
-                height: '300px',
-                bgcolor: '#eef5fd',
-                borderRadius: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'relative'
+            <iframe 
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3A4580c3c1cccfe5fd7f97ed59d71865cec1d7f8de25dc5c5dd84be6c4bdea3adb&amp;source=constructor&amp;ll=30.268519%2C59.930161&amp;z=16&amp;width=100%&amp;height=400" 
+              width="100%" 
+              height="400" 
+              frameBorder="0"
+              title="Яндекс Карта"
+              style={{ 
+                border: 0,
+                width: '100%',
+                height: '100%',
+                flexGrow: 1
               }}
-            >
-              {/* Имитация карты Яндекса */}
-              <Box
-                sx={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  backgroundImage: 'url("https://avatars.mds.yandex.net/get-bunker/118781/01ffb5e5ef0e5a2da50e7dcce4d6b1cecd66b3c1/orig")',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  opacity: 0.8
-                }}
-              />
-              
-              {/* Маркер на карте */}
-              <Box 
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  bgcolor: 'primary.main',
-                  width: 20,
-                  height: 20,
-                  borderRadius: '50%',
-                  border: '3px solid white',
-                  boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
-                  zIndex: 2
-                }}
-              />
-              
-              {/* Заголовок */}
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  position: 'absolute',
-                  top: 10,
-                  left: 10,
-                  bgcolor: 'rgba(255,255,255,0.8)',
-                  p: 1,
-                  borderRadius: 1,
-                  zIndex: 1
-                }}
-              >
-                Санкт-Петербург, 21 линия В.О., д. 2
-              </Typography>
-            </Box>
-            
-            <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
-              Координаты: 59.930161, 30.268519
-            </Typography>
+            />
           </Paper>
         </Box>
       </Box>
