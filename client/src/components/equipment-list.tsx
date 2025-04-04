@@ -223,6 +223,17 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
 
   // Determine which data to display
   const displayData = useMemo(() => {
+    console.log("Вычисление displayData:", {
+      showOnlyFavorites,
+      isLoadingAll,
+      isLoadingSearch,
+      isLoadingFavorites,
+      favoriteEquipmentCount: favoriteEquipment?.length,
+      allEquipmentCount: allEquipment?.length,
+      searchResultsCount: searchResults?.length,
+      favoriteIds
+    });
+    
     // Если данные еще загружаются, вернем null, чтобы показать состояние загрузки
     if ((isLoadingAll || isLoadingSearch) && (!showOnlyFavorites || isLoadingFavorites)) {
       return null;
@@ -230,6 +241,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
     
     // Если режим "Только избранное" активен - используем данные из прямого API-запроса избранного
     if (showOnlyFavorites) {
+      console.log("Возвращаем избранное оборудование:", favoriteEquipment?.length);
       return favoriteEquipment || [];
     }
     
@@ -247,6 +259,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
       baseData = allEquipment || [];
     }
     
+    console.log("Возвращаем обычное оборудование:", baseData?.length);
     return baseData;
   }, [
     debouncedSearchTerm, 
@@ -277,6 +290,12 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
     setCurrentPage(1);
   }, [debouncedSearchTerm, selectedFilters, showOnlyFavorites]);
   
+  // Обновляем состояние showOnlyFavorites при изменении пропса initialShowFavorites
+  useEffect(() => {
+    console.log("initialShowFavorites изменился:", initialShowFavorites);
+    setShowOnlyFavorites(initialShowFavorites);
+  }, [initialShowFavorites]);
+  
   // Проверяем текущий статус загрузки и делаем его максимально коротким
   const [isLoading, setIsLoading] = useState(true); // Начинаем с состояния загрузки
   const [showNoDataMessage, setShowNoDataMessage] = useState(false);
@@ -287,6 +306,15 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
     const loadingState = showOnlyFavorites 
       ? isLoadingFavorites || isLoadingFilters 
       : isLoadingAll || isLoadingSearch || isLoadingFilters;
+    
+    console.log("Состояние загрузки:", {
+      showOnlyFavorites,
+      isLoadingFavorites,
+      isLoadingFilters,
+      isLoadingAll,
+      isLoadingSearch,
+      loadingState
+    });
     
     if (loadingState) {
       setIsLoading(true);

@@ -186,12 +186,18 @@ export function useEquipmentById(equipmentId: string | null) {
 
 // Хук для получения списка избранного оборудования по ID
 export function useFavoriteEquipment(favoriteIds: string[]) {
+  console.log("useFavoriteEquipment вызван с IDs:", favoriteIds);
+  
   return useQuery<Equipment[]>({
     queryKey: ["favorite-equipment", favoriteIds.join(',')],
-    queryFn: () => getEquipmentByIds(favoriteIds),
+    queryFn: () => {
+      console.log("Запрос избранного оборудования для IDs:", favoriteIds);
+      return getEquipmentByIds(favoriteIds);
+    },
     enabled: favoriteIds.length > 0, // Запрос выполняется только если есть ID в избранном
     refetchOnWindowFocus: false,
-    staleTime: 60000, // Кэшируем данные на 1 минуту
+    refetchOnMount: true, // Всегда обновляем данные при монтировании компонента
+    staleTime: 0, // Всегда получаем свежие данные
     gcTime: 300000, // Данные хранятся в кэше 5 минут после использования
     retry: 1, // Минимум повторных запросов
   });

@@ -90,6 +90,7 @@ const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigateToBookings, sho
       </Box>
       
       <EquipmentList 
+        key={showFavorites ? "favorites" : "all"} // Добавляем ключ для переинициализации компонента
         onBookEquipment={handleBookEquipment} 
         initialShowFavorites={showFavorites} 
         hideFilters={showFavorites} 
