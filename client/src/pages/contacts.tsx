@@ -94,12 +94,12 @@ const Contacts = () => {
         </Box>
         
         {/* Карта Яндекс */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1.5 }}>
           <Paper 
             elevation={3} 
             sx={{ 
               p: 0, 
-              height: '100%', 
+              height: '500px', 
               borderRadius: 2,
               overflow: 'hidden',
               display: 'flex',
@@ -107,9 +107,9 @@ const Contacts = () => {
             }}
           >
             <iframe 
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3A4580c3c1cccfe5fd7f97ed59d71865cec1d7f8de25dc5c5dd84be6c4bdea3adb&amp;source=constructor&amp;ll=30.268519%2C59.930161&amp;z=16&amp;width=100%&amp;height=400" 
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3A4580c3c1cccfe5fd7f97ed59d71865cec1d7f8de25dc5c5dd84be6c4bdea3adb&amp;source=constructor&amp;ll=30.268519%2C59.930161&amp;z=16&amp;width=100%&amp;height=600" 
               width="100%" 
-              height="400" 
+              height="600" 
               frameBorder="0"
               title="Яндекс Карта"
               style={{ 
