@@ -91,9 +91,24 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
       <List>
         <ListItem sx={{ py: 2, bgcolor: 'primary.dark' }}>
           <ListItemIcon sx={{ color: 'white' }}>
+            <ScienceIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Единый каталог учебного и научного оборудования" 
+            sx={{ 
+              color: 'white',
+              '& .MuiListItemText-primary': {
+                fontSize: '0.9rem',
+                fontWeight: 'bold'
+              }
+            }} 
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemIcon>
             <AccountCircleIcon />
           </ListItemIcon>
-          <ListItemText primary="Иван Петров" sx={{ color: 'white' }} />
+          <ListItemText primary="Иван Петров" />
         </ListItem>
       </List>
       
@@ -219,7 +234,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             }}
             onClick={() => setActiveTab("equipment")}
           >
-            {isMobile ? "Бронирование" : "Бронирование Лабораторного Оборудования"}
+            {isMobile ? "Единый каталог" : "Единый каталог учебного и научного оборудования"}
           </Typography>
           
           {/* Элементы, видимые только на десктопе */}
