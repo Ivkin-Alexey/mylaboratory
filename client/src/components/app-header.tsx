@@ -24,6 +24,7 @@ import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useLocation } from "wouter";
 
 
@@ -87,42 +88,69 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
       
       <List>
         <ListItem 
-          button 
           onClick={() => handleNavigation("equipment")}
-          selected={activeTab === "equipment"}
+          sx={{ 
+            cursor: 'pointer',
+            bgcolor: activeTab === "equipment" ? 'rgba(25, 118, 210, 0.08)' : 'transparent'
+          }}
         >
           <ListItemIcon>
             <ScienceIcon color={activeTab === "equipment" ? "primary" : "inherit"} />
           </ListItemIcon>
-          <ListItemText primary="Оборудование" />
+          <ListItemText 
+            primary="Оборудование" 
+            primaryTypographyProps={{
+              color: activeTab === "equipment" ? 'primary' : 'inherit'
+            }}
+          />
         </ListItem>
         
         <ListItem 
-          button 
           onClick={() => handleNavigation("myBookings")}
-          selected={activeTab === "myBookings"}
+          sx={{ 
+            cursor: 'pointer',
+            bgcolor: activeTab === "myBookings" ? 'rgba(25, 118, 210, 0.08)' : 'transparent'
+          }}
         >
           <ListItemIcon>
             <BookmarksIcon color={activeTab === "myBookings" ? "primary" : "inherit"} />
           </ListItemIcon>
-          <ListItemText primary="Мои Бронирования" />
+          <ListItemText 
+            primary="Мои Бронирования" 
+            primaryTypographyProps={{
+              color: activeTab === "myBookings" ? 'primary' : 'inherit'
+            }}
+          />
         </ListItem>
         
         <ListItem 
-          button 
           onClick={() => handleNavigation("contacts")}
+          sx={{ cursor: 'pointer' }}
         >
           <ListItemIcon>
             <ContactsIcon />
           </ListItemIcon>
           <ListItemText primary="Контакты" />
         </ListItem>
+        
+        <ListItem 
+          onClick={() => {
+            setLocation("/add-equipment");
+            setDrawerOpen(false);
+          }}
+          sx={{ cursor: 'pointer' }}
+        >
+          <ListItemIcon>
+            <AddCircleOutlineIcon color="success" />
+          </ListItemIcon>
+          <ListItemText primary="Добавить оборудование" />
+        </ListItem>
       </List>
       
       <Divider />
       
       <List>
-        <ListItem button>
+        <ListItem sx={{ cursor: 'pointer' }}>
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
