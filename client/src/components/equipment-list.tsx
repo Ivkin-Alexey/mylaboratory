@@ -99,6 +99,7 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
     bgcolor: isActive ? 'rgba(63, 81, 181, 0.05)' : undefined,
     '& .MuiSelect-select': {
       fontWeight: isActive ? 'bold' : 'normal',
+      fontSize: '0.8rem', // Устанавливаем размер шрифта 0.8rem для текста внутри селекта
     }
   };
   
@@ -142,6 +143,7 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
               sx: {
                 fontWeight: isChecked ? 'bold' : 'normal',
                 color: isChecked ? 'primary.main' : undefined,
+                fontSize: '0.8rem', // Устанавливаем размер шрифта 0.8rem для пунктов выпадающего списка
               }
             }}
           />
@@ -484,7 +486,8 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
               <InputLabel
                 sx={{
                   color: (selectedFilters[filter.name]?.length || 0) > 0 ? 'primary.main' : undefined,
-                  fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : undefined
+                  fontWeight: (selectedFilters[filter.name]?.length || 0) > 0 ? 'bold' : undefined,
+                  fontSize: '0.8rem' // Устанавливаем размер шрифта 0.8rem для меток
                 }}
               >
                 {filter.label}
