@@ -113,16 +113,9 @@ const MyBookings: React.FC<MyBookingsProps> = ({ onNavigateToEquipment }) => {
             <Typography variant="h6" color="text.primary" gutterBottom sx={{ fontSize: '1rem' }}>
               Бронирования не найдены
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography variant="body2" color="text.secondary">
               Вы ещё не бронировали оборудование. Забронируйте оборудование, чтобы увидеть его здесь.
             </Typography>
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={onNavigateToEquipment}
-            >
-              Просмотр оборудования
-            </Button>
           </CardContent>
         </Card>
       ) : (
