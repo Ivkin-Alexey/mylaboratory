@@ -180,7 +180,7 @@ const EquipmentCard = ({ equipment, onBook }: EquipmentCardProps) => {
         variant="text"
         sx={{
           position: 'absolute',
-          top: 5,
+          bottom: 5,  // Изменено с top на bottom
           right: 5,
           minWidth: 'auto',
           padding: '5px',
