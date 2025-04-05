@@ -23,3 +23,8 @@
 .MuiMenuItem-root {
   font-size: 0.8rem !important;
 }
+
+/* Убираем стандартный padding-bottom у CardContent */
+.MuiCardContent-root {
+  padding-bottom: 0 !important;
+}
