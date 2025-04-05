@@ -416,7 +416,7 @@ const EquipmentList: React.FC<EquipmentListProps> = ({
           display: 'flex', 
           justifyContent: 'center', 
           width: '100%',
-          mb: 2,  // Уменьшаем отступ до 2, как и между селекторами фильтров
+          mb: 0.75,  // Устанавливаем отступ в 6px (0.75rem ≈ 6px при базовом размере шрифта 16px)
           px: 0  // Убираем боковые отступы 
         }}>
           <TextField
