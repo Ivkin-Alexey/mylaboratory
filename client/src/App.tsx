@@ -194,8 +194,6 @@ function Router() {
       <Container 
         maxWidth="lg" 
         sx={{ 
-          mt: 4, 
-          mb: 4, 
           px: 0 // Убираем паддинги слева и справа
         }}
         disableGutters // Отключаем стандартные отступы (gutters)
