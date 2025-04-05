@@ -252,19 +252,18 @@ const AppHeader: React.FC<AppHeaderProps> = ({ activeTab, setActiveTab }) => {
             </>
           )}
           
-          {/* Аватар для мобильных устройств */}
-          {isMobile && (
-            <Avatar 
-              sx={{ 
-                width: 32, 
-                height: 32,
-                bgcolor: '#1976d2'
-              }}
-              alt="Иван Петров"
-            >
-              ИП
-            </Avatar>
-          )}
+          {/* Аватар для мобильных устройств - скрыт через CSS */}
+          <Avatar 
+            sx={{ 
+              width: 32, 
+              height: 32,
+              bgcolor: '#1976d2',
+              display: { xs: 'none', sm: 'none' } // Скрываем на мобильных устройствах через CSS
+            }}
+            alt="Иван Петров"
+          >
+            ИП
+          </Avatar>
         </Toolbar>
         
         {/* Вкладки, видимые только на десктопе */}
