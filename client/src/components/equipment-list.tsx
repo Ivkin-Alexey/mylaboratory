@@ -55,7 +55,13 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
     }
     
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center',
+        flexWrap: 'wrap',  // Разрешаем перенос на новую строку
+        whiteSpace: 'normal', // Разрешаем перенос текста
+        wordWrap: 'break-word' // Переносим длинные слова
+      }}>
         <Typography 
           component="span" 
           sx={{ 
@@ -107,7 +113,8 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
   const menuProps = {
     PaperProps: {
       style: {
-        maxHeight: 300
+        maxHeight: 300,
+        maxWidth: 320 // Увеличиваем максимальную ширину выпадающего списка
       }
     },
     transitionDuration: 0 as const, // Явно указываем тип
@@ -127,7 +134,11 @@ const OptimizedFilterSelect = memo(({ filter, value, onChange }: FilterSelectPro
             bgcolor: isChecked ? 'rgba(63, 81, 181, 0.1)' : undefined,
             '&:hover': {
               bgcolor: isChecked ? 'rgba(63, 81, 181, 0.15)' : 'rgba(0, 0, 0, 0.04)',
-            }
+            },
+            whiteSpace: 'normal', // Разрешаем перенос текста
+            wordWrap: 'break-word', // Переносим длинные слова
+            minHeight: 'auto',     // Автоматическая высота для многострочного текста
+            py: 1                  // Добавляем вертикальные отступы для удобства
           }}
         >
           <Checkbox 
